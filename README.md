@@ -57,6 +57,7 @@ curl -X POST http://localhost:4000/ \
 
   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2JjNTNjNmIyMmE4OTc3YjhhNzhmZCIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NDg3NjU4NDIsImV4cCI6MTc0ODg1MjI0Mn0.W5sW1e_2lUrYDN2XobF-1n2gPtTmu03B9TaM4uCRfOY
 
+# Đăng nhập admin
   curl -X POST http://localhost:4000/ \
   -H "Content-Type: application/json" \
   -d '{"query":"mutation { login(input: {username: \"admin\", password: \"admin123\"}) { success message data { jwt } } }"}'
@@ -79,3 +80,16 @@ curl -X POST http://localhost:4000/ \
   -F 1=@/home/takiya/SmartShop/server/img/image_3.jpg \
   -F 2=@/home/takiya/SmartShop/server/img/image_3.jpg
 {"data":{"uploadProductImages":{"success":true,"message":"3 file(s) uploaded successfully for product","filename":"product_683bff348046303c5a404899_1748765866090_0_4fd206cd-f94a-4622-be49-19df06473a56.jpg, product_683bff348046303c5a404899_1748765866098_1_f46a6f86-60b5-4bb3-a56e-df7b11da2e04.jpg, product_683bff348046303c5a404899_1748765866104_2_6cab082f-42e2-4e04-8e0d-45fcf28088ec.jpg","url":"/img/product_683bff348046303c5a404899_1748765866090_0_4fd206cd-f94a-4622-be49-19df06473a56.jpg"}}}
+
+
+
+
+
+
+sudo lsof -i :4000
+sudo kill -9 $(sudo lsof -t -i :4000)
+
+sudo docker ps -a
+sudo docker ps
+sudo docker start smartshop-db
+sudo systemctl stop mongod

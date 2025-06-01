@@ -3,6 +3,9 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import LoginForm from './components/auth/LoginForm';
+import TestAuth from './components/auth/TestAuth';
+import TestConnection from './components/auth/TestConnection';
 
 // Layouts
 import CustomerLayout from './layouts/CustomerLayout';
@@ -44,7 +47,9 @@ function App() {
           </Route>
 
           {/* Auth Routes */}
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/test" element={<TestAuth />} />
+          <Route path="/test-connection" element={<TestConnection />} />
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Admin Routes */}

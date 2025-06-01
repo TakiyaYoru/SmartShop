@@ -1,78 +1,122 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
+import { gql, useMutation } from '@apollo/client';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Load from localStorage on initial render
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        // Clear invalid data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+// GraphQL Mutations
+const LOGIN_MUTATION = gql`
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+      success
+      message
+      data {
+        jwt
+        user {
+          _id
+          username
+          email
+          firstName
+          lastName
+          role
+        }
       }
     }
-    
-    setLoading(false);
-  }, []);
+  }
+`;
 
-  const login = (newToken, newUser) => {
-    setToken(newToken);
-    setUser(newUser);
-    
-    // Store in localStorage
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
-  };
+const REGISTER_MUTATION = gql`
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
+      success
+      message
+      data {
+        _id
+        username
+        email
+        firstName
+        lastName
+        role
+      }
+    }
+  }
+`;
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    
-    // Remove from localStorage
-    localStorage.removeItem('token');
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    // Kiểm tra nếu có user data trong localStorage
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [login] = useMutation(LOGIN_MUTATION);
+  const [register] = useMutation(REGISTER_MUTATION);
+
+  const handleLogin = useCallback(async (username, password) => {
+    try {
+      const { data } = await login({
+        variables: {
+          input: { username, password }
+        }
+      });
+
+      if (data.login.success) {
+        const { jwt, user } = data.login.data;
+        localStorage.setItem('auth_token', jwt);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        return { success: true };
+      } else {
+        return { success: false, message: data.login.message };
+      }
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  }, [login]);
+
+  const handleRegister = useCallback(async (userData) => {
+    try {
+      const { data } = await register({
+        variables: {
+          input: userData
+        }
+      });
+
+      if (data.register.success) {
+        return { success: true };
+      } else {
+        return { success: false, message: data.register.message };
+      }
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  }, [register]);
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('auth_token');
     localStorage.removeItem('user');
-  };
-
-  const isAuthenticated = !!token && !!user;
-  const isAdmin = isAuthenticated && user?.role === 'admin';
+    setUser(null);
+  }, []);
 
   const value = {
     user,
-    token,
-    isAuthenticated,
-    isAdmin,
-    login,
-    logout
+    isAuthenticated: !!user,
+    isAdmin: user?.role === 'admin',
+    isManager: user?.role === 'manager',
+    login: handleLogin,
+    register: handleRegister,
+    logout: handleLogout,
   };
-
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>;
-  }
 
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

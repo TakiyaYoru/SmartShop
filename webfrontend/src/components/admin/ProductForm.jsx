@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { UPLOAD_PRODUCT_IMAGES, REMOVE_PRODUCT_IMAGE } from '../../graphql/productQueries';
 import { X, Upload, Loader } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const ProductForm = ({ 
   initialValues,
@@ -39,6 +42,10 @@ const ProductForm = ({
     }
   }, [initialValues?.images]);
 
+  // Upload images mutation
+  const [uploadImages] = useMutation(UPLOAD_PRODUCT_IMAGES);
+  const [removeImage] = useMutation(REMOVE_PRODUCT_IMAGE);
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     const newValue = type === 'checkbox'
@@ -56,41 +63,74 @@ const ProductForm = ({
   };
 
   const handleImageChange = (e) => {
+    e.preventDefault();
+    
     if (!e.target.files || e.target.files.length === 0) return;
     
-    const newFiles = Array.from(e.target.files);
-    setImageFiles(prev => [...prev, ...newFiles]);
+    // Validate files
+    const validFiles = Array.from(e.target.files).filter(file => {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast.error(`File "${file.name}" không phải là hình ảnh`);
+        return false;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`File "${file.name}" vượt quá 5MB`);
+        return false;
+      }
+      
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+    
+    setImageFiles(prev => [...prev, ...validFiles]);
     
     // Generate previews for new files
-    const newPreviews = newFiles.map(file => URL.createObjectURL(file));
-    setImagePreviewUrls(prev => [...prev, ...newPreviews]);
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrls(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
-  const removeImage = (index) => {
-    // If it's an existing image
-    if (index < (initialValues?.images?.length || 0)) {
-      const updatedImages = [...values.images];
-      updatedImages.splice(index, 1);
-      setValues({ ...values, images: updatedImages });
-      
-      const updatedPreviews = [...imagePreviewUrls];
-      updatedPreviews.splice(index, 1);
-      setImagePreviewUrls(updatedPreviews);
+  const removeImagePreview = (index) => {
+    // If it's an existing image (from server)
+    if (index < (values.images?.length || 0)) {
+      const imageToRemove = values.images[index];
+      if (values._id) {
+        removeImage({
+          variables: {
+            productId: values._id,
+            filename: imageToRemove
+          }
+        }).then(() => {
+          setValues(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+          }));
+          setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
+          toast.success('Đã xóa hình ảnh');
+        }).catch(error => {
+          toast.error('Không thể xóa hình ảnh: ' + error.message);
+        });
+      } else {
+        setValues(prev => ({
+          ...prev,
+          images: prev.images.filter((_, i) => i !== index)
+        }));
+        setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
+      }
     } 
-    // If it's a new image
+    // If it's a new image (not yet uploaded)
     else {
-      const newFileIndex = index - (initialValues?.images?.length || 0);
-      
-      const updatedFiles = [...imageFiles];
-      updatedFiles.splice(newFileIndex, 1);
-      setImageFiles(updatedFiles);
-      
-      const updatedPreviews = [...imagePreviewUrls];
-      updatedPreviews.splice(index, 1);
-      setImagePreviewUrls(updatedPreviews);
-      
-      // Clean up the URL to prevent memory leaks
-      URL.revokeObjectURL(imagePreviewUrls[index]);
+      const fileIndex = index - (values.images?.length || 0);
+      setImageFiles(prev => prev.filter((_, i) => i !== fileIndex));
+      setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -98,10 +138,10 @@ const ProductForm = ({
     const newErrors = {};
     
     if (!values.name.trim()) newErrors.name = 'Product name is required';
-    if (values.price <= 0) newErrors.price = 'Price must be greater than zero';
+    if (!values.price || values.price <= 0) newErrors.price = 'Valid price is required';
     if (!values.sku.trim()) newErrors.sku = 'SKU is required';
-    if (!values.category) newErrors.category = 'Please select a category';
-    if (values.stock < 0) newErrors.stock = 'Stock cannot be negative';
+    if (!values.category) newErrors.category = 'Category is required';
+    if (!values.stock || values.stock < 0) newErrors.stock = 'Valid stock quantity is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,18 +153,24 @@ const ProductForm = ({
     if (!validateForm()) return;
 
     try {
-      // First, handle the basic product data
-      await onSubmit(values);
+      // Submit the form with all values including image files
+      await onSubmit({
+        ...values,
+        imageFiles // Pass the image files to parent
+      });
+      
     } catch (error) {
       console.error('Error submitting form:', error);
+      toast.error(error.message || 'Error saving product');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left Column */}
         <div>
+          {/* Name */}
           <div className="mb-4">
             <label htmlFor="name" className="form-label">Product Name*</label>
             <input
@@ -138,6 +184,7 @@ const ProductForm = ({
             {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
           </div>
 
+          {/* Description */}
           <div className="mb-4">
             <label htmlFor="description" className="form-label">Description</label>
             <textarea
@@ -150,67 +197,104 @@ const ProductForm = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="price" className="form-label">Price* ($)</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={values.price}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                className={`form-input ${errors.price ? 'border-red-500' : ''}`}
-              />
-              {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
-            </div>
-
-            <div>
-              <label htmlFor="originalPrice" className="form-label">Original Price ($)</label>
-              <input
-                type="number"
-                id="originalPrice"
-                name="originalPrice"
-                value={values.originalPrice || ''}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                className="form-input"
-              />
-            </div>
+          {/* Price */}
+          <div className="mb-4">
+            <label htmlFor="price" className="form-label">Price*</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={values.price}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              className={`form-input ${errors.price ? 'border-red-500' : ''}`}
+            />
+            {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="sku" className="form-label">SKU*</label>
-              <input
-                type="text"
-                id="sku"
-                name="sku"
-                value={values.sku}
-                onChange={handleChange}
-                className={`form-input ${errors.sku ? 'border-red-500' : ''}`}
-              />
-              {errors.sku && <p className="mt-1 text-sm text-red-500">{errors.sku}</p>}
-            </div>
-
-            <div>
-              <label htmlFor="stock" className="form-label">Stock*</label>
-              <input
-                type="number"
-                id="stock"
-                name="stock"
-                value={values.stock}
-                onChange={handleChange}
-                min="0"
-                className={`form-input ${errors.stock ? 'border-red-500' : ''}`}
-              />
-              {errors.stock && <p className="mt-1 text-sm text-red-500">{errors.stock}</p>}
-            </div>
+          {/* Original Price */}
+          <div className="mb-4">
+            <label htmlFor="originalPrice" className="form-label">Original Price</label>
+            <input
+              type="number"
+              id="originalPrice"
+              name="originalPrice"
+              value={values.originalPrice}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              className="form-input"
+            />
           </div>
 
-          <div className="flex items-center space-x-6">
+          {/* SKU */}
+          <div className="mb-4">
+            <label htmlFor="sku" className="form-label">SKU*</label>
+            <input
+              type="text"
+              id="sku"
+              name="sku"
+              value={values.sku}
+              onChange={handleChange}
+              className={`form-input ${errors.sku ? 'border-red-500' : ''}`}
+            />
+            {errors.sku && <p className="mt-1 text-sm text-red-500">{errors.sku}</p>}
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div>
+          {/* Category */}
+          <div className="mb-4">
+            <label htmlFor="category" className="form-label">Category*</label>
+            <select
+              id="category"
+              name="category"
+              value={values.category}
+              onChange={handleChange}
+              className={`form-input ${errors.category ? 'border-red-500' : ''}`}
+            >
+              <option value="">Select a category</option>
+              {categories.map(category => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            {errors.category && <p className="mt-1 text-sm text-red-500">{errors.category}</p>}
+          </div>
+
+          {/* Brand */}
+          <div className="mb-4">
+            <label htmlFor="brand" className="form-label">Brand</label>
+            <input
+              type="text"
+              id="brand"
+              name="brand"
+              value={values.brand}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+
+          {/* Stock */}
+          <div className="mb-4">
+            <label htmlFor="stock" className="form-label">Stock*</label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={values.stock}
+              onChange={handleChange}
+              min="0"
+              className={`form-input ${errors.stock ? 'border-red-500' : ''}`}
+            />
+            {errors.stock && <p className="mt-1 text-sm text-red-500">{errors.stock}</p>}
+          </div>
+
+          {/* Status Checkboxes */}
+          <div className="mb-4 space-y-2">
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -224,7 +308,6 @@ const ProductForm = ({
                 Active Product
               </label>
             </div>
-
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -239,10 +322,8 @@ const ProductForm = ({
               </label>
             </div>
           </div>
-        </div>
 
-        {/* Right Column */}
-        <div>
+          {/* Images */}
           <div className="mb-4">
             <label className="form-label">Product Images</label>
             <div className="mt-2 border-2 border-dashed border-gray-300 p-6 rounded-md">
@@ -280,7 +361,7 @@ const ProductForm = ({
                   <button
                     type="button"
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                    onClick={() => removeImage(index)}
+                    onClick={() => removeImagePreview(index)}
                   >
                     <X size={14} />
                   </button>
@@ -306,10 +387,10 @@ const ProductForm = ({
           className="btn-primary"
           disabled={isLoading || uploadingImages}
         >
-          {isLoading ? (
+          {isLoading || uploadingImages ? (
             <>
               <Loader size={20} className="animate-spin mr-2" />
-              Saving...
+              {uploadingImages ? 'Uploading Images...' : 'Saving...'}
             </>
           ) : (
             'Save Product'
