@@ -3,6 +3,7 @@ import _ from "lodash";
 import { typeDef as hello, resolvers as helloResolvers } from "./hello.js";
 import { typeDef as categories, resolvers as categoriesResolvers } from "./categories.js";
 import { typeDef as products, resolvers as productsResolvers } from "./products.js";
+import { typeDef as brands, resolvers as brandsResolvers } from "./brands.js";
 import { typeDef as authentication, resolvers as authenticationResolvers } from "./authentication.js";
 import { typeDef as upload, resolvers as uploadResolvers } from "./upload.js";
 
@@ -16,11 +17,12 @@ const query = `
   }
 `;
 
-const typeDefs = [query, hello,  categories, products, authentication, upload];
+const typeDefs = [query, hello,  categories, products, brands, authentication, upload];
 const resolvers = _.merge(
   helloResolvers, 
   categoriesResolvers,
   productsResolvers,
+  brandsResolvers,
   authenticationResolvers,
   uploadResolvers
 );

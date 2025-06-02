@@ -7,7 +7,7 @@ export const typeDef = `
     originalPrice: Float
     sku: String!
     category: Category!
-    brand: String
+    brand: Brand!
     images: [String]
     stock: Int!
     isActive: Boolean
@@ -43,7 +43,7 @@ export const typeDef = `
 
   input ProductConditionInput {
     name: String
-    brand: String
+    brand: ID!
     category: ID
     price: RangeConditionInput
     stock: RangeConditionInput
@@ -65,6 +65,8 @@ export const typeDef = `
     allProducts: [Product]
     featuredProducts: [Product]
     productsByCategory(categoryId: ID!): [Product]
+    productsByBrand(brandId: ID!): [Product]
+    productsByBrandAndCategory(brandId: ID!, categoryId: ID!): [Product]
     
     # Search products
     searchProducts(
@@ -88,7 +90,7 @@ export const typeDef = `
     originalPrice: Float
     sku: String!
     category: ID!
-    brand: String
+    brand: ID!
     images: [String]
     stock: Int!
     isActive: Boolean = true
@@ -146,6 +148,15 @@ export const resolvers = {
     productsByCategory: async (parent, args, context, info) => {
       return await context.db.products.getByCategory(args.categoryId);
     },
+    productsByBrand: async (parent, args, context, info) => {
+      return await context.db.products.getByBrand(args.brandId);
+    },
+    productsByBrandAndCategory: async (parent, args, context, info) => {
+      return await context.db.products.getByBrandAndCategory(args.brandId, args.categoryId);
+    },
+    productsByBrandAndCategory: async (parent, args, context, info) => {
+      return await context.db.products.getByBrandAndCategory(args.brandId, args.categoryId);
+    }
   },
   
   Mutation: {

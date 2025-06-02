@@ -1,4 +1,4 @@
-import { Category, User, Product } from "./models/index.js";
+import { Category, User, Product, Brand } from "./models/index.js";
 
 // Helper function to build sort options from GraphQL enum
 const buildSortOptions = (orderBy, columnMapping) => {
@@ -26,9 +26,17 @@ const buildQueryConditions = (condition) => {
     query.brand = { $regex: condition.brand.trim(), $options: 'i' };
   }
   
+  if (condition.country && condition.country.trim() !== '') {
+    query.country = { $regex: condition.country.trim(), $options: 'i' };
+  }
+  
   // Exact matches
   if (condition.category) {
     query.category = condition.category;
+  }
+  
+  if (condition.categories && condition.categories.length > 0) {
+    query.categories = { $in: condition.categories };
   }
   
   if (condition.isActive !== undefined) {
@@ -132,6 +140,96 @@ const db = {
     },
   },
 
+  brands: {
+    // New paginated method
+    getAll: async ({ first = 10, offset = 0, orderBy = 'CREATED_DESC', condition } = {}) => {
+      try {
+        const columnMapping = {
+          ID: '_id',
+          NAME: 'name',
+          FOUNDED: 'foundedYear',
+          CREATED: 'createdAt'
+        };
+        
+        const query = buildQueryConditions(condition);
+        const sortOptions = buildSortOptions(orderBy, columnMapping);
+        
+        console.log('Brands query:', query);
+        console.log('Brands sort:', sortOptions);
+        
+        // Get total count
+        const totalCount = await Brand.countDocuments(query);
+        
+        // Ensure offset doesn't exceed total count
+        const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
+        
+        // Get paginated items with population
+        const items = await Brand.find(query)
+          .populate('categories')
+          .sort(sortOptions)
+          .skip(safeOffset)
+          .limit(first);
+        
+        return {
+          items,
+          totalCount
+        };
+      } catch (error) {
+        console.error('Error in brands.getAll:', error);
+        throw error;
+      }
+    },
+    
+    // Simple method for backward compatibility
+    getAllSimple: async () => {
+      return await Brand.find({ isActive: true })
+        .populate('categories')
+        .sort({ createdAt: -1 });
+    },
+    
+    findById: async (id) => {
+      return await Brand.findById(id).populate('categories');
+    },
+    
+    findBySlug: async (slug) => {
+      return await Brand.findOne({ slug }).populate('categories');
+    },
+    
+    findByName: async (name) => {
+      return await Brand.findOne({ name });
+    },
+    
+    create: async (input) => {
+      const brand = new Brand(input);
+      const savedBrand = await brand.save();
+      return await Brand.findById(savedBrand._id).populate('categories');
+    },
+    
+    updateById: async (id, input) => {
+      const updatedBrand = await Brand.findByIdAndUpdate(id, input, { new: true });
+      return await Brand.findById(updatedBrand._id).populate('categories');
+    },
+    
+    deleteById: async (id) => {
+      const result = await Brand.findByIdAndDelete(id);
+      return result ? id : null;
+    },
+
+    // Get featured brands
+    getFeatured: async () => {
+      return await Brand.find({ isFeatured: true, isActive: true })
+        .populate('categories')
+        .sort({ createdAt: -1 });
+    },
+
+    // Get brands by category
+    getByCategory: async (categoryId) => {
+      return await Brand.find({ categories: categoryId, isActive: true })
+        .populate('categories')
+        .sort({ name: 1 });
+    },
+  },
+
   products: {
     // New paginated method with filtering
     getAll: async ({ first = 10, offset = 0, orderBy = 'CREATED_DESC', condition } = {}) => {
@@ -159,6 +257,7 @@ const db = {
         // Get paginated items with population
         const items = await Product.find(query)
           .populate('category')
+          .populate('brand')
           .sort(sortOptions)
           .skip(safeOffset)
           .limit(first);
@@ -190,7 +289,6 @@ const db = {
           $or: [
             { name: { $regex: term, $options: 'i' } },
             { description: { $regex: term, $options: 'i' } },
-            { brand: { $regex: term, $options: 'i' } },
             { sku: { $regex: term, $options: 'i' } }
           ]
         }));
@@ -213,6 +311,7 @@ const db = {
         // Get paginated items with population
         const items = await Product.find(query)
           .populate('category')
+          .populate('brand')
           .sort(sortOptions)
           .skip(safeOffset)
           .limit(first);
@@ -231,22 +330,23 @@ const db = {
     getAllSimple: async () => {
       return await Product.find({ isActive: true })
         .populate('category')
+        .populate('brand')
         .sort({ createdAt: -1 });
     },
     
     findById: async (id) => {
-      return await Product.findById(id).populate('category');
+      return await Product.findById(id).populate('category').populate('brand');
     },
     
     create: async (input) => {
       const product = new Product(input);
       const savedProduct = await product.save();
-      return await Product.findById(savedProduct._id).populate('category');
+      return await Product.findById(savedProduct._id).populate('category').populate('brand');
     },
     
     updateById: async (id, input) => {
       const updatedProduct = await Product.findByIdAndUpdate(id, input, { new: true });
-      return await Product.findById(updatedProduct._id).populate('category');
+      return await Product.findById(updatedProduct._id).populate('category').populate('brand');
     },
     
     deleteById: async (id) => {
@@ -258,6 +358,7 @@ const db = {
     getFeatured: async () => {
       return await Product.find({ isFeatured: true, isActive: true })
         .populate('category')
+        .populate('brand')
         .sort({ createdAt: -1 });
     },
 
@@ -265,6 +366,27 @@ const db = {
     getByCategory: async (categoryId) => {
       return await Product.find({ category: categoryId, isActive: true })
         .populate('category')
+        .populate('brand')
+        .sort({ createdAt: -1 });
+    },
+
+    // Get products by brand
+    getByBrand: async (brandId) => {
+      return await Product.find({ brand: brandId, isActive: true })
+        .populate('category')
+        .populate('brand')
+        .sort({ createdAt: -1 });
+    },
+
+    // Get products by brand and category
+    getByBrandAndCategory: async (brandId, categoryId) => {
+      return await Product.find({ 
+        brand: brandId, 
+        category: categoryId, 
+        isActive: true 
+      })
+        .populate('category')
+        .populate('brand')
         .sort({ createdAt: -1 });
     },
 
@@ -280,7 +402,7 @@ const db = {
         productId, 
         { images: updatedImages }, 
         { new: true }
-      ).populate('category');
+      ).populate('category').populate('brand');
     },
 
     // Remove image from product
@@ -295,7 +417,7 @@ const db = {
         productId, 
         { images: updatedImages }, 
         { new: true }
-      ).populate('category');
+      ).populate('category').populate('brand');
     }
   },
 

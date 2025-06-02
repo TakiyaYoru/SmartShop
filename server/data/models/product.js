@@ -27,7 +27,11 @@ export const ProductSchema = new Schema(
       ref: 'Category',
       required: true,
     },
-    brand: String,
+    brand: {
+      type: Schema.Types.ObjectId,
+      ref: 'Brand', // Changed from String to ObjectId reference
+      required: true,
+    },
     images: [String],
     stock: {
       type: Number,

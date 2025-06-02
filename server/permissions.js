@@ -52,7 +52,12 @@ export const permissions = {
     updateCategory: isAdmin,
     deleteCategory: isAdmin,
     
-    // Product operations - Admin or Manager
+    // // Brand operations - Admin only
+    createBrand: isAdmin,
+    updateBrand: isAdmin,
+    deleteBrand: isAdmin,
+    
+    // // Product operations - Admin or Manager
     createProduct: isAdminOrManager,
     updateProduct: isAdminOrManager,
     deleteProduct: isAdmin,
