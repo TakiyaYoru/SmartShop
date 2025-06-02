@@ -9,7 +9,7 @@ export const GET_ALL_CATEGORIES = gql`
         description
         isActive
       }
-      totalCount
+      totalCountS
     }
   }
 `;
