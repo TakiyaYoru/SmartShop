@@ -85,7 +85,7 @@ curl -X POST http://localhost:4000/ \
 
 
 
-
+npm install @apollo/client graphql react-router-dom @headlessui/react @heroicons/react tailwindcss postcss autoprefixer react-hot-toast lucide-react
 
 
 sudo lsof -i :4000

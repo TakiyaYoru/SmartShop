@@ -1,110 +1,119 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { gql, useMutation } from '@apollo/client';
+// src/contexts/AuthContext.jsx
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
-const AuthContext = createContext(null);
+// Auth utilities functions
+const getToken = () => {
+  return localStorage.getItem('smartshop_token');
+};
 
-// GraphQL Mutations
-const LOGIN_MUTATION = gql`
-  mutation Login($input: LoginInput!) {
-    login(input: $input) {
-      success
-      message
-      data {
-        jwt
-        user {
-          _id
-          username
-          email
-          firstName
-          lastName
-          role
-        }
-      }
-    }
+const getUser = () => {
+  const userStr = localStorage.getItem('smartshop_user');
+  try {
+    return userStr ? JSON.parse(userStr) : null;
+  } catch {
+    return null;
   }
-`;
+};
 
-const REGISTER_MUTATION = gql`
-  mutation Register($input: RegisterInput!) {
-    register(input: $input) {
-      success
-      message
-      data {
-        _id
-        username
-        email
-        firstName
-        lastName
-        role
-      }
-    }
+const setAuth = (token, user) => {
+  localStorage.setItem('smartshop_token', token);
+  localStorage.setItem('smartshop_user', JSON.stringify(user));
+};
+
+const clearAuth = () => {
+  localStorage.removeItem('smartshop_token');
+  localStorage.removeItem('smartshop_user');
+};
+
+// Create Auth Context
+const AuthContext = createContext();
+
+// Auth reducer
+const authReducer = (state, action) => {
+  switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+        token: action.payload.token,
+        loading: false,
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        token: null,
+        loading: false,
+      };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        loading: action.payload,
+      };
+    case 'INIT':
+      return {
+        ...state,
+        isAuthenticated: !!action.payload.token,
+        user: action.payload.user,
+        token: action.payload.token,
+        loading: false,
+      };
+    default:
+      return state;
   }
-`;
+};
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    // Kiểm tra nếu có user data trong localStorage
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+// Initial state
+const initialState = {
+  isAuthenticated: false,
+  user: null,
+  token: null,
+  loading: true,
+};
 
-  const [login] = useMutation(LOGIN_MUTATION);
-  const [register] = useMutation(REGISTER_MUTATION);
+// Auth Provider Component
+export const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(authReducer, initialState);
 
-  const handleLogin = useCallback(async (username, password) => {
-    try {
-      const { data } = await login({
-        variables: {
-          input: { username, password }
-        }
-      });
-
-      if (data.login.success) {
-        const { jwt, user } = data.login.data;
-        localStorage.setItem('auth_token', jwt);
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
-        return { success: true };
-      } else {
-        return { success: false, message: data.login.message };
-      }
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  }, [login]);
-
-  const handleRegister = useCallback(async (userData) => {
-    try {
-      const { data } = await register({
-        variables: {
-          input: userData
-        }
-      });
-
-      if (data.register.success) {
-        return { success: true };
-      } else {
-        return { success: false, message: data.register.message };
-      }
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  }, [register]);
-
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
-    setUser(null);
+  // Initialize auth state từ localStorage
+  useEffect(() => {
+    const token = getToken();
+    const user = getUser();
+    
+    dispatch({
+      type: 'INIT',
+      payload: { token, user }
+    });
   }, []);
 
+  // Login function
+  const login = (token, user) => {
+    setAuth(token, user);
+    dispatch({
+      type: 'LOGIN',
+      payload: { token, user }
+    });
+  };
+
+  // Logout function
+  const logout = () => {
+    clearAuth();
+    dispatch({ type: 'LOGOUT' });
+  };
+
+  // Set loading function
+  const setLoading = (loading) => {
+    dispatch({ type: 'SET_LOADING', payload: loading });
+  };
+
+  // Context value
   const value = {
-    user,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isManager: user?.role === 'manager',
-    login: handleLogin,
-    register: handleRegister,
-    logout: handleLogout,
+    ...state,
+    login,
+    logout,
+    setLoading,
   };
 
   return (
@@ -112,12 +121,13 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
+// Custom hook to use Auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
 };
