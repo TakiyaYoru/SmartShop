@@ -1,4 +1,5 @@
-import { Category, User, Product, Brand } from "./models/index.js";
+import { Category, User, Product, Brand, Cart, Order, OrderItem  } from "./models/index.js";
+import mongoose from "mongoose";
 
 // Helper function to build sort options from GraphQL enum
 const buildSortOptions = (orderBy, columnMapping) => {
@@ -439,6 +440,515 @@ const db = {
       return await user.save();
     },
   },
+
+  carts: {
+    // Lấy tất cả items trong cart của user
+    getByUserId: async (userId) => {
+      try {
+        const cartItems = await Cart.find({ userId })
+          .populate('productId')
+          .sort({ addedAt: -1 });
+        
+        return cartItems;
+      } catch (error) {
+        console.error('Error in carts.getByUserId:', error);
+        throw error;
+      }
+    },
+
+    // Tìm cart item của user cho 1 product cụ thể
+    findByUserAndProduct: async (userId, productId) => {
+      try {
+        return await Cart.findOne({ userId, productId });
+      } catch (error) {
+        console.error('Error in carts.findByUserAndProduct:', error);
+        throw error;
+      }
+    },
+
+    // Tạo cart item mới
+    create: async (cartData) => {
+      try {
+        const cartItem = new Cart(cartData);
+        const savedItem = await cartItem.save();
+        
+        // Populate product info trước khi return
+        return await Cart.findById(savedItem._id).populate('productId');
+      } catch (error) {
+        console.error('Error in carts.create:', error);
+        if (error.code === 11000) {
+          throw new Error('Item already exists in cart');
+        }
+        throw error;
+      }
+    },
+
+    // Cập nhật quantity của cart item
+    updateQuantity: async (userId, productId, quantity) => {
+      try {
+        const updatedItem = await Cart.findOneAndUpdate(
+          { userId, productId },
+          { quantity },
+          { new: true }
+        ).populate('productId');
+
+        if (!updatedItem) {
+          throw new Error('Cart item not found');
+        }
+
+        return updatedItem;
+      } catch (error) {
+        console.error('Error in carts.updateQuantity:', error);
+        throw error;
+      }
+    },
+
+    // Xóa 1 item khỏi cart
+    removeItem: async (userId, productId) => {
+      try {
+        const result = await Cart.findOneAndDelete({ userId, productId });
+        return result !== null;
+      } catch (error) {
+        console.error('Error in carts.removeItem:', error);
+        throw error;
+      }
+    },
+
+    // Xóa toàn bộ cart của user
+    clearByUserId: async (userId) => {
+      try {
+        const result = await Cart.deleteMany({ userId });
+        return result.deletedCount > 0;
+      } catch (error) {
+        console.error('Error in carts.clearByUserId:', error);
+        throw error;
+      }
+    },
+
+    // Lấy tổng số items trong cart (để hiển thị badge)
+    getItemCount: async (userId) => {
+      try {
+        const cartItems = await Cart.find({ userId });
+        return cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      } catch (error) {
+        console.error('Error in carts.getItemCount:', error);
+        throw error;
+      }
+    },
+
+    // Kiểm tra và validate cart trước khi checkout
+    validateCart: async (userId) => {
+      try {
+        const cartItems = await Cart.find({ userId }).populate('productId');
+        
+        const validationErrors = [];
+        const validItems = [];
+
+        for (const item of cartItems) {
+          if (!item.productId) {
+            validationErrors.push(`Product ${item.productName} no longer exists`);
+            continue;
+          }
+
+          if (!item.productId.isActive) {
+            validationErrors.push(`Product ${item.productName} is no longer available`);
+            continue;
+          }
+
+          if (item.productId.stock < item.quantity) {
+            validationErrors.push(`${item.productName}: Only ${item.productId.stock} items available (you have ${item.quantity} in cart)`);
+            continue;
+          }
+
+          // Kiểm tra giá có thay đổi không
+          if (item.unitPrice !== item.productId.price) {
+            validationErrors.push(`${item.productName}: Price changed from ${item.unitPrice} to ${item.productId.price}`);
+          }
+
+          validItems.push(item);
+        }
+
+        return {
+          isValid: validationErrors.length === 0,
+          errors: validationErrors,
+          validItems
+        };
+      } catch (error) {
+        console.error('Error in carts.validateCart:', error);
+        throw error;
+      }
+    }
+  },
+  orders: {
+    // Generate unique order number
+    generateOrderNumber: async () => {
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
+      
+      // Find the last order of today
+      const lastOrder = await Order.findOne({
+        orderNumber: { $regex: `^DH${dateStr}` }
+      }).sort({ orderNumber: -1 });
+      
+      let sequence = 1;
+      if (lastOrder) {
+        const lastSequence = parseInt(lastOrder.orderNumber.slice(-3));
+        sequence = lastSequence + 1;
+      }
+      
+      return `DH${dateStr}${sequence.toString().padStart(3, '0')}`;
+    },
+
+    // Create order from cart
+    createFromCart: async (userId, orderInput) => {
+      const session = await mongoose.startSession();
+      
+      try {
+        await session.startTransaction();
+        
+        // 1. Validate cart
+        const cartValidation = await db.carts.validateCart(userId);
+        if (!cartValidation.isValid) {
+          throw new Error(`Cart validation failed: ${cartValidation.errors.join(', ')}`);
+        }
+        
+        const cartItems = cartValidation.validItems;
+        if (cartItems.length === 0) {
+          throw new Error('No valid items in cart');
+        }
+        
+        // 2. Calculate totals
+        const subtotal = cartItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+        const totalAmount = subtotal; // No shipping fee for now
+        
+        // 3. Generate order number
+        const orderNumber = await db.orders.generateOrderNumber();
+        
+        // 4. Create order
+        const orderData = {
+          orderNumber,
+          userId,
+          customerInfo: orderInput.customerInfo,
+          paymentMethod: orderInput.paymentMethod,
+          subtotal,
+          totalAmount,
+          customerNotes: orderInput.customerNotes || '',
+          status: 'pending',
+          paymentStatus: 'pending'
+        };
+        
+        const order = new Order(orderData);
+        const savedOrder = await order.save({ session });
+        
+        // 5. Create order items and update stock
+        const orderItems = [];
+        for (const cartItem of cartItems) {
+          const product = cartItem.productId;
+          
+          // Create order item with snapshot data
+          const orderItemData = {
+            orderId: savedOrder._id,
+            productId: product._id,
+            productName: product.name,
+            productSku: product.sku,
+            quantity: cartItem.quantity,
+            unitPrice: cartItem.unitPrice,
+            totalPrice: cartItem.quantity * cartItem.unitPrice,
+            productSnapshot: {
+              description: product.description,
+              images: product.images || [],
+              brand: product.brand?.name || '',
+              category: product.category?.name || ''
+            }
+          };
+          
+          const orderItem = new OrderItem(orderItemData);
+          const savedOrderItem = await orderItem.save({ session });
+          orderItems.push(savedOrderItem);
+          
+          // Update stock
+          await Product.findByIdAndUpdate(
+            product._id,
+            { $inc: { stock: -cartItem.quantity } },
+            { session }
+          );
+        }
+        
+        // 6. Clear cart
+        await Cart.deleteMany({ userId }, { session });
+        
+        await session.commitTransaction();
+        
+        // 7. Return populated order
+        return await db.orders.getByOrderNumber(orderNumber);
+        
+      } catch (error) {
+        await session.abortTransaction();
+        console.error('Error creating order from cart:', error);
+        throw error;
+      } finally {
+        session.endSession();
+      }
+    },
+
+    // Get paginated orders for admin
+    getAll: async ({ first = 10, offset = 0, orderBy = 'DATE_DESC', condition } = {}) => {
+      try {
+        const columnMapping = {
+          DATE: 'orderDate',
+          STATUS: 'status',
+          TOTAL: 'totalAmount'
+        };
+        
+        const query = {};
+        
+        if (condition) {
+          if (condition.status) query.status = condition.status;
+          if (condition.paymentStatus) query.paymentStatus = condition.paymentStatus;
+          if (condition.paymentMethod) query.paymentMethod = condition.paymentMethod;
+          if (condition.userId) query.userId = condition.userId;
+          
+          if (condition.dateFrom || condition.dateTo) {
+            query.orderDate = {};
+            if (condition.dateFrom) query.orderDate.$gte = new Date(condition.dateFrom);
+            if (condition.dateTo) query.orderDate.$lte = new Date(condition.dateTo);
+          }
+        }
+        
+        const sortOptions = buildSortOptions(orderBy, columnMapping);
+        
+        console.log('Orders query:', query);
+        console.log('Orders sort:', sortOptions);
+        
+        const totalCount = await Order.countDocuments(query);
+        const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
+        
+        const items = await Order.find(query)
+          .populate('userId', 'username email firstName lastName')
+          .sort(sortOptions)
+          .skip(safeOffset)
+          .limit(first);
+        
+        return { items, totalCount };
+      } catch (error) {
+        console.error('Error in orders.getAll:', error);
+        throw error;
+      }
+    },
+
+    // Get orders by user ID
+    getByUserId: async (userId, { first = 10, offset = 0, orderBy = 'DATE_DESC' } = {}) => {
+      try {
+        const columnMapping = {
+          DATE: 'orderDate',
+          STATUS: 'status',
+          TOTAL: 'totalAmount'
+        };
+        
+        const query = { userId };
+        const sortOptions = buildSortOptions(orderBy, columnMapping);
+        
+        const totalCount = await Order.countDocuments(query);
+        const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
+        
+        const items = await Order.find(query)
+          .sort(sortOptions)
+          .skip(safeOffset)
+          .limit(first);
+        
+        return { items, totalCount };
+      } catch (error) {
+        console.error('Error in orders.getByUserId:', error);
+        throw error;
+      }
+    },
+
+    // Get order by order number
+    getByOrderNumber: async (orderNumber) => {
+      try {
+        return await Order.findOne({ orderNumber })
+          .populate('userId', 'username email firstName lastName');
+      } catch (error) {
+        console.error('Error in orders.getByOrderNumber:', error);
+        throw error;
+      }
+    },
+
+    // Update order status
+    updateStatus: async (orderNumber, status, adminNotes) => {
+      try {
+        const updateData = { 
+          status,
+          ...(adminNotes && { adminNotes })
+        };
+        
+        // Set timestamp fields based on status
+        const now = new Date();
+        switch (status) {
+          case 'confirmed':
+            updateData.confirmedAt = now;
+            break;
+          case 'processing':
+            updateData.processedAt = now;
+            break;
+          case 'shipping':
+            updateData.shippedAt = now;
+            break;
+          case 'delivered':
+            updateData.deliveredAt = now;
+            updateData.paymentStatus = 'paid'; // Auto-mark as paid when delivered
+            break;
+          case 'cancelled':
+            updateData.cancelledAt = now;
+            // Restore stock when cancelled
+            await db.orders.restoreStockForOrder(orderNumber);
+            break;
+        }
+        
+        return await Order.findOneAndUpdate(
+          { orderNumber },
+          updateData,
+          { new: true }
+        ).populate('userId', 'username email firstName lastName');
+      } catch (error) {
+        console.error('Error in orders.updateStatus:', error);
+        throw error;
+      }
+    },
+
+    // Update payment status
+    updatePaymentStatus: async (orderNumber, paymentStatus) => {
+      try {
+        return await Order.findOneAndUpdate(
+          { orderNumber },
+          { paymentStatus },
+          { new: true }
+        ).populate('userId', 'username email firstName lastName');
+      } catch (error) {
+        console.error('Error in orders.updatePaymentStatus:', error);
+        throw error;
+      }
+    },
+
+    // Cancel order and restore stock
+    cancelOrder: async (orderNumber, reason) => {
+      try {
+        const updateData = {
+          status: 'cancelled',
+          cancelledAt: new Date(),
+          ...(reason && { adminNotes: reason })
+        };
+        
+        // Restore stock
+        await db.orders.restoreStockForOrder(orderNumber);
+        
+        return await Order.findOneAndUpdate(
+          { orderNumber },
+          updateData,
+          { new: true }
+        ).populate('userId', 'username email firstName lastName');
+      } catch (error) {
+        console.error('Error in orders.cancelOrder:', error);
+        throw error;
+      }
+    },
+
+    // Restore stock when order is cancelled
+    restoreStockForOrder: async (orderNumber) => {
+      try {
+        const order = await Order.findOne({ orderNumber });
+        if (!order) throw new Error('Order not found');
+        
+        const orderItems = await OrderItem.find({ orderId: order._id });
+        
+        for (const item of orderItems) {
+          await Product.findByIdAndUpdate(
+            item.productId,
+            { $inc: { stock: item.quantity } }
+          );
+        }
+        
+        console.log(`Stock restored for order ${orderNumber}`);
+      } catch (error) {
+        console.error('Error restoring stock:', error);
+        throw error;
+      }
+    },
+
+    // Get order statistics
+    getStats: async () => {
+      try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const [
+          totalOrders,
+          pendingOrders,
+          confirmedOrders,
+          shippingOrders,
+          deliveredOrders,
+          cancelledOrders,
+          todayOrders,
+          revenueResult
+        ] = await Promise.all([
+          Order.countDocuments(),
+          Order.countDocuments({ status: 'pending' }),
+          Order.countDocuments({ status: 'confirmed' }),
+          Order.countDocuments({ status: 'shipping' }),
+          Order.countDocuments({ status: 'delivered' }),
+          Order.countDocuments({ status: 'cancelled' }),
+          Order.countDocuments({ orderDate: { $gte: today } }),
+          Order.aggregate([
+            { $match: { status: 'delivered' } },
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+          ])
+        ]);
+        
+        const totalRevenue = revenueResult[0]?.total || 0;
+        
+        return {
+          totalOrders,
+          pendingOrders,
+          confirmedOrders,
+          shippingOrders,
+          deliveredOrders,
+          cancelledOrders,
+          totalRevenue,
+          todayOrders
+        };
+      } catch (error) {
+        console.error('Error in orders.getStats:', error);
+        throw error;
+      }
+    }
+  },
+
+  orderItems: {
+    // Get order items by order ID
+    getByOrderId: async (orderId) => {
+      try {
+        return await OrderItem.find({ orderId })
+          .populate('productId')
+          .sort({ createdAt: 1 });
+      } catch (error) {
+        console.error('Error in orderItems.getByOrderId:', error);
+        throw error;
+      }
+    },
+
+    // Get order items by product ID (for analytics)
+    getByProductId: async (productId) => {
+      try {
+        return await OrderItem.find({ productId })
+          .populate('orderId')
+          .sort({ createdAt: -1 });
+      } catch (error) {
+        console.error('Error in orderItems.getByProductId:', error);
+        throw error;
+      }
+    }
+  },
+
 };
 
 export { db };

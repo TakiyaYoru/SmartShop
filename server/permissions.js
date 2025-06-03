@@ -41,9 +41,18 @@ const isAdminOrManager = async (next, parent, args, ctx, info) => {
 
 export const permissions = {
   Query: {
-    // VIP features require premium secret
-    // vipProducts: hasValidSecret,
-    // me: isAuthenticated,
+    // Cart queries require authentication
+    getCart: isAuthenticated,
+    getCartItemCount: isAuthenticated,
+    
+    // Customer order queries
+    getMyOrders: isAuthenticated,
+    getMyOrder: isAuthenticated,
+    
+    // Admin order queries
+    getAllOrders: isAdminOrManager,
+    getOrder: isAdminOrManager,
+    getOrderStats: isAdminOrManager,
   },
   
   Mutation: {
@@ -52,12 +61,12 @@ export const permissions = {
     updateCategory: isAdmin,
     deleteCategory: isAdmin,
     
-    // // Brand operations - Admin only
+    // Brand operations - Admin only
     createBrand: isAdmin,
     updateBrand: isAdmin,
     deleteBrand: isAdmin,
     
-    // // Product operations - Admin or Manager
+    // Product operations - Admin or Manager
     createProduct: isAdminOrManager,
     updateProduct: isAdminOrManager,
     deleteProduct: isAdmin,
@@ -67,5 +76,17 @@ export const permissions = {
     uploadProductImage: isAdminOrManager,
     uploadProductImages: isAdminOrManager,
     removeProductImage: isAdminOrManager,
+    
+    // Cart operations - Customer access required
+    addToCart: isAuthenticated,
+    updateCartItem: isAuthenticated,
+    removeFromCart: isAuthenticated,
+    clearCart: isAuthenticated,
+    
+    // Order operations
+    createOrderFromCart: isAuthenticated, // Customer can create orders
+    updateOrderStatus: isAdminOrManager,  // Admin/Manager can update status
+    updatePaymentStatus: isAdminOrManager, // Admin/Manager can update payment
+    cancelOrder: isAdminOrManager,        // Admin/Manager can cancel orders
   },
 };
