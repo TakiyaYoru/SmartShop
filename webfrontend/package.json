@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.13.8",
     "@heroicons/react": "^2.2.0",
+    "apollo-upload-client": "^18.0.1",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "extract-files": "^13.0.0",

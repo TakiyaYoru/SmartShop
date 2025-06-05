@@ -9,6 +9,13 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AdminLayout from './components/admin/AdminLayout';
+import DashboardPage from './pages/admin/DashboardPage';
+import ProductsManagementPage  from './pages/admin/ProductsManagementPage';
+import CreateProductPage from './pages/admin/CreateProductPage';
+import EditProductPage from './pages/admin/EditProductPage';
+
+
 
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
@@ -104,27 +111,23 @@ function App() {
         />
         
         {/* Admin Routes */}
+
         <Route 
           path="/admin/*" 
           element={
             <AdminRoute>
-              <div className="min-h-screen bg-gray-100 p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                  Admin Dashboard
-                </h1>
-                <div className="bg-white rounded-lg shadow p-6">
-                  <p className="text-gray-600">
-                    Welcome to SmartShop Admin Panel! 🚀
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Admin features will be implemented here.
-                  </p>
-                </div>
-              </div>
+              <Routes>
+                <Route path="/" element={<AdminLayout />}>
+                  <Route index element={<DashboardPage />} />
+                  <Route path="products" element={<ProductsPage />} />
+                  <Route path="products/create" element={<CreateProductPage />} />
+                  <Route path="products/edit/:id" element={<EditProductPage />} />
+                </Route>
+              </Routes>
             </AdminRoute>
           } 
         />
-        
+          
         {/* Manager Routes */}
         <Route 
           path="/manager/*" 

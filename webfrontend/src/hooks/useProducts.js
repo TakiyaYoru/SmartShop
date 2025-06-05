@@ -1,7 +1,9 @@
-// src/hooks/useProducts.js
-import { useQuery, useLazyQuery } from '@apollo/client';
+// src/hooks/useProducts.js - Key fixes for product creation
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+
+// Import GraphQL operations
 import {
   GET_PRODUCTS,
   GET_PRODUCT,
@@ -14,16 +16,40 @@ import {
   UPDATE_PRODUCT,
   DELETE_PRODUCT
 } from '../graphql/products';
+
 import {
-  GET_ALL_CATEGORIES,
-  GET_CATEGORIES
+  GET_ALL_CATEGORIES
 } from '../graphql/categories';
+
 import {
-  GET_ALL_BRANDS,
-  GET_BRANDS
+  GET_ALL_BRANDS
 } from '../graphql/brands';
 
-// Hook để lấy danh sách products với pagination và filter
+// Import upload hooks
+import { useUploadProductImages } from './useUpload';
+
+// Default values for null/undefined data
+const DEFAULT_BRAND = { _id: '', name: 'Unknown Brand', description: '' };
+const DEFAULT_CATEGORY = { _id: '', name: 'Unknown Category', description: '' };
+
+// Safe product data processor
+const processProductData = (product) => {
+  if (!product) return null;
+  
+  return {
+    ...product,
+    brand: (product.brand && typeof product.brand === 'object') ? product.brand : DEFAULT_BRAND,
+    category: (product.category && typeof product.category === 'object') ? product.category : DEFAULT_CATEGORY,
+    images: Array.isArray(product.images) ? product.images : [],
+    stock: typeof product.stock === 'number' ? product.stock : 0,
+    price: typeof product.price === 'number' ? product.price : 0
+  };
+};
+
+// =================
+// PUBLIC HOOKS (Customer facing)
+// =================
+
 export const useProducts = (options = {}) => {
   const {
     first = 12,
@@ -55,8 +81,12 @@ export const useProducts = (options = {}) => {
     }
   };
 
+  const products = (data?.products?.nodes || [])
+    .map(processProductData)
+    .filter(Boolean);
+
   return {
-    products: data?.products?.nodes || [],
+    products,
     totalCount: data?.products?.totalCount || 0,
     hasNextPage: data?.products?.hasNextPage || false,
     hasPreviousPage: data?.products?.hasPreviousPage || false,
@@ -67,14 +97,17 @@ export const useProducts = (options = {}) => {
   };
 };
 
-// Hook để search products - Fixed để sử dụng useLazyQuery
 export const useSearchProducts = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS, {
     onCompleted: (data) => {
-      setSearchResults(data?.searchProducts?.nodes || []);
+      const results = (data?.searchProducts?.nodes || [])
+        .map(processProductData)
+        .filter(Boolean);
+      
+      setSearchResults(results);
       setIsSearching(false);
     },
     onError: (error) => {
@@ -122,7 +155,6 @@ export const useSearchProducts = () => {
   };
 };
 
-// Hook để lấy chi tiết 1 product
 export const useProduct = (productId) => {
   const { data, loading, error } = useQuery(GET_PRODUCT, {
     variables: { id: productId },
@@ -130,27 +162,31 @@ export const useProduct = (productId) => {
     errorPolicy: 'all'
   });
 
+  const product = data?.product ? processProductData(data.product) : null;
+
   return {
-    product: data?.product,
+    product,
     loading,
     error
   };
 };
 
-// Hook để lấy featured products
 export const useFeaturedProducts = () => {
   const { data, loading, error } = useQuery(GET_FEATURED_PRODUCTS, {
     errorPolicy: 'all'
   });
 
+  const featuredProducts = (data?.featuredProducts || [])
+    .map(processProductData)
+    .filter(Boolean);
+
   return {
-    featuredProducts: data?.featuredProducts || [],
+    featuredProducts,
     loading,
     error
   };
 };
 
-// Hook để lấy products theo category
 export const useProductsByCategory = (categoryId) => {
   const { data, loading, error } = useQuery(GET_PRODUCTS_BY_CATEGORY, {
     variables: { categoryId },
@@ -158,14 +194,17 @@ export const useProductsByCategory = (categoryId) => {
     errorPolicy: 'all'
   });
 
+  const products = (data?.productsByCategory || [])
+    .map(processProductData)
+    .filter(Boolean);
+
   return {
-    products: data?.productsByCategory || [],
+    products,
     loading,
     error
   };
 };
 
-// Hook để lấy products theo brand
 export const useProductsByBrand = (brandId) => {
   const { data, loading, error } = useQuery(GET_PRODUCTS_BY_BRAND, {
     variables: { brandId },
@@ -173,14 +212,17 @@ export const useProductsByBrand = (brandId) => {
     errorPolicy: 'all'
   });
 
+  const products = (data?.productsByBrand || [])
+    .map(processProductData)
+    .filter(Boolean);
+
   return {
-    products: data?.productsByBrand || [],
+    products,
     loading,
     error
   };
 };
 
-// Hook để lấy categories cho filter
 export const useCategories = () => {
   const { data, loading, error } = useQuery(GET_ALL_CATEGORIES, {
     errorPolicy: 'all'
@@ -193,7 +235,6 @@ export const useCategories = () => {
   };
 };
 
-// Hook để lấy brands cho filter
 export const useBrands = () => {
   const { data, loading, error } = useQuery(GET_ALL_BRANDS, {
     errorPolicy: 'all'
@@ -206,30 +247,249 @@ export const useBrands = () => {
   };
 };
 
-// Admin hooks - sẽ cần useMutation cho các operations này
+// =================
+// ADMIN HOOKS
+// =================
+
 export const useCreateProduct = () => {
-  // TODO: Implement với useMutation khi cần
+  const [createProductMutation, { loading, error }] = useMutation(CREATE_PRODUCT, {
+    refetchQueries: [
+      { query: GET_PRODUCTS },
+      { query: GET_ALL_PRODUCTS }
+    ],
+    onCompleted: (data) => {
+      console.log('✅ Create product mutation completed:', data);
+    },
+    onError: (error) => {
+      console.error('❌ Create product mutation error:', error);
+    }
+  });
+
+  const createProduct = async (productData) => {
+    try {
+      console.log('🚀 Creating product with data:', productData);
+      
+      const result = await createProductMutation({
+        variables: {
+          input: productData
+        }
+      });
+      
+      console.log('📦 Create product result:', result);
+      
+      if (!result?.data?.createProduct) {
+        throw new Error('No product returned from create mutation');
+      }
+      
+      return result.data.createProduct;
+      
+    } catch (err) {
+      console.error('❌ Create product error:', err);
+      throw err;
+    }
+  };
+
   return {
-    createProduct: () => console.log('Create product not implemented'),
-    loading: false,
-    error: null
+    createProduct,
+    loading,
+    error
   };
 };
 
 export const useUpdateProduct = () => {
-  // TODO: Implement với useMutation khi cần  
+  const [updateProductMutation, { loading, error }] = useMutation(UPDATE_PRODUCT, {
+    refetchQueries: [
+      { query: GET_PRODUCTS },
+      { query: GET_ALL_PRODUCTS }
+    ],
+    onCompleted: (data) => {
+      console.log('✅ Update product completed:', data);
+    },
+    onError: (error) => {
+      console.error('❌ Update product error:', error);
+    }
+  });
+
+  const updateProduct = async (productId, productData) => {
+    try {
+      console.log('🔄 Updating product:', productId, 'with data:', productData);
+      
+      const result = await updateProductMutation({
+        variables: {
+          id: productId,
+          input: productData
+        }
+      });
+      
+      console.log('📦 Update result:', result);
+      
+      if (!result?.data?.updateProduct) {
+        throw new Error('No product returned from update mutation');
+      }
+      
+      return result.data.updateProduct;
+      
+    } catch (err) {
+      console.error('❌ Update product error:', err);
+      throw err;
+    }
+  };
+
   return {
-    updateProduct: () => console.log('Update product not implemented'),
-    loading: false,
-    error: null
+    updateProduct,
+    loading,
+    error
+  };
+};
+
+// Combined hook for creating product with images
+export const useCreateProductWithImages = () => {
+  const { createProduct, loading: createLoading, error: createError } = useCreateProduct();
+  const { uploadImages, loading: uploadLoading } = useUploadProductImages();
+  
+  const [loading, setLoading] = useState(false);
+
+  const createProductWithImages = async (productData, imageFiles) => {
+    setLoading(true);
+    
+    try {
+      console.log('🚀 Step 1: Creating product...');
+      const createdProduct = await createProduct(productData);
+      
+      console.log('✅ Product created:', createdProduct);
+      
+      if (!createdProduct?._id) {
+        throw new Error('Failed to create product - no product ID returned');
+      }
+
+      // Step 2: Upload images if provided
+      if (imageFiles && imageFiles.length > 0) {
+        console.log('🖼️ Step 2: Uploading images...');
+        try {
+          const uploadResult = await uploadImages(createdProduct._id, imageFiles);
+          
+          if (!uploadResult?.success) {
+            console.warn('⚠️ Image upload failed:', uploadResult?.message);
+            toast.warn(`Sản phẩm đã tạo thành công nhưng upload ảnh thất bại: ${uploadResult?.message || 'Unknown error'}`);
+          } else {
+            console.log('✅ Images uploaded successfully');
+          }
+        } catch (uploadError) {
+          console.error('❌ Image upload error:', uploadError);
+          toast.warn(`Sản phẩm đã tạo thành công nhưng upload ảnh thất bại: ${uploadError.message}`);
+        }
+      }
+
+      setLoading(false);
+      return createdProduct;
+      
+    } catch (error) {
+      setLoading(false);
+      console.error('❌ Create product with images error:', error);
+      throw error;
+    }
+  };
+
+  return {
+    createProductWithImages,
+    loading: loading || createLoading || uploadLoading,
+    error: createError
+  };
+};
+
+export const useUpdateProductWithImages = () => {
+  const { updateProduct, loading: updateLoading, error: updateError } = useUpdateProduct();
+  const { uploadImages, loading: uploadLoading } = useUploadProductImages();
+  
+  const [loading, setLoading] = useState(false);
+
+  const updateProductWithImages = async (productId, productData, imageFiles) => {
+    setLoading(true);
+    
+    try {
+      console.log('🔄 Step 1: Updating product...');
+      const updatedProduct = await updateProduct(productId, productData);
+      
+      // Step 2: Upload new images if provided
+      if (imageFiles && imageFiles.length > 0) {
+        console.log('🖼️ Step 2: Uploading new images...');
+        try {
+          const uploadResult = await uploadImages(productId, imageFiles);
+          
+          if (!uploadResult?.success) {
+            toast.warn(`Cập nhật sản phẩm thành công nhưng upload ảnh thất bại: ${uploadResult?.message || 'Unknown error'}`);
+          }
+        } catch (uploadError) {
+          console.error('❌ Image upload error:', uploadError);
+          toast.warn(`Cập nhật sản phẩm thành công nhưng upload ảnh thất bại: ${uploadError.message}`);
+        }
+      }
+
+      setLoading(false);
+      return updatedProduct;
+      
+    } catch (error) {
+      setLoading(false);
+      console.error('❌ Update product with images error:', error);
+      throw error;
+    }
+  };
+
+  return {
+    updateProductWithImages,
+    loading: loading || updateLoading || uploadLoading,
+    error: updateError
   };
 };
 
 export const useDeleteProduct = () => {
-  // TODO: Implement với useMutation khi cần
+  const [deleteProductMutation, { loading, error }] = useMutation(DELETE_PRODUCT, {
+    refetchQueries: [
+      { query: GET_PRODUCTS },
+      { query: GET_ALL_PRODUCTS }
+    ],
+    onCompleted: (data) => {
+      console.log('✅ Delete product completed:', data);
+      toast.success('Xóa sản phẩm thành công!');
+    },
+    onError: (error) => {
+      console.error('❌ Delete product error:', error);
+      toast.error(`Lỗi xóa sản phẩm: ${error.message}`);
+    }
+  });
+
+  const deleteProduct = async (productId) => {
+    try {
+      await deleteProductMutation({
+        variables: {
+          id: productId
+        }
+      });
+      return true;
+    } catch (err) {
+      console.error('❌ Delete product error:', err);
+      throw err;
+    }
+  };
+
   return {
-    deleteProduct: () => console.log('Delete product not implemented'),
-    loading: false,
-    error: null
+    deleteProduct,
+    loading,
+    error
+  };
+};
+
+export const useProductFormData = () => {
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(GET_ALL_CATEGORIES, {
+    errorPolicy: 'all'
+  });
+  const { data: brandsData, loading: brandsLoading } = useQuery(GET_ALL_BRANDS, {
+    errorPolicy: 'all'
+  });
+
+  return {
+    categories: categoriesData?.allCategories || [],
+    brands: brandsData?.allBrands || [],
+    loading: categoriesLoading || brandsLoading
   };
 };

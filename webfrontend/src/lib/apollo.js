@@ -1,10 +1,11 @@
 // src/lib/apollo.js
-import { ApolloClient, InMemoryCache, createHttpLink, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache, from } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
 
-// HTTP link tới GraphQL server
-const httpLink = createHttpLink({
+// Upload link cho file uploads
+const uploadLink = createUploadLink({
   uri: import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/',
 });
 
@@ -16,8 +17,6 @@ const authLink = setContext((_, { headers }) => {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token}` : "",
-      // Loại bỏ secret header để tránh CORS error
-      // secret sẽ được gửi qua variables trong queries khi cần
     }
   };
 });
@@ -42,24 +41,14 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
   }
 });
 
-// Apollo Client instance
+// Apollo Client instance với upload support
 export const client = new ApolloClient({
-  link: from([errorLink, authLink, httpLink]),
+  link: from([errorLink, authLink, uploadLink]),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
         fields: {
-          // Cache policies cho pagination
           products: {
-            keyArgs: ['condition', 'orderBy'],
-            merge(existing = { nodes: [], totalCount: 0 }, incoming) {
-              return {
-                ...incoming,
-                nodes: [...(existing.nodes || []), ...incoming.nodes],
-              };
-            },
-          },
-          categories: {
             keyArgs: ['condition', 'orderBy'],
             merge(existing = { nodes: [], totalCount: 0 }, incoming) {
               return {

@@ -7,6 +7,9 @@ import ProductFilter from '../components/products/ProductFilter';
 import ProductSearch from '../components/products/ProductSearch';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import { useProducts } from '../hooks/useProducts';
+
+
+
 import { 
   FunnelIcon, 
   Squares2X2Icon, 

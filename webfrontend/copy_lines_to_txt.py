@@ -20,5 +20,5 @@ def copy_folder_to_txt(folder_path, output_path):
 # Ví dụ sử dụng
 if __name__ == "__main__":
     folder_path = "lay_data"       # Đổi thành thư mục chứa các file bạn muốn copy
-    output_path = "output.txt"
+    output_path = "frontend.txt"
     copy_folder_to_txt(folder_path, output_path)
