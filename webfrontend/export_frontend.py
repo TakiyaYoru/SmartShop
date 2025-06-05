@@ -13,7 +13,8 @@ def should_skip_file(file_path):
         '__pycache__',
         '.git',
         'dist',
-        'build'
+        'build',
+        'package-lock.json'
     ]
     
     # Kiểm tra xem file có nằm trong danh sách bỏ qua không

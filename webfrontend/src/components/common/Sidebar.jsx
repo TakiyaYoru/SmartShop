@@ -1,4 +1,4 @@
-// src/components/common/Sidebar.jsx
+// src/components/common/Sidebar.jsx - Complete updated version
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -20,7 +20,7 @@ import {
 const Sidebar = ({ 
   isOpen = true, 
   onToggle, 
-  type = 'admin' // 'admin', 'filter', 'mobile'
+  type = 'admin'
 }) => {
   const location = useLocation();
   const { user } = useAuth();
@@ -33,7 +33,7 @@ const Sidebar = ({
     }));
   };
 
-  // Admin Navigation
+  // Admin Navigation - Updated
   const adminNavigation = [
     {
       name: 'Dashboard',
@@ -45,9 +45,10 @@ const Sidebar = ({
       name: 'Sản phẩm',
       icon: CubeIcon,
       children: [
-        { name: 'Tất cả sản phẩm', href: '/admin/products' },
+        { name: 'Quản lý sản phẩm', href: '/admin/products' },
         { name: 'Thêm sản phẩm', href: '/admin/products/create' },
         { name: 'Quản lý kho', href: '/admin/inventory' },
+        { name: 'Import/Export', href: '/admin/products/import' },
       ]
     },
     {
@@ -85,6 +86,7 @@ const Sidebar = ({
         { name: 'Doanh thu', href: '/admin/reports/revenue' },
         { name: 'Sản phẩm bán chạy', href: '/admin/reports/bestsellers' },
         { name: 'Khách hàng', href: '/admin/reports/customers' },
+        { name: 'Tồn kho', href: '/admin/reports/inventory' },
       ]
     },
     {

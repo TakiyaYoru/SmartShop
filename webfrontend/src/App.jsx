@@ -1,4 +1,4 @@
-// src/App.jsx
+// src/App.jsx - Updated routing for standalone admin pages
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -8,14 +8,15 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
+
+// Admin Components
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
-import ProductsManagementPage  from './pages/admin/ProductsManagementPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage'; // Standalone layout
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
-
-
 
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
@@ -23,7 +24,6 @@ import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/Prot
 function App() {
   const { loading } = useAuth();
 
-  // Show loading while initializing auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -42,7 +42,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         
-        {/* Protected Routes */}
+        {/* Protected Routes - Customer */}
         <Route 
           path="/" 
           element={
@@ -61,7 +61,16 @@ function App() {
           } 
         />
         
-        {/* Placeholder pages */}
+        {/* Placeholder customer pages */}
+
+        <Route 
+          path="/products/:id" 
+          element={
+            <ProtectedRoute>
+              <ProductDetailPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route 
           path="/categories" 
           element={
@@ -109,9 +118,43 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
-        {/* Admin Routes */}
 
+        {/* Admin Routes */}
+        
+        {/* Standalone Admin Products Page */}
+        <Route 
+          path="/admin/products" 
+          element={
+            <AdminRoute>
+              <AdminProductsPage />
+            </AdminRoute>
+          } 
+        />
+
+        {/* Admin Product Management with shared layout */}
+        <Route 
+          path="/admin/products/create" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <CreateProductPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin/products/edit/:id" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <EditProductPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        {/* Other Admin Routes with shared layout */}
         <Route 
           path="/admin/*" 
           element={
@@ -119,9 +162,54 @@ function App() {
               <Routes>
                 <Route path="/" element={<AdminLayout />}>
                   <Route index element={<DashboardPage />} />
-                  <Route path="products" element={<ProductsPage />} />
-                  <Route path="products/create" element={<CreateProductPage />} />
-                  <Route path="products/edit/:id" element={<EditProductPage />} />
+                  <Route path="orders" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">Order Management</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">Order management will be implemented soon! 📦</p>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="categories" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">Category Management</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">Category management will be implemented soon! 📂</p>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="brands" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">Brand Management</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">Brand management will be implemented soon! 🏪</p>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="users" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">User Management</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">User management will be implemented soon! 👥</p>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="analytics" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">Analytics</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">Analytics dashboard will be implemented soon! 📊</p>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="settings" element={
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <p className="text-gray-600">Settings panel will be implemented soon! ⚙️</p>
+                      </div>
+                    </div>
+                  } />
                 </Route>
               </Routes>
             </AdminRoute>
