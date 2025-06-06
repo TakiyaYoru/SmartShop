@@ -20,12 +20,20 @@ export const PRODUCT_FRAGMENT = gql`
       _id
       name
       description
+      image
+      isActive
     }
     brand {
       _id
       name
       description
       logo
+      banner
+      website
+      country
+      foundedYear
+      isActive
+      isFeatured
     }
   }
 `;

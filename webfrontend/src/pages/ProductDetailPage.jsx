@@ -7,7 +7,6 @@ import { formatPrice, getImageUrl, calculateDiscountPercentage } from '../lib/ut
 import {
   HeartIcon,
   ShoppingCartIcon,
-  StarIcon,
   CheckIcon,
   XMarkIcon,
   ArrowLeftIcon,
@@ -16,11 +15,14 @@ import {
   ChevronRightIcon,
   MinusIcon,
   PlusIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  GlobeAltIcon,
+  BuildingOfficeIcon,
+  CalendarIcon,
+  MapPinIcon
 } from '@heroicons/react/24/outline';
 import {
-  HeartIcon as HeartSolidIcon,
-  StarIcon as StarSolidIcon
+  HeartIcon as HeartSolidIcon
 } from '@heroicons/react/24/solid';
 import toast from 'react-hot-toast';
 
@@ -32,7 +34,6 @@ const ProductDetailPage = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('description');
   const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
@@ -88,7 +89,10 @@ const ProductDetailPage = () => {
     stock = 0,
     category,
     brand,
-    isFeatured
+    isFeatured,
+    sku,
+    createdAt,
+    updatedAt
   } = product;
 
   const discount = originalPrice && originalPrice > price 
@@ -289,6 +293,11 @@ const ProductDetailPage = () => {
         )}
       </div>
 
+      {/* SKU */}
+      <div className="text-sm text-gray-600">
+        SKU: <span className="font-medium">{sku}</span>
+      </div>
+
       {/* Quantity */}
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Số lượng:</span>
@@ -357,33 +366,69 @@ const ProductDetailPage = () => {
           <ShareIcon className="w-6 h-6" />
         </button>
       </div>
-    </div>
-  );
 
-  const renderTabs = () => (
-    <div className="space-y-6">
-      {/* Tab Headers */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
-          <button
-            onClick={() => setSelectedTab('description')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-              selectedTab === 'description'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Mô tả
-          </button>
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      <div className="space-y-6">
-        <div className="prose prose-sm max-w-none">
-          {description || 'Chưa có mô tả cho sản phẩm này.'}
+      {/* Brand Info */}
+      {brand && (
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-start gap-4">
+            {brand.logo && (
+              <img 
+                src={getImageUrl(brand.logo)}
+                alt={brand.name}
+                className="w-16 h-16 object-contain rounded-lg bg-white p-2"
+              />
+            )}
+            <div className="flex-1">
+              <h3 className="font-medium text-gray-900 mb-1">{brand.name}</h3>
+              <p className="text-sm text-gray-600 mb-3">{brand.description}</p>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {brand.website && (
+                  <a 
+                    href={brand.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-700"
+                  >
+                    <GlobeAltIcon className="w-4 h-4 mr-1" />
+                    Website
+                  </a>
+                )}
+                {brand.country && (
+                  <div className="flex items-center text-gray-600">
+                    <MapPinIcon className="w-4 h-4 mr-1" />
+                    {brand.country}
+                  </div>
+                )}
+                {brand.foundedYear && (
+                  <div className="flex items-center text-gray-600">
+                    <CalendarIcon className="w-4 h-4 mr-1" />
+                    Thành lập: {brand.foundedYear}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Category Info */}
+      {category && category.description && (
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-start gap-4">
+            {category.image && (
+              <img 
+                src={getImageUrl(category.image)}
+                alt={category.name}
+                className="w-16 h-16 object-cover rounded-lg"
+              />
+            )}
+            <div>
+              <h3 className="font-medium text-gray-900 mb-1">{category.name}</h3>
+              <p className="text-sm text-gray-600">{category.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -399,6 +444,17 @@ const ProductDetailPage = () => {
           <button onClick={() => navigate('/products')} className="hover:text-gray-900">
             Sản phẩm
           </button>
+          {category && (
+            <>
+              <span>/</span>
+              <button 
+                onClick={() => navigate(`/categories/${category._id}`)}
+                className="hover:text-gray-900"
+              >
+                {category.name}
+              </button>
+            </>
+          )}
           <span>/</span>
           <span className="text-gray-900">{name}</span>
         </nav>
@@ -409,8 +465,13 @@ const ProductDetailPage = () => {
           <div>{renderProductInfo()}</div>
         </div>
 
-        {/* Tabs */}
-        <div>{renderTabs()}</div>
+        {/* Description */}
+        <div className="prose prose-sm max-w-none bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Mô tả sản phẩm</h2>
+          <div className="text-gray-600">
+            {description || 'Chưa có mô tả cho sản phẩm này.'}
+          </div>
+        </div>
 
         {/* Image Modal */}
         {showImageModal && (
@@ -461,6 +522,7 @@ const ProductDetailSkeleton = () => (
           <div className="h-12 w-12 bg-gray-200 rounded" />
           <div className="h-12 w-12 bg-gray-200 rounded" />
         </div>
+        <div className="h-40 bg-gray-200 rounded" />
       </div>
     </div>
   </div>

@@ -11,6 +11,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import ProductsManagementPage from './pages/admin/ProductsManagementPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
@@ -33,6 +34,7 @@ const routes = createRoutesFromElements(
     {/* Protected Routes */}
     <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
     <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
+    <Route path="/products/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
     
     {/* Admin Routes */}
     <Route path="/admin/*" element={<AdminRoute><AdminLayout /></AdminRoute>}>
