@@ -249,7 +249,7 @@ const AdminProductsPage = () => {
               </button>
 
               {/* View Mode Toggle */}
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode('table')}
                   className={`px-3 py-2 text-sm font-medium transition-colors ${
@@ -257,7 +257,6 @@ const AdminProductsPage = () => {
                       ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
-                  title="Dạng bảng"
                 >
                   <ViewColumnsIcon className="h-4 w-4" />
                 </button>
@@ -268,11 +267,20 @@ const AdminProductsPage = () => {
                       ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
-                  title="Dạng lưới"
                 >
                   <Squares2X2Icon className="h-4 w-4" />
                 </button>
               </div>
+
+              {/* Clear Filters */}
+              {hasActiveFilters() && (
+                <button
+                  onClick={clearFilters}
+                  className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                  Xóa bộ lọc
+                </button>
+              )}
             </div>
           </div>
 
@@ -280,47 +288,31 @@ const AdminProductsPage = () => {
           {hasActiveFilters() && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-sm text-gray-500">Bộ lọc đang áp dụng:</span>
-              
-              {searchQuery && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Tìm kiếm: "{searchQuery}"
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      handleFilterChange(null);
-                    }}
-                    className="ml-1 text-blue-600 hover:text-blue-800"
-                  >
-                    ×
-                  </button>
+              {filters.condition?.name && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Tên: {filters.condition.name}
                 </span>
               )}
-
               {filters.orderBy !== 'CREATED_DESC' && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   Sắp xếp: {
-                    filters.orderBy === 'NAME_ASC' ? 'Tên A-Z' :
-                    filters.orderBy === 'NAME_DESC' ? 'Tên Z-A' :
-                    filters.orderBy === 'PRICE_ASC' ? 'Giá thấp → cao' :
-                    filters.orderBy === 'PRICE_DESC' ? 'Giá cao → thấp' :
-                    filters.orderBy === 'STOCK_ASC' ? 'Tồn kho ít' :
-                    filters.orderBy === 'STOCK_DESC' ? 'Tồn kho nhiều' :
-                    filters.orderBy === 'CREATED_ASC' ? 'Cũ nhất' : 'Mới nhất'
+                    {
+                      'CREATED_ASC': 'Cũ nhất',
+                      'NAME_ASC': 'Tên A-Z',
+                      'NAME_DESC': 'Tên Z-A',
+                      'PRICE_ASC': 'Giá thấp đến cao',
+                      'PRICE_DESC': 'Giá cao đến thấp',
+                      'STOCK_ASC': 'Tồn kho ít nhất',
+                      'STOCK_DESC': 'Tồn kho nhiều nhất'
+                    }[filters.orderBy]
                   }
                 </span>
               )}
-
-              <button
-                onClick={clearFilters}
-                className="text-sm text-red-600 hover:text-red-800 font-medium"
-              >
-                Xóa tất cả
-              </button>
             </div>
           )}
         </div>
 
-        {/* Filters Panel */}
+        {/* Filter Panel */}
         {showFilters && (
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <AdminProductFilter 
@@ -380,30 +372,18 @@ const AdminProductsPage = () => {
                   <span className="text-2xl">📦</span>
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {hasActiveFilters() ? 'Không tìm thấy sản phẩm' : 'Chưa có sản phẩm nào'}
+                  Chưa có sản phẩm nào
                 </h3>
                 <p className="text-gray-500 mb-6">
-                  {hasActiveFilters() 
-                    ? 'Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm'
-                    : 'Bắt đầu bằng cách thêm sản phẩm đầu tiên của bạn'
-                  }
+                  Bắt đầu bằng cách thêm sản phẩm đầu tiên của bạn
                 </p>
-                {!hasActiveFilters() ? (
-                  <Link
-                    to="/admin/products/create"
-                    className="btn btn-primary"
-                  >
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Thêm sản phẩm đầu tiên
-                  </Link>
-                ) : (
-                  <button
-                    onClick={clearFilters}
-                    className="btn btn-secondary"
-                  >
-                    Xóa bộ lọc
-                  </button>
-                )}
+                <Link
+                  to="/admin/products/create"
+                  className="btn btn-primary"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Thêm sản phẩm đầu tiên
+                </Link>
               </div>
             )}
           </>
@@ -413,147 +393,4 @@ const AdminProductsPage = () => {
   );
 };
 
-// src/pages/admin/DashboardPage.jsx - Updated with correct links
-import React from 'react';
-import { Link } from 'react-router-dom';
-import {
-  CubeIcon,
-  TagIcon,
-  BuildingStorefrontIcon,
-  ShoppingCartIcon,
-  UserGroupIcon,
-  ChartBarIcon
-} from '@heroicons/react/24/outline';
-
-const DashboardPage = () => {
-  // Mock data - sẽ được thay thế bằng real data sau
-  const stats = [
-    {
-      name: 'Tổng sản phẩm',
-      value: '1,234',
-      change: '+12%',
-      changeType: 'positive',
-      icon: CubeIcon,
-      color: 'blue'
-    },
-    {
-      name: 'Đơn hàng mới',
-      value: '56',
-      change: '+8%',
-      changeType: 'positive',
-      icon: ShoppingCartIcon,
-      color: 'green'
-    },
-    {
-      name: 'Khách hàng',
-      value: '2,345',
-      change: '+15%',
-      changeType: 'positive',
-      icon: UserGroupIcon,
-      color: 'purple'
-    },
-    {
-      name: 'Doanh thu',
-      value: '₫234M',
-      change: '-2%',
-      changeType: 'negative',
-      icon: ChartBarIcon,
-      color: 'red'
-    }
-  ];
-
-  const getColorClasses = (color, type = 'bg') => {
-    const colors = {
-      blue: type === 'bg' ? 'bg-blue-500' : 'text-blue-600',
-      green: type === 'bg' ? 'bg-green-500' : 'text-green-600',
-      purple: type === 'bg' ? 'bg-purple-500' : 'text-purple-600',
-      red: type === 'bg' ? 'bg-red-500' : 'text-red-600',
-    };
-    return colors[color] || colors.blue;
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">
-          Chào mừng trở lại! 👋
-        </h1>
-        <p className="text-blue-100">
-          Đây là tổng quan về hoạt động kinh doanh của SmartShop
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <p className={`text-sm ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stat.change} từ tháng trước
-                </p>
-              </div>
-              <div className={`w-12 h-12 ${getColorClasses(stat.color)} rounded-lg flex items-center justify-center`}>
-                <stat.icon className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Đơn hàng gần đây</h3>
-          </div>
-          <div className="p-6">
-            <div className="text-center py-8">
-              <ShoppingCartIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Tính năng đang phát triển</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Thao tác nhanh</h3>
-          </div>
-          <div className="p-6 space-y-3">
-            <Link 
-              to="/admin/products/create"
-              className="w-full btn btn-primary justify-start"
-            >
-              <CubeIcon className="h-5 w-5 mr-3" />
-              Thêm sản phẩm mới
-            </Link>
-            <Link 
-              to="/admin/products"
-              className="w-full btn btn-secondary justify-start"
-            >
-              <CubeIcon className="h-5 w-5 mr-3" />
-              Quản lý sản phẩm
-            </Link>
-            <button className="w-full btn btn-secondary justify-start">
-              <TagIcon className="h-5 w-5 mr-3" />
-              Quản lý danh mục
-            </button>
-            <button className="w-full btn btn-secondary justify-start">
-              <BuildingStorefrontIcon className="h-5 w-5 mr-3" />
-              Quản lý thương hiệu
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default DashboardPage;
+export default AdminProductsPage;

@@ -193,3 +193,30 @@ export const PRODUCT_CONDITION_INPUT = gql`
     max: Int
   }
 `;
+
+export const UPDATE_PRODUCT_IMAGES = gql`
+  mutation UpdateProductImages($id: ID!, $images: [String!]!) {
+    updateProductImages(id: $id, images: $images) {
+      ...ProductData
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+`;
+
+export const SET_MAIN_PRODUCT_IMAGE = gql`
+  mutation SetMainProductImage($id: ID!, $imageIndex: Int!) {
+    setMainProductImage(id: $id, imageIndex: $imageIndex) {
+      ...ProductData
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+`;
+
+export const DELETE_PRODUCT_IMAGE = gql`
+  mutation DeleteProductImage($id: ID!, $imageIndex: Int!) {
+    deleteProductImage(id: $id, imageIndex: $imageIndex) {
+      ...ProductData
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+`;

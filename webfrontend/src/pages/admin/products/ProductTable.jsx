@@ -1,5 +1,5 @@
 // src/components/admin/products/ProductTable.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   PencilIcon, 
@@ -8,10 +8,12 @@ import {
   PhotoIcon,
   CheckCircleIcon,
   XCircleIcon,
-  StarIcon
+  StarIcon,
+  ArrowsUpDownIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { formatPrice, formatDate, getImageUrl } from '../../../lib/utils';
-import { useDeleteProduct } from '../../../hooks/useProducts';
+import { useDeleteProduct, useUpdateProductImages, useSetMainProductImage, useDeleteProductImage } from '../../../hooks/useProducts';
 
 const ProductTable = ({ 
   products = [], 
@@ -20,6 +22,12 @@ const ProductTable = ({
 }) => {
   const navigate = useNavigate();
   const { deleteProduct, loading: deleteLoading } = useDeleteProduct();
+  const { updateProductImages, loading: updateImagesLoading } = useUpdateProductImages();
+  const { setMainProductImage, loading: setMainLoading } = useSetMainProductImage();
+  const { deleteProductImage, loading: deleteImageLoading } = useDeleteProductImage();
+  
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   const handleEdit = (productId) => {
     navigate(`/admin/products/edit/${productId}`);
@@ -34,6 +42,126 @@ const ProductTable = ({
     if (window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productName}"?`)) {
       await deleteProduct(productId);
     }
+  };
+
+  const handleImageClick = (product) => {
+    setSelectedProduct(product);
+    setShowImageModal(true);
+  };
+
+  const handleSetMainImage = async (productId, imageIndex) => {
+    try {
+      await setMainProductImage({
+        variables: {
+          id: productId,
+          imageIndex
+        }
+      });
+    } catch (error) {
+      console.error('Error setting main image:', error);
+      alert('Có lỗi xảy ra khi đặt ảnh chính');
+    }
+  };
+
+  const handleDeleteImage = async (productId, imageIndex) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa ảnh này?')) {
+      try {
+        await deleteProductImage({
+          variables: {
+            id: productId,
+            imageIndex
+          }
+        });
+      } catch (error) {
+        console.error('Error deleting image:', error);
+        alert('Có lỗi xảy ra khi xóa ảnh');
+      }
+    }
+  };
+
+  // Image Modal Component
+  const ImageModal = () => {
+    if (!selectedProduct) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          </div>
+
+          <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+                <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      Quản lý ảnh sản phẩm
+                    </h3>
+                    <button
+                      onClick={() => setShowImageModal(false)}
+                      className="text-gray-400 hover:text-gray-500"
+                    >
+                      <XMarkIcon className="h-6 w-6" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {selectedProduct.images?.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={getImageUrl(image)}
+                          alt={`${selectedProduct.name} - ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <div className="flex space-x-2">
+                            {index !== 0 && (
+                              <button
+                                onClick={() => handleSetMainImage(selectedProduct._id, index)}
+                                disabled={setMainLoading}
+                                className="p-1 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                                title="Đặt làm ảnh chính"
+                              >
+                                <ArrowsUpDownIcon className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteImage(selectedProduct._id, index)}
+                              disabled={deleteImageLoading}
+                              className="p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                              title="Xóa ảnh"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                        {index === 0 && (
+                          <div className="absolute top-2 left-2">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                              Ảnh chính
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowImageModal(false)}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -70,6 +198,46 @@ const ProductTable = ({
     );
   }
 
+  // Update the image click handler in both grid and table views
+  const productImage = (product, size = 'small') => (
+    <div 
+      className={`relative ${size === 'small' ? 'h-12 w-12' : 'h-48'} cursor-pointer group`}
+      onClick={() => handleImageClick(product)}
+    >
+      {product.images && product.images.length > 0 ? (
+        <img
+          src={getImageUrl(product.images[0])}
+          alt={product.name}
+          className={`${
+            size === 'small' 
+              ? 'h-12 w-12 rounded-lg object-cover border border-gray-200' 
+              : 'w-full h-full object-cover'
+          }`}
+          onError={(e) => {
+            e.target.src = '/placeholder-product.jpg';
+          }}
+        />
+      ) : (
+        <div className={`${
+          size === 'small'
+            ? 'h-12 w-12 rounded-lg'
+            : 'w-full h-full'
+          } bg-gray-100 flex items-center justify-center`}
+        >
+          <PhotoIcon className={`${size === 'small' ? 'h-6 w-6' : 'h-12 w-12'} text-gray-400`} />
+        </div>
+      )}
+      
+      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity flex items-center justify-center">
+        <div className="opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all">
+          <button className="px-2 py-1 bg-white bg-opacity-90 rounded text-xs font-medium">
+            Quản lý ảnh
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Grid View
   if (viewMode === 'grid') {
     return (
@@ -81,58 +249,7 @@ const ProductTable = ({
               className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
             >
               {/* Product Image */}
-              <div className="relative h-48 bg-gray-100">
-                {product.images && product.images.length > 0 ? (
-                  <img
-                    src={getImageUrl(product.images[0])}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = '/placeholder-product.jpg';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <PhotoIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-
-                {/* Status badges */}
-                <div className="absolute top-2 left-2 flex flex-col space-y-1">
-                  {product.isFeatured && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      <StarIcon className="h-3 w-3 mr-1" />
-                      Nổi bật
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    product.isActive 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {product.isActive ? (
-                      <>
-                        <CheckCircleIcon className="h-3 w-3 mr-1" />
-                        Đang bán
-                      </>
-                    ) : (
-                      <>
-                        <XCircleIcon className="h-3 w-3 mr-1" />
-                        Tạm dừng
-                      </>
-                    )}
-                  </span>
-                </div>
-
-                {/* Stock warning */}
-                {product.stock === 0 && (
-                  <div className="absolute bottom-2 left-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      Hết hàng
-                    </span>
-                  </div>
-                )}
-              </div>
+              {productImage(product, 'large')}
 
               {/* Product Info */}
               <div className="p-4">
@@ -193,6 +310,7 @@ const ProductTable = ({
             </div>
           ))}
         </div>
+        {showImageModal && <ImageModal />}
       </div>
     );
   }
@@ -205,6 +323,9 @@ const ProductTable = ({
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Sản phẩm
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Danh mục & Thương hiệu
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Giá
@@ -229,42 +350,29 @@ const ProductTable = ({
               {/* Product Info */}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 h-12 w-12">
-                    {product.images && product.images.length > 0 ? (
-                      <img
-                        className="h-12 w-12 rounded-lg object-cover border border-gray-200"
-                        src={getImageUrl(product.images[0])}
-                        alt={product.name}
-                        onError={(e) => {
-                          e.target.src = '/placeholder-product.jpg';
-                        }}
-                      />
-                    ) : (
-                      <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <PhotoIcon className="h-6 w-6 text-gray-400" />
-                      </div>
-                    )}
+                  <div className="flex-shrink-0">
+                    {productImage(product, 'small')}
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
                       {product.name}
-                      {product.isFeatured && (
-                        <StarIcon className="h-4 w-4 text-yellow-500 inline ml-1" />
-                      )}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {product.category?.name} • {product.brand?.name}
-                    </div>
-                    <div className="text-xs text-gray-400">
                       SKU: {product.sku}
                     </div>
                   </div>
                 </div>
               </td>
 
+              {/* Category & Brand */}
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{product.category?.name || 'N/A'}</div>
+                <div className="text-sm text-gray-500">{product.brand?.name || 'N/A'}</div>
+              </td>
+
               {/* Price */}
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">
+                <div className="text-sm font-medium text-red-600">
                   {formatPrice(product.price)}
                 </div>
                 {product.originalPrice && product.originalPrice > product.price && (
@@ -276,40 +384,34 @@ const ProductTable = ({
 
               {/* Stock */}
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
-                  {product.stock}
-                  {product.stock === 0 && (
-                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                      Hết hàng
-                    </span>
-                  )}
-                  {product.stock > 0 && product.stock <= 10 && (
-                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Sắp hết
-                    </span>
-                  )}
-                </div>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  product.stock === 0
+                    ? 'bg-red-100 text-red-800'
+                    : product.stock < 10
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {product.stock} sản phẩm
+                </span>
               </td>
 
               {/* Status */}
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  product.isActive 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {product.isActive ? (
-                    <>
-                      <CheckCircleIcon className="h-3 w-3 mr-1" />
-                      Đang bán
-                    </>
-                  ) : (
-                    <>
-                      <XCircleIcon className="h-3 w-3 mr-1" />
-                      Tạm dừng
-                    </>
+                <div className="flex flex-col space-y-1">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    product.isActive 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {product.isActive ? 'Đang bán' : 'Tạm dừng'}
+                  </span>
+                  {product.isFeatured && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <StarIcon className="h-3 w-3 mr-1" />
+                      Nổi bật
+                    </span>
                   )}
-                </span>
+                </div>
               </td>
 
               {/* Created Date */}
@@ -318,29 +420,29 @@ const ProductTable = ({
               </td>
 
               {/* Actions */}
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleView(product._id)}
-                    className="text-gray-600 hover:text-gray-900 p-1 rounded transition-colors"
+                    className="text-gray-600 hover:text-gray-900"
                     title="Xem chi tiết"
                   >
-                    <EyeIcon className="h-4 w-4" />
+                    <EyeIcon className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => handleEdit(product._id)}
-                    className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
+                    className="text-blue-600 hover:text-blue-900"
                     title="Chỉnh sửa"
                   >
-                    <PencilIcon className="h-4 w-4" />
+                    <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => handleDelete(product._id, product.name)}
                     disabled={deleteLoading}
-                    className="text-red-600 hover:text-red-900 p-1 rounded transition-colors disabled:opacity-50"
+                    className="text-red-600 hover:text-red-900 disabled:opacity-50"
                     title="Xóa"
                   >
-                    <TrashIcon className="h-4 w-4" />
+                    <TrashIcon className="h-5 w-5" />
                   </button>
                 </div>
               </td>
@@ -348,6 +450,7 @@ const ProductTable = ({
           ))}
         </tbody>
       </table>
+      {showImageModal && <ImageModal />}
     </div>
   );
 };

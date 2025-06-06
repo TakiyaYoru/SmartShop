@@ -8,7 +8,7 @@ import ProductsPage from './pages/ProductsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
-import ProductsManagementPage from './pages/admin/ProductsManagementPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -39,7 +39,7 @@ const routes = createRoutesFromElements(
     {/* Admin Routes */}
     <Route path="/admin/*" element={<AdminRoute><AdminLayout /></AdminRoute>}>
       <Route index element={<DashboardPage />} />
-      <Route path="products" element={<ProductsPage />} />
+      <Route path="products" element={<AdminProductsPage />} />
       <Route path="products/create" element={<CreateProductPage />} />
       <Route path="products/edit/:id" element={<EditProductPage />} />
     </Route>

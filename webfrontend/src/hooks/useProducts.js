@@ -14,7 +14,10 @@ import {
   GET_ALL_PRODUCTS,
   CREATE_PRODUCT,
   UPDATE_PRODUCT,
-  DELETE_PRODUCT
+  DELETE_PRODUCT,
+  UPDATE_PRODUCT_IMAGES,
+  SET_MAIN_PRODUCT_IMAGE,
+  DELETE_PRODUCT_IMAGE
 } from '../graphql/products';
 
 import {
@@ -531,5 +534,38 @@ export const useProductFormData = () => {
     categories: categoriesData?.allCategories || [],
     brands: brandsData?.allBrands || [],
     loading: categoriesLoading || brandsLoading
+  };
+};
+
+export const useUpdateProductImages = () => {
+  const [updateImages, { loading }] = useMutation(UPDATE_PRODUCT_IMAGES, {
+    refetchQueries: [{ query: GET_PRODUCTS }]
+  });
+
+  return {
+    updateProductImages: updateImages,
+    loading
+  };
+};
+
+export const useSetMainProductImage = () => {
+  const [setMain, { loading }] = useMutation(SET_MAIN_PRODUCT_IMAGE, {
+    refetchQueries: [{ query: GET_PRODUCTS }]
+  });
+
+  return {
+    setMainProductImage: setMain,
+    loading
+  };
+};
+
+export const useDeleteProductImage = () => {
+  const [deleteImage, { loading }] = useMutation(DELETE_PRODUCT_IMAGE, {
+    refetchQueries: [{ query: GET_PRODUCTS }]
+  });
+
+  return {
+    deleteProductImage: deleteImage,
+    loading
   };
 };
