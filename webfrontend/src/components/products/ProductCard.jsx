@@ -54,9 +54,9 @@ const ProductCard = ({
   const mainImage = images.length > 0 ? getImageUrl(images[0]) : '/placeholder-product.jpg';
   const hoverImage = images.length > 1 ? getImageUrl(images[1]) : mainImage;
 
-  // Mock rating - trong thực tế sẽ lấy từ API
-  const rating = 4.2;
-  const reviewCount = Math.floor(Math.random() * 200) + 10;
+  // Fixed 5-star rating
+  const rating = 5;
+  const reviewCount = 999;
 
   const handleAddToWishlist = (e) => {
     e.preventDefault();
@@ -230,13 +230,7 @@ const ProductCard = ({
               {[...Array(5)].map((_, index) => (
                 <StarSolidIcon
                   key={index}
-                  className={`w-4 h-4 ${
-                    index < Math.floor(rating)
-                      ? 'text-yellow-400'
-                      : index < rating
-                      ? 'text-gradient-to-r from-yellow-400 to-gray-300'
-                      : 'text-gray-300'
-                  }`}
+                  className="w-4 h-4 text-yellow-400"
                 />
               ))}
             </div>
@@ -336,13 +330,7 @@ const ProductCard = ({
                   {[...Array(5)].map((_, index) => (
                     <StarSolidIcon
                       key={index}
-                      className={`w-4 h-4 ${
-                        index < Math.floor(rating)
-                          ? 'text-yellow-400'
-                          : index < rating
-                          ? 'text-gradient-to-r from-yellow-400 to-gray-300'
-                          : 'text-gray-300'
-                      }`}
+                      className="w-4 h-4 text-yellow-400"
                     />
                   ))}
                 </div>

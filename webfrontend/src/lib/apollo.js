@@ -50,7 +50,13 @@ export const client = new ApolloClient({
         fields: {
           products: {
             keyArgs: ['condition', 'orderBy'],
-            merge(existing = { nodes: [], totalCount: 0 }, incoming) {
+            merge(existing = { nodes: [], totalCount: 0 }, incoming, { args }) {
+              // If offset is 0 or not provided, replace the entire list
+              if (!args?.offset || args.offset === 0) {
+                return incoming;
+              }
+              
+              // Otherwise, append new items
               return {
                 ...incoming,
                 nodes: [...(existing.nodes || []), ...incoming.nodes],
