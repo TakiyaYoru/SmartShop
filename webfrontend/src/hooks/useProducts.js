@@ -59,16 +59,56 @@ export const useProducts = (options = {}) => {
     skip = false
   } = options;
 
+  // Build filter condition
+  const buildCondition = () => {
+    if (!condition) return null;
+
+    const filterCondition = {};
+
+    // Price range
+    if (condition.price?.min || condition.price?.max) {
+      filterCondition.price = {};
+      if (condition.price.min) filterCondition.price.min = parseFloat(condition.price.min);
+      if (condition.price.max) filterCondition.price.max = parseFloat(condition.price.max);
+    }
+
+    // Category
+    if (condition.category) {
+      filterCondition.category = condition.category;
+    }
+
+    // Brand
+    if (condition.brand) {
+      filterCondition.brand = condition.brand;
+    }
+
+    // Stock
+    if (condition.stock?.min || condition.stock?.max) {
+      filterCondition.stock = {};
+      if (condition.stock.min) filterCondition.stock.min = parseInt(condition.stock.min);
+      if (condition.stock.max) filterCondition.stock.max = parseInt(condition.stock.max);
+    }
+
+    // Featured
+    if (condition.isFeatured) {
+      filterCondition.isFeatured = true;
+    }
+
+    console.log('useProducts - Final filter condition:', filterCondition);
+    return Object.keys(filterCondition).length > 0 ? filterCondition : null;
+  };
+
   const { data, loading, error, fetchMore, refetch } = useQuery(GET_PRODUCTS, {
     variables: {
       first,
       offset,
       orderBy,
-      condition
+      condition: buildCondition()
     },
     skip,
     errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only' // Force fetch from network
   });
 
   const loadMore = () => {

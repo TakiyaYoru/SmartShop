@@ -10,8 +10,6 @@ import {
   StarIcon,
   CheckIcon,
   XMarkIcon,
-  TruckIcon,
-  ShieldCheckIcon,
   ArrowLeftIcon,
   ShareIcon,
   ChevronLeftIcon,
@@ -36,35 +34,6 @@ const ProductDetailPage = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedTab, setSelectedTab] = useState('description');
   const [showImageModal, setShowImageModal] = useState(false);
-
-  // Mock data - trong thực tế sẽ lấy từ API
-  const mockReviews = [
-    {
-      id: 1,
-      user: 'Nguyễn Văn A',
-      rating: 5,
-      comment: 'Sản phẩm rất tốt, chất lượng vượt mong đợi!',
-      date: '2024-01-15',
-      verified: true
-    },
-    {
-      id: 2,
-      user: 'Trần Thị B',
-      rating: 4,
-      comment: 'Giao hàng nhanh, đóng gói cẩn thận.',
-      date: '2024-01-10',
-      verified: true
-    }
-  ];
-
-  const mockSpecs = [
-    { label: 'Thương hiệu', value: product?.brand?.name || 'N/A' },
-    { label: 'Danh mục', value: product?.category?.name || 'N/A' },
-    { label: 'SKU', value: product?.sku || 'N/A' },
-    { label: 'Tình trạng', value: product?.stock > 0 ? 'Còn hàng' : 'Hết hàng' },
-    { label: 'Bảo hành', value: '12 tháng' },
-    { label: 'Xuất xứ', value: 'Chính hãng' }
-  ];
 
   useEffect(() => {
     if (product) {
@@ -289,41 +258,15 @@ const ProductDetailPage = () => {
         <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
       </div>
 
-      {/* Rating */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center">
-          {[...Array(5)].map((_, index) => (
-            <StarSolidIcon
-              key={index}
-              className={`w-5 h-5 ${index < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
-            />
-          ))}
-        </div>
-        <span className="text-sm text-gray-600">4.0 (128 đánh giá)</span>
-      </div>
-
       {/* Price */}
-      <div className="space-y-2">
-        <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-bold text-gray-900">
-            {formatPrice(price)}
+      <div className="flex items-baseline gap-3">
+        <span className="text-3xl font-bold text-gray-900">
+          {formatPrice(price)}
+        </span>
+        {originalPrice && originalPrice > price && (
+          <span className="text-lg text-gray-500 line-through">
+            {formatPrice(originalPrice)}
           </span>
-          {originalPrice && originalPrice > price && (
-            <span className="text-lg text-gray-500 line-through">
-              {formatPrice(originalPrice)}
-            </span>
-          )}
-          {discount > 0 && (
-            <span className="text-sm font-medium text-green-600">
-              Tiết kiệm {formatPrice(originalPrice - price)}
-            </span>
-          )}
-        </div>
-        {price >= 500000 && (
-          <div className="flex items-center gap-2 text-green-600">
-            <TruckIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">Miễn phí vận chuyển</span>
-          </div>
         )}
       </div>
 
@@ -414,24 +357,6 @@ const ProductDetailPage = () => {
           <ShareIcon className="w-6 h-6" />
         </button>
       </div>
-
-      {/* Benefits */}
-      <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl">
-        <div className="flex items-start gap-3">
-          <TruckIcon className="w-6 h-6 text-blue-600 flex-shrink-0" />
-          <div>
-            <h4 className="font-medium text-gray-900">Giao hàng nhanh</h4>
-            <p className="text-sm text-gray-600">2-4 ngày làm việc</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <ShieldCheckIcon className="w-6 h-6 text-blue-600 flex-shrink-0" />
-          <div>
-            <h4 className="font-medium text-gray-900">Bảo hành chính hãng</h4>
-            <p className="text-sm text-gray-600">12 tháng</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 
@@ -440,80 +365,24 @@ const ProductDetailPage = () => {
       {/* Tab Headers */}
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8">
-          {['description', 'specs', 'reviews'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setSelectedTab(tab)}
-              className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                selectedTab === tab
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab === 'description' && 'Mô tả'}
-              {tab === 'specs' && 'Thông số kỹ thuật'}
-              {tab === 'reviews' && 'Đánh giá (2)'}
-            </button>
-          ))}
+          <button
+            onClick={() => setSelectedTab('description')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+              selectedTab === 'description'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Mô tả
+          </button>
         </nav>
       </div>
 
       {/* Tab Content */}
       <div className="space-y-6">
-        {selectedTab === 'description' && (
-          <div className="prose prose-sm max-w-none">
-            {description || 'Chưa có mô tả cho sản phẩm này.'}
-          </div>
-        )}
-
-        {selectedTab === 'specs' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {mockSpecs.map((spec, index) => (
-              <div key={index} className="flex items-center justify-between py-3 border-b border-gray-200">
-                <span className="text-sm text-gray-600">{spec.label}</span>
-                <span className="text-sm font-medium text-gray-900">{spec.value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {selectedTab === 'reviews' && (
-          <div className="space-y-8">
-            {mockReviews.map((review) => (
-              <div key={review.id} className="border-b border-gray-200 pb-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-gray-900">{review.user}</span>
-                      {review.verified && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                          <CheckIcon className="w-3 h-3 mr-1" />
-                          Đã mua hàng
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, index) => (
-                          <StarSolidIcon
-                            key={index}
-                            className={`w-4 h-4 ${
-                              index < review.rating ? 'text-yellow-400' : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-600">
-                        {new Date(review.date).toLocaleDateString('vi-VN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-600">{review.comment}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="prose prose-sm max-w-none">
+          {description || 'Chưa có mô tả cho sản phẩm này.'}
+        </div>
       </div>
     </div>
   );
@@ -583,15 +452,8 @@ const ProductDetailSkeleton = () => (
           <div className="h-4 bg-gray-200 rounded w-1/4 mb-2" />
           <div className="h-8 bg-gray-200 rounded w-3/4" />
         </div>
-        <div className="flex gap-2">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-5 h-5 bg-gray-200 rounded" />
-          ))}
-        </div>
-        <div>
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-2" />
-          <div className="h-6 bg-gray-200 rounded w-1/4" />
-        </div>
+        <div className="h-8 bg-gray-200 rounded w-1/3" />
+        <div className="h-6 bg-gray-200 rounded w-1/4" />
         <div className="h-10 bg-gray-200 rounded" />
         <div className="flex gap-4">
           <div className="h-12 bg-gray-200 rounded flex-1" />

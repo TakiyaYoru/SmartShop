@@ -154,3 +154,34 @@ export const DELETE_PRODUCT = gql`
     deleteProduct(id: $id)
   }
 `;
+
+// Thêm input type cho filter condition
+export const PRODUCT_CONDITION_INPUT = gql`
+  input ProductConditionInput {
+    # Text search
+    name: String
+    
+    # Price range
+    price: PriceRangeInput
+    
+    # Category & Brand
+    category: ID
+    brand: ID
+    
+    # Stock filter
+    stock: StockRangeInput
+    
+    # Featured filter
+    isFeatured: Boolean
+  }
+
+  input PriceRangeInput {
+    min: Float
+    max: Float
+  }
+
+  input StockRangeInput {
+    min: Int
+    max: Int
+  }
+`;
