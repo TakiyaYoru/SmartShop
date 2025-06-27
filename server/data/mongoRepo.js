@@ -422,7 +422,7 @@ const db = {
     }
   },
 
-  users: {
+users: {
     findOne: async (username) => {
       return await User.findOne({ username }).lean();
     },
@@ -439,6 +439,92 @@ const db = {
       const user = new User(input);
       return await user.save();
     },
+
+    // ===== CÁC METHOD ĐÃ CÓ TỪ TRƯỚC =====
+    updateOne: async (filter, update) => {
+      try {
+        const result = await User.updateOne(filter, update);
+        return result;
+      } catch (error) {
+        console.error('User updateOne error:', error);
+        throw error;
+      }
+    },
+
+    findOneByQuery: async (query) => {
+      try {
+        return await User.findOne(query).lean();
+      } catch (error) {
+        console.error('User findOneByQuery error:', error);
+        throw error;
+      }
+    },
+
+    // ===== THÊM MỚI: OTP-specific methods =====
+    
+    // Lưu OTP vào database
+    savePasswordResetOTP: async (email, otp, otpExpires) => {
+      try {
+        console.log('Saving OTP to DB:', { email, otp, otpExpires });
+        const result = await User.updateOne(
+          { email: email },
+          {
+            $set: {
+              passwordResetOTP: otp,
+              passwordResetOTPExpires: otpExpires,
+              passwordResetEmail: email
+            }
+          }
+        );
+        console.log('Save OTP result:', result);
+        return result;
+      } catch (error) {
+        console.error('Save OTP error:', error);
+        throw error;
+      }
+    },
+
+    // Tìm user theo OTP hợp lệ
+    findByValidOTP: async (email, otp) => {
+      try {
+        console.log('Finding user by valid OTP:', { email, otp });
+        const user = await User.findOne({
+          passwordResetEmail: email,
+          passwordResetOTP: otp,
+          passwordResetOTPExpires: { $gt: new Date() } // OTP chưa hết hạn
+        }).lean();
+        console.log('Found user with valid OTP:', user ? 'Yes' : 'No');
+        return user;
+      } catch (error) {
+        console.error('Find by valid OTP error:', error);
+        throw error;
+      }
+    },
+
+    // Reset password và clear OTP
+    resetPasswordAndClearOTP: async (userId, hashedPassword) => {
+      try {
+        console.log('Resetting password and clearing OTP for user:', userId);
+        const result = await User.updateOne(
+          { _id: userId },
+          {
+            $set: {
+              password: hashedPassword
+            },
+            $unset: {
+              passwordResetOTP: "",
+              passwordResetOTPExpires: "",
+              passwordResetEmail: ""
+            }
+          }
+        );
+        console.log('Reset password result:', result);
+        return result;
+      } catch (error) {
+        console.error('Reset password and clear OTP error:', error);
+        throw error;
+      }
+    }
   },
 
   carts: {

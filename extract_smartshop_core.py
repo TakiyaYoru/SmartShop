@@ -39,10 +39,16 @@ IMPORTANT_FILES = [
     "server/data/mongoRepo.js",
     "server/data/init.js",
     
+    # Backend - Migrations
+    "server/migrations/20250601031152-initial_smartshop_data.js",
+    "server/migrations/20250601032421-add_sample_images.js",
+    
     # Frontend - Core files
     "webfrontend/package.json",
     "webfrontend/vite.config.js",
     "webfrontend/tailwind.config.js",
+    "webfrontend/postcss.config.js",
+    "webfrontend/eslint.config.js",
     
     # Frontend - Main app
     "webfrontend/src/main.jsx",
@@ -51,6 +57,7 @@ IMPORTANT_FILES = [
     
     # Frontend - Contexts & Hooks
     "webfrontend/src/contexts/AuthContext.jsx",
+    "webfrontend/src/contexts/CartContext.jsx",
     "webfrontend/src/hooks/useAuth.js",
     "webfrontend/src/hooks/useProducts.js",
     "webfrontend/src/hooks/useUpload.js",
@@ -61,21 +68,35 @@ IMPORTANT_FILES = [
     "webfrontend/src/graphql/products.js",
     "webfrontend/src/graphql/categories.js",
     "webfrontend/src/graphql/brands.js",
+    "webfrontend/src/graphql/cart.js",
     "webfrontend/src/graphql/upload.js",
     "webfrontend/src/graphql/admin.js",
     
-    # Frontend - Components
+    # Frontend - Common Components
     "webfrontend/src/components/common/Layout.jsx",
     "webfrontend/src/components/common/Header.jsx",
     "webfrontend/src/components/common/Sidebar.jsx",
     "webfrontend/src/components/common/Footer.jsx",
+    "webfrontend/src/components/common/LoadingSkeleton.jsx",
+    
+    # Frontend - Auth Components
     "webfrontend/src/components/auth/LoginForm.jsx",
     "webfrontend/src/components/auth/RegisterForm.jsx",
     "webfrontend/src/components/auth/ProtectedRoute.jsx",
+    
+    # Frontend - Product Components
     "webfrontend/src/components/products/ProductCard.jsx",
     "webfrontend/src/components/products/ProductList.jsx",
     "webfrontend/src/components/products/ProductFilter.jsx",
     "webfrontend/src/components/products/ProductSearch.jsx",
+    
+    # Frontend - Cart Components (NEW)
+    "webfrontend/src/components/cart/CartIcon.jsx",
+    "webfrontend/src/components/cart/CartItem.jsx",
+    "webfrontend/src/components/cart/CartSummary.jsx",
+    "webfrontend/src/components/cart/AddToCartButton.jsx",
+    
+    # Frontend - Admin Components
     "webfrontend/src/components/admin/AdminLayout.jsx",
     
     # Frontend - Pages
@@ -241,6 +262,9 @@ SmartShop/
 │   │   ├── models/        # Mongoose models
 │   │   ├── mongoRepo.js   # Repository pattern
 │   │   └── init.js        # Database initialization
+│   ├── migrations/        # Database migrations
+│   │   ├── 20250601031152-initial_smartshop_data.js
+│   │   └── 20250601032421-add_sample_images.js
 │   └── img/               # Uploaded images
 ├── webfrontend/           # Frontend React/Vite
 │   ├── src/
@@ -248,14 +272,72 @@ SmartShop/
 │   │   ├── App.jsx        # Main app component
 │   │   ├── router.jsx     # React Router setup
 │   │   ├── contexts/      # React contexts
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── CartContext.jsx
 │   │   ├── hooks/         # Custom hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useProducts.js
+│   │   │   └── useUpload.js
 │   │   ├── components/    # Reusable components
+│   │   │   ├── common/    # Common components
+│   │   │   │   ├── Layout.jsx
+│   │   │   │   ├── Header.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   └── LoadingSkeleton.jsx
+│   │   │   ├── auth/      # Authentication components
+│   │   │   │   ├── LoginForm.jsx
+│   │   │   │   ├── RegisterForm.jsx
+│   │   │   │   └── ProtectedRoute.jsx
+│   │   │   ├── products/  # Product components
+│   │   │   │   ├── ProductCard.jsx
+│   │   │   │   ├── ProductList.jsx
+│   │   │   │   ├── ProductFilter.jsx
+│   │   │   │   └── ProductSearch.jsx
+│   │   │   ├── cart/      # Cart components
+│   │   │   │   ├── CartIcon.jsx
+│   │   │   │   ├── CartItem.jsx
+│   │   │   │   ├── CartSummary.jsx
+│   │   │   │   └── AddToCartButton.jsx
+│   │   │   └── admin/     # Admin components
+│   │   │       └── AdminLayout.jsx
 │   │   ├── pages/         # Page components
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── RegisterPage.jsx
+│   │   │   ├── ProductsPage.jsx
+│   │   │   ├── ProductDetailPage.jsx
+│   │   │   ├── CategoriesPage.jsx
+│   │   │   ├── BrandsPage.jsx
+│   │   │   ├── CartPage.jsx
+│   │   │   ├── NotFoundPage.jsx
+│   │   │   └── admin/     # Admin pages
+│   │   │       ├── DashboardPage.jsx
+│   │   │       ├── AdminProductsPage.jsx
+│   │   │       ├── CreateProductPage.jsx
+│   │   │       ├── EditProductPage.jsx
+│   │   │       └── products/  # Admin product components
+│   │   │           ├── ProductTable.jsx
+│   │   │           ├── ProductForm.jsx
+│   │   │           ├── ProductFilter.jsx
+│   │   │           ├── AdminProductFilter.jsx
+│   │   │           └── ImageUpload.jsx
 │   │   ├── graphql/       # GraphQL queries/mutations
+│   │   │   ├── auth.js
+│   │   │   ├── products.js
+│   │   │   ├── categories.js
+│   │   │   ├── brands.js
+│   │   │   ├── cart.js
+│   │   │   ├── upload.js
+│   │   │   └── admin.js
 │   │   └── lib/           # Utilities
+│   │       ├── apollo.js
+│   │       └── utils.js
 │   ├── package.json
 │   ├── vite.config.js
-│   └── tailwind.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   └── eslint.config.js
 └── README.md
 """
     

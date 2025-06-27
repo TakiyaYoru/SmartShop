@@ -255,17 +255,17 @@ const HomePage = () => {
               <div className="text-center text-white max-w-4xl mx-auto px-4">
                 <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
                   {slide.title}
-                </h1>
+            </h1>
                 <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-fade-in-delay">
                   {slide.subtitle}
-                </p>
-                <Link
+            </p>
+              <Link
                   to={slide.ctaLink}
                   className="inline-flex items-center px-8 py-4 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 animate-fade-in-delay-2"
-                >
+              >
                   {slide.cta}
                   <ArrowRightIcon className="ml-2 h-5 w-5" />
-                </Link>
+              </Link>
               </div>
             </div>
           </div>
@@ -312,8 +312,8 @@ const HomePage = () => {
                       className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all transform hover:scale-105"
                     >
                       🚀 Admin Panel
-                    </Link>
-                  )}
+                  </Link>
+                )}
                 </div>
               </div>
             </div>
@@ -506,8 +506,8 @@ const HomePage = () => {
             <div className="flex items-center justify-center mb-4">
               <SparklesIcon className="h-8 w-8 text-yellow-500 mr-3" />
               <h2 className="text-3xl font-bold text-gray-900">
-                Tính năng nổi bật
-              </h2>
+              Tính năng nổi bật
+            </h2>
             </div>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Khám phá đầy đủ các tính năng của SmartShop để có trải nghiệm mua sắm tuyệt vời nhất
@@ -660,8 +660,8 @@ const HomePage = () => {
           <div className="flex items-center justify-center mb-6">
             <GiftIcon className="h-12 w-12 text-yellow-400 mr-4" />
             <h2 className="text-4xl font-bold">
-              Bắt đầu mua sắm ngay hôm nay!
-            </h2>
+            Bắt đầu mua sắm ngay hôm nay!
+          </h2>
           </div>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Tham gia cùng hàng triệu khách hàng đã tin tưởng SmartShop. 

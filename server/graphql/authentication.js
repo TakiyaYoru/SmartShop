@@ -1,5 +1,10 @@
+// File: server/graphql/authentication.js (HOÀN CHỈNH VÀ CLEAN)
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { GraphQLError } from "graphql";
+import { otpUtils } from "../utils/otpUtils.js";
+import { emailService } from "../services/emailService.js";
 
 export const typeDef = `
   type LoginResult {
@@ -28,6 +33,11 @@ export const typeDef = `
     data: UserInfo
   }
 
+  type GenericResponse {
+    success: Boolean!
+    message: String!
+  }
+
   input LoginInput {
     username: String!
     password: String!
@@ -42,9 +52,21 @@ export const typeDef = `
     phone: String
   }
 
+  input SendOTPInput {
+    email: String!
+  }
+
+  input VerifyOTPAndResetPasswordInput {
+    email: String!
+    otp: String!
+    newPassword: String!
+  }
+
   extend type Mutation {
     login(input: LoginInput!): LoginResponse
     register(input: RegisterInput!): RegisterResponse
+    sendPasswordResetOTP(input: SendOTPInput!): GenericResponse
+    verifyOTPAndResetPassword(input: VerifyOTPAndResetPasswordInput!): GenericResponse
   }
 
   extend type Query {
@@ -141,7 +163,6 @@ export const resolvers = {
     register: async (parent, args, context, info) => {
       const { username, email, password, firstName, lastName, phone } = args.input;
 
-      // Kiểm tra user đã tồn tại
       const existingUserByUsername = await context.db.users.findOne(username);
       if (existingUserByUsername) {
         return {
@@ -158,7 +179,6 @@ export const resolvers = {
         };
       }
 
-      // Validate password
       if (password.length < 6) {
         return {
           success: false,
@@ -166,10 +186,8 @@ export const resolvers = {
         };
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Tạo user mới
       const newUser = await context.db.users.create({
         username,
         email,
@@ -177,7 +195,7 @@ export const resolvers = {
         firstName,
         lastName,
         phone,
-        role: "customer", // Default role
+        role: "customer",
         isActive: true,
       });
 
@@ -193,6 +211,120 @@ export const resolvers = {
           role: newUser.role,
         },
       };
+    },
+
+    sendPasswordResetOTP: async (parent, args, context, info) => {
+      const { email } = args.input;
+
+      console.log('=== SEND OTP REQUEST ===');
+      console.log('Email:', email);
+
+      if (!email || !email.includes('@')) {
+        return {
+          success: false,
+          message: "Valid email address is required",
+        };
+      }
+
+      const user = await context.db.users.findByEmail(email);
+      console.log('User found:', user ? 'Yes' : 'No');
+      
+      if (!user) {
+        return {
+          success: true,
+          message: "If an account with that email exists, an OTP has been sent.",
+        };
+      }
+
+      if (!user.isActive) {
+        return {
+          success: false,
+          message: "Account is deactivated. Please contact support.",
+        };
+      }
+
+      const otp = otpUtils.generateOTP();
+      const otpExpires = otpUtils.generateOTPExpiry();
+
+      console.log('Generated OTP:', otp);
+      console.log('OTP expires at:', otpExpires);
+
+      try {
+        const updateResult = await context.db.users.savePasswordResetOTP(email, otp, otpExpires);
+        console.log('OTP saved to DB:', updateResult.modifiedCount > 0 ? 'Yes' : 'No');
+
+        await emailService.sendPasswordResetOTP(email, otp, user.firstName || user.username);
+        console.log('OTP email sent successfully');
+
+        return {
+          success: true,
+          message: "OTP has been sent to your email. Please check your inbox.",
+        };
+
+      } catch (error) {
+        console.error('Send OTP error:', error);
+        return {
+          success: false,
+          message: "Failed to send OTP. Please try again later.",
+        };
+      }
+    },
+
+    verifyOTPAndResetPassword: async (parent, args, context, info) => {
+      const { email, otp, newPassword } = args.input;
+
+      console.log('=== VERIFY OTP AND RESET PASSWORD ===');
+      console.log('Email:', email);
+      console.log('OTP:', otp);
+
+      if (!email || !otp || !newPassword) {
+        return {
+          success: false,
+          message: "Email, OTP, and new password are required",
+        };
+      }
+
+      if (!otpUtils.isValidOTPFormat(otp)) {
+        return {
+          success: false,
+          message: "OTP must be 6 digits",
+        };
+      }
+
+      if (newPassword.length < 6) {
+        return {
+          success: false,
+          message: "Password must be at least 6 characters long",
+        };
+      }
+
+      try {
+        const user = await context.db.users.findByValidOTP(email, otp);
+        console.log('User with valid OTP found:', user ? 'Yes' : 'No');
+
+        if (!user) {
+          return {
+            success: false,
+            message: "Invalid or expired OTP",
+          };
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const updateResult = await context.db.users.resetPasswordAndClearOTP(user._id, hashedPassword);
+        console.log('Password reset successful:', updateResult.modifiedCount > 0 ? 'Yes' : 'No');
+
+        return {
+          success: true,
+          message: "Password has been successfully reset. You can now login with your new password.",
+        };
+
+      } catch (error) {
+        console.error('Verify OTP and reset password error:', error);
+        return {
+          success: false,
+          message: "Failed to reset password. Please try again later.",
+        };
+      }
     },
   },
 };

@@ -179,8 +179,8 @@ export const up = async (db, client) => {
 
   await db.collection("products").updateMany(
     { name: "Sony WH-1000XM5" },
-    { 
-      $set: { 
+    {
+      $set: {
         images: [
           "product_6842d89e5254a983d0443110_1749211294064_0_5c2671ea-1f0f-45d3-8390-7134ed77940f.webp",
           "product_6842d89e5254a983d0443110_1749211294065_1_ddff20d8-3bbf-499f-a1ba-9211f0ee2f3f.webp",

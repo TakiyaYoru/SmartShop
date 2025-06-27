@@ -1,3 +1,6 @@
+// File: server/data/models/user.js
+// CẬP NHẬT User Schema để thêm các field cho forgot password
+
 import mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
@@ -31,6 +34,30 @@ export const UserSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    
+
+    passwordResetOTP: {
+      type: String,
+      default: null
+    },
+    passwordResetOTPExpires: {
+      type: Date,
+      default: null
+    },
+    passwordResetEmail: {
+      type: String, // Email được dùng để reset (để tránh confusion)
+      default: null
+    },
+    
+    // Email verification (giữ lại nếu cần)
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationToken: {
+      type: String,
+      default: null
+    }
   },
   {
     collection: "users",
