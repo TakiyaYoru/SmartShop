@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import CartIcon from '../cart/CartIcon'; // Import CartIcon
 import {
   MagnifyingGlassIcon,
   ShoppingCartIcon,
@@ -96,9 +97,9 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-lg mx-8">
-            <form onSubmit={handleSearch} className="w-full">
+          {/* Desktop Search */}
+          <div className="hidden md:block flex-1 max-w-lg mx-8">
+            <form onSubmit={handleSearch}>
               <div className="relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
@@ -106,78 +107,72 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm kiếm sản phẩm..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/80 text-sm"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/80 transition-all"
                 />
               </div>
             </form>
           </div>
 
-          {/* Right Section */}
-          <div className="flex items-center space-x-4">
+          {/* Right Section - Actions */}
+          <div className="flex items-center space-x-2">
+            {/* Cart Icon - THÊM MỚI */}
+            <CartIcon className="hover:bg-gray-50" />
+
+            {/* User Actions */}
             {isAuthenticated ? (
-              <>
-                {/* Cart Icon */}
-                <Link
-                  to="/cart"
-                  className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ShoppingCartIcon className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    3
-                  </span>
-                </Link>
-
-                {/* Wishlist Icon */}
-                <Link
-                  to="/wishlist"
-                  className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <HeartIcon className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-pink-500 text-white text-xs rounded-full flex items-center justify-center">
-                    5
-                  </span>
-                </Link>
-
-                {/* Notifications */}
-                <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+              <div className="flex items-center space-x-2">
+                {/* Notifications (if needed) */}
+                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                   <BellIcon className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    2
-                  </span>
                 </button>
+
+                {/* Wishlist (if needed) */}
+                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                  <HeartIcon className="h-5 w-5" />
+                </button>
+
+                {/* Admin Panel Link - cho admin/manager */}
+                {(user?.role === 'admin' || user?.role === 'manager') && (
+                  <Link
+                    to="/admin"
+                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Admin Panel"
+                  >
+                    <ChartBarIcon className="h-5 w-5" />
+                  </Link>
+                )}
 
                 {/* User Menu */}
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                       {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
                     </div>
-                    <div className="hidden md:block text-left">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user?.firstName} {user?.lastName}
-                      </p>
-                    </div>
+                    <span className="hidden sm:block text-sm font-medium text-gray-700">
+                      {user?.firstName}
+                    </span>
                   </button>
 
-                  {/* User Dropdown */}
+                  {/* User Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                      {/* User Info */}
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                      {/* User Info Header */}
                       <div className="px-4 py-3 border-b border-gray-100">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+                          <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
                             {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
                           </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900 text-sm">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 truncate">
                               {user?.firstName} {user?.lastName}
                             </p>
-                            <p className="text-xs text-gray-500">{user?.email}</p>
+                            <p className="text-sm text-gray-500 truncate">{user?.email}</p>
                             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${getRoleColor(user?.role)}`}>
-                              {getRoleIcon(user?.role)} {user?.role}
+                              <span className="mr-1">{getRoleIcon(user?.role)}</span>
+                              {user?.role}
                             </span>
                           </div>
                         </div>
@@ -187,76 +182,76 @@ const Header = () => {
                       <div className="py-1">
                         <Link
                           to="/profile"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <UserIcon className="h-4 w-4 mr-3" />
+                          <UserIcon className="h-4 w-4 mr-2" />
                           Thông tin cá nhân
                         </Link>
+
                         <Link
                           to="/orders"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <span className="w-4 h-4 mr-3 text-center">📦</span>
+                          <ShoppingCartIcon className="h-4 w-4 mr-2" />
                           Đơn hàng của tôi
                         </Link>
+
                         <Link
-                          to="/settings"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          to="/wishlist"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <Cog6ToothIcon className="h-4 w-4 mr-3" />
+                          <HeartIcon className="h-4 w-4 mr-2" />
+                          Danh sách yêu thích
+                        </Link>
+
+                        <Link
+                          to="/settings"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <Cog6ToothIcon className="h-4 w-4 mr-2" />
                           Cài đặt
                         </Link>
-                        {(user?.role === 'admin' || user?.role === 'manager') && (
-                          <Link
-                            to="/admin"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            onClick={() => setShowUserMenu(false)}
-                          >
-                            <ChartBarIcon className="h-4 w-4 mr-3" />
-                            Quản trị
-                          </Link>
-                        )}
-                      </div>
 
-                      {/* Logout */}
-                      <div className="border-t border-gray-100 py-1">
+                        <hr className="my-1" />
+
                         <button
                           onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                         >
-                          <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3" />
+                          <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
                           Đăng xuất
                         </button>
                       </div>
                     </div>
                   )}
                 </div>
-              </>
+              </div>
             ) : (
-              /* Auth Links */
-              <div className="flex items-center space-x-4">
+              /* Guest Actions */
+              <div className="flex items-center space-x-2">
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   Đăng nhập
                 </Link>
                 <Link
                   to="/register"
-                  className="btn btn-primary"
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition-all shadow-sm"
                 >
                   Đăng ký
                 </Link>
               </div>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               {showMobileMenu ? (
                 <XMarkIcon className="h-5 w-5" />

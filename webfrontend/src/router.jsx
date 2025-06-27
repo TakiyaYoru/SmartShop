@@ -1,3 +1,4 @@
+// webfrontend/src/router.jsx - CẬP NHẬT thêm CartPage
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 
 // Pages
@@ -5,13 +6,14 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage'; // ← THÊM IMPORT
 import NotFoundPage from './pages/NotFoundPage';
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
-import ProductDetailPage from './pages/ProductDetailPage';
 
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
@@ -35,6 +37,9 @@ const routes = createRoutesFromElements(
     <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
     <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
     <Route path="/products/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
+    
+    {/* Cart Route - THÊM VÀO ĐÂY */}
+    <Route path="/cart" element={<CartPage />} />
     
     {/* Admin Routes */}
     <Route path="/admin/*" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -67,4 +72,4 @@ const routes = createRoutesFromElements(
 );
 
 // Create router with configuration
-export const router = createBrowserRouter(routes, routerConfig); 
+export const router = createBrowserRouter(routes, routerConfig);

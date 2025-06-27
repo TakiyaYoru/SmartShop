@@ -1,4 +1,4 @@
-// src/App.jsx - Updated routing for standalone admin pages
+// webfrontend/src/App.jsx - CẬP NHẬT thêm CartPage import và route
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -9,12 +9,13 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage'; 
 import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Components
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
-import AdminProductsPage from './pages/admin/AdminProductsPage'; // Standalone layout
+import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
 
@@ -61,8 +62,6 @@ function App() {
           } 
         />
         
-        {/* Placeholder customer pages */}
-
         <Route 
           path="/products/:id" 
           element={
@@ -71,6 +70,19 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/cart" 
+          element={
+            <ProtectedRoute>
+              <div className="p-8">
+                <h1>Cart Page Test</h1>
+                <p>Nếu thấy text này thì route đã hoạt động!</p>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Placeholder customer pages */}
         <Route 
           path="/categories" 
           element={
@@ -96,22 +108,6 @@ function App() {
                   <h1 className="text-3xl font-bold text-gray-900 mb-6">Thương hiệu</h1>
                   <div className="bg-white rounded-lg shadow p-6">
                     <p className="text-gray-600">Trang thương hiệu sẽ được phát triển ở phần tiếp theo! 🏪</p>
-                  </div>
-                </div>
-              </div>
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/cart" 
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen bg-gray-100 p-8">
-                <div className="max-w-7xl mx-auto">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-6">Giỏ hàng</h1>
-                  <div className="bg-white rounded-lg shadow p-6">
-                    <p className="text-gray-600">Tính năng giỏ hàng sẽ được phát triển ở phần tiếp theo! 🛒</p>
                   </div>
                 </div>
               </div>
@@ -186,22 +182,6 @@ function App() {
                       </div>
                     </div>
                   } />
-                  <Route path="users" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">User Management</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">User management will be implemented soon! 👥</p>
-                      </div>
-                    </div>
-                  } />
-                  <Route path="analytics" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">Analytics</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">Analytics dashboard will be implemented soon! 📊</p>
-                      </div>
-                    </div>
-                  } />
                   <Route path="settings" element={
                     <div className="p-6">
                       <h1 className="text-2xl font-bold mb-4">Settings</h1>
@@ -215,7 +195,7 @@ function App() {
             </AdminRoute>
           } 
         />
-          
+
         {/* Manager Routes */}
         <Route 
           path="/manager/*" 
