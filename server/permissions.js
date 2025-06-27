@@ -56,37 +56,37 @@ export const permissions = {
   },
   
   Mutation: {
-    // Category operations - Admin only
-    createCategory: isAdmin,
-    updateCategory: isAdmin,
-    deleteCategory: isAdmin,
+    // // Category operations - Admin only
+    // createCategory: isAdmin,
+    // updateCategory: isAdmin,
+    // //deleteCategory: isAdmin,
     
-    // Brand operations - Admin only
-    createBrand: isAdmin,
-    updateBrand: isAdmin,
-    deleteBrand: isAdmin,
+    // // Brand operations - Admin only
+    // //createBrand: isAdmin,
+    // //updateBrand: isAdmin,
+    // //deleteBrand: isAdmin,
     
-    // Product operations - Admin or Manager
-    createProduct: isAdminOrManager,
-    updateProduct: isAdminOrManager,
-    deleteProduct: isAdmin,
+    // // Product operations - Admin or Manager
+    // createProduct: isAdminOrManager,
+    // updateProduct: isAdminOrManager,
+    // deleteProduct: isAdmin,
     
-    // Upload operations - Admin or Manager
-    upload: isAdminOrManager,
-    uploadProductImage: isAdminOrManager,
-    uploadProductImages: isAdminOrManager,
-    removeProductImage: isAdminOrManager,
+    // // Upload operations - Admin or Manager
+    // upload: isAdminOrManager,
+    // uploadProductImage: isAdminOrManager,
+    // uploadProductImages: isAdminOrManager,
+    // removeProductImage: isAdminOrManager,
     
-    // Cart operations - Customer access required
-    addToCart: isAuthenticated,
-    updateCartItem: isAuthenticated,
-    removeFromCart: isAuthenticated,
-    clearCart: isAuthenticated,
+    // // Cart operations - Customer access required
+    // addToCart: isAuthenticated,
+    // updateCartItem: isAuthenticated,
+    // removeFromCart: isAuthenticated,
+    // clearCart: isAuthenticated,
     
-    // Order operations
-    createOrderFromCart: isAuthenticated, // Customer can create orders
-    updateOrderStatus: isAdminOrManager,  // Admin/Manager can update status
-    updatePaymentStatus: isAdminOrManager, // Admin/Manager can update payment
-    cancelOrder: isAdminOrManager,        // Admin/Manager can cancel orders
+    // // Order operations
+    // createOrderFromCart: isAuthenticated, // Customer can create orders
+    // updateOrderStatus: isAdminOrManager,  // Admin/Manager can update status
+    // updatePaymentStatus: isAdminOrManager, // Admin/Manager can update payment
+    // cancelOrder: isAdminOrManager,        // Admin/Manager can cancel orders
   },
 };

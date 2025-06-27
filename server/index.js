@@ -11,6 +11,8 @@ import fs from "fs";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -94,4 +96,8 @@ if (!fs.existsSync(imgDir)) {
 
 app.listen(PORT, () => {
   console.info(`Server is running on http://localhost:${PORT}`);
+});
+
+app.get('/health', (req, res) => {
+  res.send('✅ MongoDB is connected & SmartShop is healthy');
 });

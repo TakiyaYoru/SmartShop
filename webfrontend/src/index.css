@@ -199,15 +199,13 @@
   .dropdown-item {
     @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors;
   }
-}
 
-@layer utilities {
-  /* Custom Scrollbar */
+  /* Scrollbar Components */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -221,26 +219,63 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 3px;
+    @apply bg-gray-100 rounded-full;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
+    @apply bg-gray-300 rounded-full;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    @apply bg-gray-400;
+  }
+
+  /* Carousel Components */
+  .carousel-container {
+    @apply relative overflow-hidden;
+  }
+
+  .carousel-track {
+    @apply flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth;
+    scroll-snap-type: x mandatory;
+  }
+
+  .carousel-item {
+    @apply flex-shrink-0;
+    scroll-snap-align: start;
+  }
+
+  .carousel-nav-button {
+    @apply absolute top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full p-3 shadow-lg hover:bg-white transition-all duration-300;
+  }
+
+  .carousel-nav-button-left {
+    @apply left-0 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0;
+  }
+
+  .carousel-nav-button-right {
+    @apply right-0 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0;
+  }
+
+  .carousel-indicators {
+    @apply flex justify-center mt-6 space-x-2;
+  }
+
+  .carousel-indicator {
+    @apply w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors cursor-pointer;
+  }
+
+  .carousel-indicator-active {
+    @apply bg-blue-600;
   }
 
   /* Glass Effect */
   .glass {
-    @apply bg-white/80 backdrop-blur-md border border-white/20;
+    @apply backdrop-blur-sm bg-white bg-opacity-10 border border-white border-opacity-20;
   }
 
   .glass-dark {
-    @apply bg-gray-900/80 backdrop-blur-md border border-gray-700/20;
+    @apply backdrop-blur-sm bg-black bg-opacity-20 border border-white border-opacity-10;
   }
 
   /* Text Gradients */
@@ -249,44 +284,85 @@
   }
 
   .text-gradient-success {
-    @apply bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-warning {
-    @apply bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-danger {
-    @apply bg-gradient-to-r from-red-500 to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent;
   }
 
-  /* Animations */
+  /* Animation Classes */
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.6s ease-out;
   }
 
   .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp 0.6s ease-out;
   }
 
   .animate-slide-down {
-    animation: slideDown 0.3s ease-out;
+    animation: slideDown 0.6s ease-out;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.2s ease-out;
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  /* Homepage Specific Animations */
+  .animate-fade-in-delay {
+    animation: fadeIn 0.8s ease-out 0.2s both;
+  }
+
+  .animate-fade-in-delay-2 {
+    animation: fadeIn 1s ease-out 0.4s both;
+  }
+
+  .animate-fade-in-delay-3 {
+    animation: fadeIn 1.2s ease-out 0.6s both;
+  }
+
+  .animate-slide-up-delay {
+    animation: slideUp 0.8s ease-out 0.3s both;
+  }
+
+  .animate-slide-up-delay-2 {
+    animation: slideUp 0.8s ease-out 0.5s both;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.8s ease-out;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* Hover Effects */
   .hover-lift {
-    @apply transition-transform duration-200 hover:scale-105;
+    @apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg;
   }
 
   .hover-glow {
-    @apply transition-shadow duration-200 hover:shadow-lg hover:shadow-blue-500/25;
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25;
   }
 
-  /* Focus Effects */
+  .hover-rotate {
+    @apply transition-transform duration-300 hover:rotate-3;
+  }
+
+  .hover-bounce {
+    @apply transition-transform duration-300 hover:scale-110;
+  }
+
+  /* Focus States */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
   }
@@ -296,7 +372,7 @@
   }
 }
 
-/* Custom Animations */
+/* Keyframe Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -309,7 +385,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -320,7 +396,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
@@ -331,7 +407,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -339,21 +415,48 @@
   }
 }
 
-/* React Hot Toast Custom Styles */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Toast Styles */
 .Toaster__toast {
-  @apply rounded-xl shadow-lg;
+  @apply rounded-xl shadow-lg border;
 }
 
 .Toaster__toast--success {
-  @apply bg-green-500;
+  @apply bg-green-50 border-green-200 text-green-800;
 }
 
 .Toaster__toast--error {
-  @apply bg-red-500;
+  @apply bg-red-50 border-red-200 text-red-800;
 }
 
 .Toaster__toast--loading {
-  @apply bg-blue-500;
+  @apply bg-blue-50 border-blue-200 text-blue-800;
 }
 
 /* Selection Styles */
@@ -365,7 +468,7 @@
   @apply bg-blue-200 text-blue-900;
 }
 
-/* Focus Visible for Accessibility */
+/* Focus Visible */
 *:focus-visible {
   @apply outline-none ring-2 ring-blue-500 ring-offset-2;
 }
@@ -375,8 +478,8 @@
   .no-print {
     display: none !important;
   }
-  
+
   .print-break {
-    page-break-after: always;
+    page-break-before: always;
   }
 }
