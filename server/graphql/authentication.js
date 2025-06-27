@@ -213,6 +213,7 @@ export const resolvers = {
       };
     },
 
+
     sendPasswordResetOTP: async (parent, args, context, info) => {
       const { email } = args.input;
 
@@ -230,10 +231,18 @@ export const resolvers = {
       console.log('User found:', user ? 'Yes' : 'No');
       
       if (!user) {
+        // ===== THAY ĐỔI: Trả về success false cho email không tồn tại =====
         return {
-          success: true,
-          message: "If an account with that email exists, an OTP has been sent.",
+          success: false,
+          message: "Email không tồn tại trong hệ thống. Vui lòng kiểm tra lại.",
         };
+        
+        // HOẶC nếu muốn giữ bảo mật, có thể delay và trả về như đã gửi:
+        // await new Promise(resolve => setTimeout(resolve, 2000)); // Delay 2s
+        // return {
+        //   success: true,
+        //   message: "Nếu email tồn tại, mã OTP đã được gửi.",
+        // };
       }
 
       if (!user.isActive) {
@@ -258,7 +267,7 @@ export const resolvers = {
 
         return {
           success: true,
-          message: "OTP has been sent to your email. Please check your inbox.",
+          message: "OTP has been sent to your email. Please check your inbox.", // ← Message này sẽ được frontend check
         };
 
       } catch (error) {

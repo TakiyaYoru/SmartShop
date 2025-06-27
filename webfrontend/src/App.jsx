@@ -1,4 +1,14 @@
-// webfrontend/src/App.jsx - CẬP NHẬT thêm CartPage import và route
+// ===== CURRENT ROUTING STATUS =====
+
+// ❌ MISSING ROUTES for Forgot Password feature:
+
+// 1. IN App.jsx - MISSING:
+//    - import ForgotPasswordPage
+//    - <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+// ===== COMPLETE ROUTER FIX =====
+// File: webfrontend/src/App.jsx (FINAL COMPLETE VERSION)
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -6,6 +16,7 @@ import { useAuth } from './contexts/AuthContext';
 // Pages
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage'; // ← MISSING IMPORT
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -39,11 +50,14 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        {/* Public Routes */}
+        {/* ===== PUBLIC ROUTES ===== */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         
-        {/* Protected Routes - Customer */}
+        {/* ❌ MISSING: Forgot Password Route */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        
+        {/* ===== PROTECTED CUSTOMER ROUTES ===== */}
         <Route 
           path="/" 
           element={
@@ -70,14 +84,12 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/cart" 
           element={
             <ProtectedRoute>
-              <div className="p-8">
-                <h1>Cart Page Test</h1>
-                <p>Nếu thấy text này thì route đã hoạt động!</p>
-              </div>
+              <CartPage />
             </ProtectedRoute>
           } 
         />
@@ -107,7 +119,7 @@ function App() {
                 <div className="max-w-7xl mx-auto">
                   <h1 className="text-3xl font-bold text-gray-900 mb-6">Thương hiệu</h1>
                   <div className="bg-white rounded-lg shadow p-6">
-                    <p className="text-gray-600">Trang thương hiệu sẽ được phát triển ở phần tiếp theo! 🏪</p>
+                    <p className="text-gray-600">Trang thương hiệu sẽ được phát triển ở phần tiếp theo! 🏷️</p>
                   </div>
                 </div>
               </div>
@@ -115,88 +127,77 @@ function App() {
           } 
         />
 
-        {/* Admin Routes */}
-        
-        {/* Standalone Admin Products Page */}
-        <Route 
-          path="/admin/products" 
-          element={
-            <AdminRoute>
-              <AdminProductsPage />
-            </AdminRoute>
-          } 
-        />
-
-        {/* Admin Product Management with shared layout */}
-        <Route 
-          path="/admin/products/create" 
-          element={
-            <AdminRoute>
-              <AdminLayout>
-                <CreateProductPage />
-              </AdminLayout>
-            </AdminRoute>
-          } 
-        />
-
-        <Route 
-          path="/admin/products/edit/:id" 
-          element={
-            <AdminRoute>
-              <AdminLayout>
-                <EditProductPage />
-              </AdminLayout>
-            </AdminRoute>
-          } 
-        />
-
-        {/* Other Admin Routes with shared layout */}
+        {/* ===== ADMIN ROUTES ===== */}
         <Route 
           path="/admin/*" 
           element={
             <AdminRoute>
-              <Routes>
-                <Route path="/" element={<AdminLayout />}>
-                  <Route index element={<DashboardPage />} />
-                  <Route path="orders" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">Order Management</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">Order management will be implemented soon! 📦</p>
-                      </div>
-                    </div>
-                  } />
-                  <Route path="categories" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">Category Management</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">Category management will be implemented soon! 📂</p>
-                      </div>
-                    </div>
-                  } />
-                  <Route path="brands" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">Brand Management</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">Brand management will be implemented soon! 🏪</p>
-                      </div>
-                    </div>
-                  } />
-                  <Route path="settings" element={
-                    <div className="p-6">
-                      <h1 className="text-2xl font-bold mb-4">Settings</h1>
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <p className="text-gray-600">Settings panel will be implemented soon! ⚙️</p>
-                      </div>
-                    </div>
-                  } />
-                </Route>
-              </Routes>
+              <AdminLayout />
             </AdminRoute>
-          } 
-        />
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="products/create" element={<CreateProductPage />} />
+          <Route path="products/edit/:id" element={<EditProductPage />} />
+          
+          {/* Placeholder admin routes */}
+          <Route path="categories" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Categories</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Categories management will be implemented soon! 📂</p>
+              </div>
+            </div>
+          } />
+          
+          <Route path="brands" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Brands</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Brands management will be implemented soon! 🏷️</p>
+              </div>
+            </div>
+          } />
+          
+          <Route path="orders" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Orders</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Orders management will be implemented soon! 📦</p>
+              </div>
+            </div>
+          } />
+          
+          <Route path="users" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Users</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Users management will be implemented soon! 👥</p>
+              </div>
+            </div>
+          } />
+          
+          <Route path="reports" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Reports</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Reports will be implemented soon! 📊</p>
+              </div>
+            </div>
+          } />
+          
+          <Route path="settings" element={
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Settings</h1>
+              <div className="bg-white rounded-lg shadow p-6">
+                <p className="text-gray-600">Settings panel will be implemented soon! ⚙️</p>
+              </div>
+            </div>
+          } />
+        </Route>
 
-        {/* Manager Routes */}
+        {/* ===== MANAGER ROUTES ===== */}
         <Route 
           path="/manager/*" 
           element={
@@ -218,7 +219,7 @@ function App() {
           } 
         />
         
-        {/* 404 Page */}
+        {/* ===== 404 PAGE ===== */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
