@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 """
-SmartShop Core Code Extractor
+SmartShop Core Code Extractor - UPDATED VERSION
 Extract các file quan trọng nhất từ SmartShop project
 """
 
 import os
 from pathlib import Path
 
-# Danh sách các file quan trọng cần extract
+# Danh sách các file quan trọng cần extract - UPDATED
 IMPORTANT_FILES = [
     # Backend - Core files
     "server/package.json",
     "server/index.js",
     "server/config.js",
     "server/permissions.js",
+    "server/check-db.js",
+    "server/migrate-mongo-config.js",
+    "server/jest.config.json",
     
     # Backend - GraphQL
     "server/graphql/schema.js",
+    "server/graphql/hello.js",
     "server/graphql/authentication.js",
     "server/graphql/products.js",
     "server/graphql/categories.js",
@@ -37,11 +41,25 @@ IMPORTANT_FILES = [
     
     # Backend - Data layer
     "server/data/mongoRepo.js",
+    "server/data/mockRepo.js",
     "server/data/init.js",
+    
+    # Backend - Utils & Services
+    "server/utils/otpUtils.js",
+    "server/utils/passwordReset.js",
+    "server/utils/imageHelper.js",
+    "server/services/emailService.js",
     
     # Backend - Migrations
     "server/migrations/20250601031152-initial_smartshop_data.js",
     "server/migrations/20250601032421-add_sample_images.js",
+    
+    # Backend - Tests
+    "server/data/__tests__/categories.test.js",
+    "server/data/__tests__/products.test.js",
+    "server/test/globalSetup.js",
+    "server/test/globalTeardown.js",
+    "server/test/setupFileAfterEnv.js",
     
     # Frontend - Core files
     "webfrontend/package.json",
@@ -49,6 +67,7 @@ IMPORTANT_FILES = [
     "webfrontend/tailwind.config.js",
     "webfrontend/postcss.config.js",
     "webfrontend/eslint.config.js",
+    "webfrontend/index.html",
     
     # Frontend - Main app
     "webfrontend/src/main.jsx",
@@ -69,6 +88,7 @@ IMPORTANT_FILES = [
     "webfrontend/src/graphql/categories.js",
     "webfrontend/src/graphql/brands.js",
     "webfrontend/src/graphql/cart.js",
+    "webfrontend/src/graphql/orders.js",
     "webfrontend/src/graphql/upload.js",
     "webfrontend/src/graphql/admin.js",
     
@@ -90,7 +110,7 @@ IMPORTANT_FILES = [
     "webfrontend/src/components/products/ProductFilter.jsx",
     "webfrontend/src/components/products/ProductSearch.jsx",
     
-    # Frontend - Cart Components (NEW)
+    # Frontend - Cart Components
     "webfrontend/src/components/cart/CartIcon.jsx",
     "webfrontend/src/components/cart/CartItem.jsx",
     "webfrontend/src/components/cart/CartSummary.jsx",
@@ -103,11 +123,16 @@ IMPORTANT_FILES = [
     "webfrontend/src/pages/HomePage.jsx",
     "webfrontend/src/pages/LoginPage.jsx",
     "webfrontend/src/pages/RegisterPage.jsx",
+    "webfrontend/src/pages/ForgotPasswordPage.jsx",
     "webfrontend/src/pages/ProductsPage.jsx",
     "webfrontend/src/pages/ProductDetailPage.jsx",
     "webfrontend/src/pages/CategoriesPage.jsx",
     "webfrontend/src/pages/BrandsPage.jsx",
     "webfrontend/src/pages/CartPage.jsx",
+    "webfrontend/src/pages/CheckoutPage.jsx",
+    "webfrontend/src/pages/OrdersPage.jsx",
+    "webfrontend/src/pages/OrderDetailPage.jsx",
+    "webfrontend/src/pages/OrderSuccessPage.jsx",
     "webfrontend/src/pages/NotFoundPage.jsx",
     
     # Frontend - Admin Pages
@@ -156,31 +181,33 @@ def format_file_section(file_path, content):
 def extract_smartshop_core():
     """Extract core files của SmartShop"""
     
-    print("🚀 SmartShop Core Code Extractor")
-    print("="*50)
+    print("🚀 SmartShop Core Code Extractor - UPDATED VERSION")
+    print("="*60)
     
-    output_file = "smartshop_core_code.txt"
+    output_file = "smartshop_core_code_complete.txt"
     
     # Tạo header
     header = f"""
 {'='*100}
-SMARTSHOP CORE CODE EXTRACTION
+SMARTSHOP CORE CODE EXTRACTION - COMPLETE VERSION
 {'='*100}
 Generated on: {os.popen('date').read().strip()}
 Project: SmartShop E-commerce System
-Description: Core files for backend (Node.js/GraphQL) and frontend (React/Vite)
+Description: Complete core files for backend (Node.js/GraphQL) and frontend (React/Vite)
 
 {'='*100}
 PROJECT OVERVIEW
 {'='*100}
 Backend: Node.js + Express + GraphQL + MongoDB
 Frontend: React 18 + Vite + Tailwind CSS + Apollo Client
-Authentication: JWT + bcrypt
-File Upload: GraphQL Upload
+Authentication: JWT + bcrypt + OTP reset password
+File Upload: GraphQL Upload with multiple images
 Authorization: Role-based (admin/manager/customer)
+Email Service: Nodemailer for password reset
+Testing: Jest + MongoDB Memory Server
 
 {'='*100}
-CORE FILES LIST
+CORE FILES LIST - UPDATED
 {'='*100}
 """
     
@@ -222,7 +249,7 @@ CORE FILES LIST
     # Thêm footer
     footer = f"""
 {'='*100}
-EXTRACTION SUMMARY
+EXTRACTION SUMMARY - COMPLETE VERSION
 {'='*100}
 Total core files: {len(IMPORTANT_FILES)}
 Successfully processed: {processed_files}
@@ -241,7 +268,7 @@ MISSING FILES
         footer += "None - All files processed successfully!\n"
     
     footer += f"\n{'='*100}\n"
-    footer += "SMARTSHOP PROJECT STRUCTURE\n"
+    footer += "SMARTSHOP PROJECT STRUCTURE - COMPLETE\n"
     footer += f"{'='*100}\n"
     footer += """
 SmartShop/
@@ -249,8 +276,12 @@ SmartShop/
 │   ├── index.js           # Main server entry
 │   ├── config.js          # Database configuration
 │   ├── permissions.js     # Authorization middleware
+│   ├── check-db.js        # Database connection check
+│   ├── migrate-mongo-config.js # Migration config
+│   ├── jest.config.json   # Test configuration
 │   ├── graphql/           # GraphQL schema & resolvers
 │   │   ├── schema.js      # Main schema
+│   │   ├── hello.js       # Hello resolver
 │   │   ├── authentication.js
 │   │   ├── products.js
 │   │   ├── categories.js
@@ -260,89 +291,120 @@ SmartShop/
 │   │   └── upload.js
 │   ├── data/              # Data layer
 │   │   ├── models/        # Mongoose models
+│   │   │   ├── index.js
+│   │   │   ├── user.js
+│   │   │   ├── product.js
+│   │   │   ├── category.js
+│   │   │   ├── brand.js
+│   │   │   ├── cart.js
+│   │   │   ├── order.js
+│   │   │   └── orderItem.js
 │   │   ├── mongoRepo.js   # Repository pattern
-│   │   └── init.js        # Database initialization
+│   │   ├── mockRepo.js    # Mock repository for tests
+│   │   ├── init.js        # Database initialization
+│   │   └── __tests__/     # Data layer tests
+│   │       ├── categories.test.js
+│   │       └── products.test.js
+│   ├── utils/             # Utility functions
+│   │   ├── otpUtils.js    # OTP generation & validation
+│   │   ├── passwordReset.js # Password reset utilities
+│   │   └── imageHelper.js # Image processing utilities
+│   ├── services/          # External services
+│   │   └── emailService.js # Email service for password reset
 │   ├── migrations/        # Database migrations
 │   │   ├── 20250601031152-initial_smartshop_data.js
 │   │   └── 20250601032421-add_sample_images.js
+│   ├── test/              # Test setup files
+│   │   ├── globalSetup.js
+│   │   ├── globalTeardown.js
+│   │   └── setupFileAfterEnv.js
 │   └── img/               # Uploaded images
 ├── webfrontend/           # Frontend React/Vite
-│   ├── src/
-│   │   ├── main.jsx       # App entry point
-│   │   ├── App.jsx        # Main app component
-│   │   ├── router.jsx     # React Router setup
-│   │   ├── contexts/      # React contexts
-│   │   │   ├── AuthContext.jsx
-│   │   │   └── CartContext.jsx
-│   │   ├── hooks/         # Custom hooks
-│   │   │   ├── useAuth.js
-│   │   │   ├── useProducts.js
-│   │   │   └── useUpload.js
-│   │   ├── components/    # Reusable components
-│   │   │   ├── common/    # Common components
-│   │   │   │   ├── Layout.jsx
-│   │   │   │   ├── Header.jsx
-│   │   │   │   ├── Sidebar.jsx
-│   │   │   │   ├── Footer.jsx
-│   │   │   │   └── LoadingSkeleton.jsx
-│   │   │   ├── auth/      # Authentication components
-│   │   │   │   ├── LoginForm.jsx
-│   │   │   │   ├── RegisterForm.jsx
-│   │   │   │   └── ProtectedRoute.jsx
-│   │   │   ├── products/  # Product components
-│   │   │   │   ├── ProductCard.jsx
-│   │   │   │   ├── ProductList.jsx
-│   │   │   │   ├── ProductFilter.jsx
-│   │   │   │   └── ProductSearch.jsx
-│   │   │   ├── cart/      # Cart components
-│   │   │   │   ├── CartIcon.jsx
-│   │   │   │   ├── CartItem.jsx
-│   │   │   │   ├── CartSummary.jsx
-│   │   │   │   └── AddToCartButton.jsx
-│   │   │   └── admin/     # Admin components
-│   │   │       └── AdminLayout.jsx
-│   │   ├── pages/         # Page components
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── RegisterPage.jsx
-│   │   │   ├── ProductsPage.jsx
-│   │   │   ├── ProductDetailPage.jsx
-│   │   │   ├── CategoriesPage.jsx
-│   │   │   ├── BrandsPage.jsx
-│   │   │   ├── CartPage.jsx
-│   │   │   ├── NotFoundPage.jsx
-│   │   │   └── admin/     # Admin pages
-│   │   │       ├── DashboardPage.jsx
-│   │   │       ├── AdminProductsPage.jsx
-│   │   │       ├── CreateProductPage.jsx
-│   │   │       ├── EditProductPage.jsx
-│   │   │       └── products/  # Admin product components
-│   │   │           ├── ProductTable.jsx
-│   │   │           ├── ProductForm.jsx
-│   │   │           ├── ProductFilter.jsx
-│   │   │           ├── AdminProductFilter.jsx
-│   │   │           └── ImageUpload.jsx
-│   │   ├── graphql/       # GraphQL queries/mutations
-│   │   │   ├── auth.js
-│   │   │   ├── products.js
-│   │   │   ├── categories.js
-│   │   │   ├── brands.js
-│   │   │   ├── cart.js
-│   │   │   ├── upload.js
-│   │   │   └── admin.js
-│   │   └── lib/           # Utilities
-│   │       ├── apollo.js
-│   │       └── utils.js
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   └── eslint.config.js
+│   ├── index.html         # Main HTML file
+│   ├── package.json       # Frontend dependencies
+│   ├── vite.config.js     # Vite configuration
+│   ├── tailwind.config.js # Tailwind CSS config
+│   ├── postcss.config.js  # PostCSS config
+│   ├── eslint.config.js   # ESLint configuration
+│   └── src/
+│       ├── main.jsx       # App entry point
+│       ├── App.jsx        # Main app component
+│       ├── router.jsx     # React Router setup
+│       ├── index.css      # Global styles
+│       ├── App.css        # App-specific styles
+│       ├── contexts/      # React contexts
+│       │   ├── AuthContext.jsx
+│       │   └── CartContext.jsx
+│       ├── hooks/         # Custom hooks
+│       │   ├── useAuth.js
+│       │   ├── useProducts.js
+│       │   └── useUpload.js
+│       ├── components/    # Reusable components
+│       │   ├── common/    # Common components
+│       │   │   ├── Layout.jsx
+│       │   │   ├── Header.jsx
+│       │   │   ├── Sidebar.jsx
+│       │   │   ├── Footer.jsx
+│       │   │   └── LoadingSkeleton.jsx
+│       │   ├── auth/      # Authentication components
+│       │   │   ├── LoginForm.jsx
+│       │   │   ├── RegisterForm.jsx
+│       │   │   └── ProtectedRoute.jsx
+│       │   ├── products/  # Product components
+│       │   │   ├── ProductCard.jsx
+│       │   │   ├── ProductList.jsx
+│       │   │   ├── ProductFilter.jsx
+│       │   │   └── ProductSearch.jsx
+│       │   ├── cart/      # Cart components
+│       │   │   ├── CartIcon.jsx
+│       │   │   ├── CartItem.jsx
+│       │   │   ├── CartSummary.jsx
+│       │   │   └── AddToCartButton.jsx
+│       │   └── admin/     # Admin components
+│       │       └── AdminLayout.jsx
+│       ├── pages/         # Page components
+│       │   ├── HomePage.jsx
+│       │   ├── LoginPage.jsx
+│       │   ├── RegisterPage.jsx
+│       │   ├── ForgotPasswordPage.jsx
+│       │   ├── ProductsPage.jsx
+│       │   ├── ProductDetailPage.jsx
+│       │   ├── CategoriesPage.jsx
+│       │   ├── BrandsPage.jsx
+│       │   ├── CartPage.jsx
+│       │   ├── CheckoutPage.jsx
+│       │   ├── OrdersPage.jsx
+│       │   ├── OrderDetailPage.jsx
+│       │   ├── OrderSuccessPage.jsx
+│       │   ├── NotFoundPage.jsx
+│       │   └── admin/     # Admin pages
+│       │       ├── DashboardPage.jsx
+│       │       ├── AdminProductsPage.jsx
+│       │       ├── CreateProductPage.jsx
+│       │       ├── EditProductPage.jsx
+│       │       └── products/  # Admin product components
+│       │           ├── ProductTable.jsx
+│       │           ├── ProductForm.jsx
+│       │           ├── ProductFilter.jsx
+│       │           ├── AdminProductFilter.jsx
+│       │           └── ImageUpload.jsx
+│       ├── graphql/       # GraphQL queries/mutations
+│       │   ├── auth.js
+│       │   ├── products.js
+│       │   ├── categories.js
+│       │   ├── brands.js
+│       │   ├── cart.js
+│       │   ├── orders.js
+│       │   ├── upload.js
+│       │   └── admin.js
+│       └── lib/           # Utilities
+│           ├── apollo.js
+│           └── utils.js
 └── README.md
 """
     
     footer += f"\n{'='*100}\n"
-    footer += "EXTRACTION COMPLETED\n"
+    footer += "EXTRACTION COMPLETED - COMPLETE VERSION\n"
     footer += f"{'='*100}\n"
     
     with open(output_file, 'a', encoding='utf-8') as f:

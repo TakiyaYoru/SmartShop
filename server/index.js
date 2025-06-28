@@ -1,3 +1,5 @@
+// File: server/index.js - ORIGINAL STRUCTURE WITH DEBUG
+
 import { createYoga } from "graphql-yoga";
 import { schema } from "./graphql/schema.js";
 import { useGraphQLMiddleware } from "@envelop/graphql-middleware";
@@ -11,8 +13,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -23,6 +23,24 @@ import { initDatabase } from "./data/init.js";
 
 // Initialize database connection
 await initDatabase();
+
+// ✅ DEBUG: Log db object structure
+console.log('🔍 DEBUG: Checking db object structure...');
+console.log('🔍 Available db keys:', Object.keys(db));
+
+if (db.orders) {
+  console.log('✅ db.orders exists');
+  console.log('🔍 db.orders methods:', Object.keys(db.orders));
+} else {
+  console.error('❌ db.orders is missing!');
+}
+
+if (db.orderItems) {
+  console.log('✅ db.orderItems exists');
+  console.log('🔍 db.orderItems methods:', Object.keys(db.orderItems));
+} else {
+  console.error('❌ db.orderItems is missing!');
+}
 
 const signingKey = process.env.JWT_SECRET;
 
@@ -45,12 +63,53 @@ const yoga = createYoga({
       }
     }
 
+    // ✅ DEBUG: Log context creation for order queries
+    const body = await request.text();
+    if (body && body.includes('getMyOrder')) {
+      console.log('🔍 Creating context for getMyOrder query');
+      console.log('🔍 User:', user ? `${user.username} (${user.id})` : 'Not authenticated');
+      console.log('🔍 DB object keys:', Object.keys(db));
+      console.log('🔍 db.orders available:', !!db.orders);
+      console.log('🔍 db.orderItems available:', !!db.orderItems);
+      console.log('🔍 db.orderItems.getByOrderId available:', !!db.orderItems?.getByOrderId);
+    }
+
     return {
       db: db,
       user: user,
       secret: request.headers.get("secret"),
     };
   },
+  formatError: (error) => {
+    console.error('❌ GraphQL Error Details:');
+    console.error('Message:', error.message);
+    console.error('Path:', error.path);
+    console.error('Locations:', error.locations);
+    console.error('Extensions:', error.extensions);
+    console.error('Original Error:', error.originalError);
+    console.error('Stack:', error.stack);
+    
+    // ✅ DEBUG: Return more detailed error info in development
+    if (process.env.NODE_ENV !== 'production') {
+      return {
+        message: error.message,
+        locations: error.locations,
+        path: error.path,
+        extensions: {
+          code: error.extensions?.code,
+          exception: {
+            stacktrace: error.stack?.split('\n') || []
+          }
+        }
+      };
+    }
+    
+    return {
+      message: error.message,
+      locations: error.locations,
+      path: error.path
+    };
+  }
 });
 
 // Tạo Express app
@@ -95,7 +154,15 @@ if (!fs.existsSync(imgDir)) {
 }
 
 app.listen(PORT, () => {
-  console.info(`Server is running on http://localhost:${PORT}`);
+  console.info(`🚀 SmartShop GraphQL Server ready at http://localhost:${PORT}/`);
+  console.info(`📊 Health check available at http://localhost:${PORT}/health`);
+  console.info(`🖼️  Static images served at http://localhost:${PORT}/img`);
+  
+  // ✅ DEBUG: Final check
+  console.log('🔍 Final db object check:');
+  console.log('  - db.orders:', !!db.orders);
+  console.log('  - db.orderItems:', !!db.orderItems);
+  console.log('  - db.orderItems.getByOrderId:', !!db.orderItems?.getByOrderId);
 });
 
 app.get('/health', (req, res) => {

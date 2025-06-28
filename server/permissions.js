@@ -1,3 +1,5 @@
+// File: server/permissions.js - ALLOW CUSTOMER TO CANCEL THEIR OWN ORDERS
+
 import { GraphQLError } from "graphql";
 
 const hasValidSecret = async (next, parent, args, ctx, info) => {
@@ -39,6 +41,22 @@ const isAdminOrManager = async (next, parent, args, ctx, info) => {
   return next();
 };
 
+// ✅ NEW: Allow customers to cancel their own orders
+const canCancelOrder = async (next, parent, args, ctx, info) => {
+  if (!ctx.user) {
+    throw new GraphQLError("Authentication required.");
+  }
+  
+  // Admin and Manager can cancel any order
+  if (ctx.user.role === "admin" || ctx.user.role === "manager") {
+    return next();
+  }
+  
+  // Customer can only cancel their own pending/confirmed orders
+  // Additional validation will be done in the resolver
+  return next();
+};
+
 export const permissions = {
   Query: {
     // Cart queries require authentication
@@ -56,37 +74,37 @@ export const permissions = {
   },
   
   Mutation: {
-    // // Category operations - Admin only
+    // Category operations - Admin only
     createCategory: isAdmin,
     updateCategory: isAdmin,
     deleteCategory: isAdmin,
     
-    // // Brand operations - Admin only
+    // Brand operations - Admin only
     createBrand: isAdmin,
     updateBrand: isAdmin,
     deleteBrand: isAdmin,
     
-    // // Product operations - Admin or Manager
+    // Product operations - Admin or Manager
     createProduct: isAdminOrManager,
     updateProduct: isAdminOrManager,
     deleteProduct: isAdmin,
     
-    // // Upload operations - Admin or Manager
+    // Upload operations - Admin or Manager
     upload: isAdminOrManager,
     uploadProductImage: isAdminOrManager,
     uploadProductImages: isAdminOrManager,
     removeProductImage: isAdminOrManager,
     
-    // // Cart operations - Customer access required
+    // Cart operations - Customer access required
     addToCart: isAuthenticated,
     updateCartItem: isAuthenticated,
     removeFromCart: isAuthenticated,
     clearCart: isAuthenticated,
     
-    // // Order operations
-    createOrderFromCart: isAuthenticated, // Customer can create orders
-    updateOrderStatus: isAdminOrManager,  // Admin/Manager can update status
-    updatePaymentStatus: isAdminOrManager, // Admin/Manager can update payment
-    cancelOrder: isAdminOrManager,        // Admin/Manager can cancel orders
+    // Order operations
+    createOrderFromCart: isAuthenticated,     // Customer can create orders
+    updateOrderStatus: isAdminOrManager,      // Admin/Manager can update status
+    updatePaymentStatus: isAdminOrManager,    // Admin/Manager can update payment
+    cancelOrder: canCancelOrder,             // ✅ FIXED: Customer can cancel their own orders
   },
 };

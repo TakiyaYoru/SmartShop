@@ -422,7 +422,7 @@ const db = {
     }
   },
 
-users: {
+  users: {
     findOne: async (username) => {
       return await User.findOne({ username }).lean();
     },
@@ -666,49 +666,58 @@ users: {
     }
   },
   orders: {
-    // Generate unique order number
-    generateOrderNumber: async () => {
-      const today = new Date();
-      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
-      
-      // Find the last order of today
-      const lastOrder = await Order.findOne({
-        orderNumber: { $regex: `^DH${dateStr}` }
-      }).sort({ orderNumber: -1 });
-      
-      let sequence = 1;
-      if (lastOrder) {
-        const lastSequence = parseInt(lastOrder.orderNumber.slice(-3));
-        sequence = lastSequence + 1;
-      }
-      
-      return `DH${dateStr}${sequence.toString().padStart(3, '0')}`;
-    },
-
     // Create order from cart
     createFromCart: async (userId, orderInput) => {
       const session = await mongoose.startSession();
       
       try {
-        await session.startTransaction();
+        session.startTransaction();
         
-        // 1. Validate cart
-        const cartValidation = await db.carts.validateCart(userId);
-        if (!cartValidation.isValid) {
-          throw new Error(`Cart validation failed: ${cartValidation.errors.join(', ')}`);
+        // 1. Get and validate cart
+        const cartItems = await Cart.find({ userId }).populate('productId');
+        
+        if (!cartItems || cartItems.length === 0) {
+          throw new Error('Cart is empty');
         }
         
-        const cartItems = cartValidation.validItems;
-        if (cartItems.length === 0) {
-          throw new Error('No valid items in cart');
-        }
+        // 2. Calculate order totals
+        let subtotal = 0;
+        const orderItemsData = [];
         
-        // 2. Calculate totals
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-        const totalAmount = subtotal; // No shipping fee for now
+        for (const cartItem of cartItems) {
+          const product = cartItem.productId;
+          
+          if (!product) {
+            throw new Error(`Product not found for cart item ${cartItem._id}`);
+          }
+          
+          if (product.stock < cartItem.quantity) {
+            throw new Error(`Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${cartItem.quantity}`);
+          }
+          
+          const itemTotal = cartItem.unitPrice * cartItem.quantity;
+          subtotal += itemTotal;
+          
+          // Prepare order item data
+          orderItemsData.push({
+            productId: product._id,
+            productName: product.name,
+            productSku: product.sku,
+            quantity: cartItem.quantity,
+            unitPrice: cartItem.unitPrice,
+            totalPrice: itemTotal,
+            productSnapshot: {
+              description: product.description,
+              images: product.images,
+              brand: product.brand?.name || 'Unknown',
+              category: product.category?.name || 'Unknown'
+            }
+          });
+        }
         
         // 3. Generate order number
-        const orderNumber = await db.orders.generateOrderNumber();
+        const orderCount = await Order.countDocuments() + 1;
+        const orderNumber = `DH${new Date().getFullYear()}${String(Date.now()).slice(-8)}${String(orderCount).padStart(3, '0')}`;
         
         // 4. Create order
         const orderData = {
@@ -716,66 +725,35 @@ users: {
           userId,
           customerInfo: orderInput.customerInfo,
           paymentMethod: orderInput.paymentMethod,
-          subtotal,
-          totalAmount,
-          customerNotes: orderInput.customerNotes || '',
+          paymentStatus: 'pending',
           status: 'pending',
-          paymentStatus: 'pending'
+          subtotal,
+          totalAmount: subtotal, // Could add tax, shipping later
+          customerNotes: orderInput.customerNotes,
+          orderDate: new Date()
         };
         
-        const order = new Order(orderData);
-        const savedOrder = await order.save({ session });
+        const order = await Order.create([orderData], { session });
+        const orderId = order[0]._id;
         
-        // 5. Create order items and update stock
-        const orderItems = [];
+        // 5. Create order items
+        const orderItemsWithOrderId = orderItemsData.map(item => ({
+          ...item,
+          orderId
+        }));
+        
+        await OrderItem.create(orderItemsWithOrderId, { session });
+        
+        // 6. Update product stock and clear cart
         for (const cartItem of cartItems) {
-          const product = cartItem.productId;
-          
-          console.log('Creating order item for product:', {
-            productId: product._id,
-            productName: product.name,
-            cartItem: cartItem
-          });
-          
-          // Create order item with snapshot data
-          const orderItemData = {
-            orderId: savedOrder._id,
-            productId: product._id.toString(),
-            productName: product.name,
-            productSku: product.sku,
-            quantity: cartItem.quantity,
-            unitPrice: cartItem.unitPrice,
-            totalPrice: cartItem.quantity * cartItem.unitPrice,
-            productSnapshot: {
-              description: product.description,
-              images: product.images || [],
-              brand: product.brand?.name || '',
-              category: product.category?.name || ''
-            }
-          };
-          
-          console.log('Order item data:', orderItemData);
-          
-          // Validate order item data
-          if (!orderItemData.productId || !orderItemData.productName || !orderItemData.productSku) {
-            throw new Error(`Invalid order item data: ${JSON.stringify(orderItemData)}`);
-          }
-          
-          const orderItem = new OrderItem(orderItemData);
-          const savedOrderItem = await orderItem.save({ session });
-          orderItems.push(savedOrderItem);
-          
-          console.log('Saved order item:', savedOrderItem);
-          
-          // Update stock
           await Product.findByIdAndUpdate(
-            product._id,
+            cartItem.productId._id,
             { $inc: { stock: -cartItem.quantity } },
             { session }
           );
         }
         
-        // 6. Clear cart
+        // Clear cart
         await Cart.deleteMany({ userId }, { session });
         
         await session.commitTransaction();
@@ -792,58 +770,17 @@ users: {
       }
     },
 
-    // Get paginated orders for admin
-    getAll: async ({ first = 10, offset = 0, orderBy = 'DATE_DESC', condition, search } = {}) => {
+    // Get order by order number
+    getByOrderNumber: async (orderNumber) => {
       try {
-        const columnMapping = {
-          DATE: 'orderDate',
-          STATUS: 'status',
-          TOTAL: 'totalAmount'
-        };
+        console.log('🔍 mongoRepo: Getting order by number:', orderNumber);
+        const order = await Order.findOne({ orderNumber })
+          .populate('userId', 'username email firstName lastName');
         
-        const query = {};
-        
-        if (condition) {
-          if (condition.status) query.status = condition.status;
-          if (condition.paymentStatus) query.paymentStatus = condition.paymentStatus;
-          if (condition.paymentMethod) query.paymentMethod = condition.paymentMethod;
-          if (condition.userId) query.userId = condition.userId;
-          
-          if (condition.dateFrom || condition.dateTo) {
-            query.orderDate = {};
-            if (condition.dateFrom) query.orderDate.$gte = new Date(condition.dateFrom);
-            if (condition.dateTo) query.orderDate.$lte = new Date(condition.dateTo);
-          }
-        }
-        
-        // Add search functionality
-        if (search && search.trim()) {
-          const searchRegex = { $regex: search.trim(), $options: 'i' };
-          query.$or = [
-            { orderNumber: searchRegex },
-            { 'customerInfo.fullName': searchRegex },
-            { 'customerInfo.phone': searchRegex },
-            { 'customerInfo.address': searchRegex }
-          ];
-        }
-        
-        const sortOptions = buildSortOptions(orderBy, columnMapping);
-        
-        console.log('Orders query:', query);
-        console.log('Orders sort:', sortOptions);
-        
-        const totalCount = await Order.countDocuments(query);
-        const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
-        
-        const items = await Order.find(query)
-          .populate('userId', 'username email firstName lastName')
-          .sort(sortOptions)
-          .skip(safeOffset)
-          .limit(first);
-        
-        return { items, totalCount };
+        console.log('📦 mongoRepo: Order found:', order ? 'Yes' : 'No');
+        return order;
       } catch (error) {
-        console.error('Error in orders.getAll:', error);
+        console.error('❌ mongoRepo: Error in getByOrderNumber:', error);
         throw error;
       }
     },
@@ -875,13 +812,54 @@ users: {
       }
     },
 
-    // Get order by order number
-    getByOrderNumber: async (orderNumber) => {
+    // Get all orders (admin)
+    getAll: async ({ first = 10, offset = 0, orderBy = 'DATE_DESC', condition, search } = {}) => {
       try {
-        return await Order.findOne({ orderNumber })
-          .populate('userId', 'username email firstName lastName');
+        const columnMapping = {
+          DATE: 'orderDate',
+          STATUS: 'status',
+          TOTAL: 'totalAmount'
+        };
+        
+        const query = {};
+        
+        if (condition) {
+          if (condition.status) query.status = condition.status;
+          if (condition.paymentStatus) query.paymentStatus = condition.paymentStatus;
+          if (condition.paymentMethod) query.paymentMethod = condition.paymentMethod;
+          if (condition.userId) query.userId = condition.userId;
+          
+          if (condition.dateFrom || condition.dateTo) {
+            query.orderDate = {};
+            if (condition.dateFrom) query.orderDate.$gte = new Date(condition.dateFrom);
+            if (condition.dateTo) query.orderDate.$lte = new Date(condition.dateTo);
+          }
+        }
+        
+        if (search && search.trim()) {
+          const searchRegex = { $regex: search.trim(), $options: 'i' };
+          query.$or = [
+            { orderNumber: searchRegex },
+            { 'customerInfo.fullName': searchRegex },
+            { 'customerInfo.phone': searchRegex },
+            { 'customerInfo.address': searchRegex }
+          ];
+        }
+        
+        const sortOptions = buildSortOptions(orderBy, columnMapping);
+        
+        const totalCount = await Order.countDocuments(query);
+        const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
+        
+        const items = await Order.find(query)
+          .populate('userId', 'username email firstName lastName')
+          .sort(sortOptions)
+          .skip(safeOffset)
+          .limit(first);
+        
+        return { items, totalCount };
       } catch (error) {
-        console.error('Error in orders.getByOrderNumber:', error);
+        console.error('Error in orders.getAll:', error);
         throw error;
       }
     },
@@ -894,7 +872,6 @@ users: {
           ...(adminNotes && { adminNotes })
         };
         
-        // Set timestamp fields based on status
         const now = new Date();
         switch (status) {
           case 'confirmed':
@@ -908,11 +885,10 @@ users: {
             break;
           case 'delivered':
             updateData.deliveredAt = now;
-            updateData.paymentStatus = 'paid'; // Auto-mark as paid when delivered
+            updateData.paymentStatus = 'paid';
             break;
           case 'cancelled':
             updateData.cancelledAt = now;
-            // Restore stock when cancelled
             await db.orders.restoreStockForOrder(orderNumber);
             break;
         }
@@ -942,8 +918,8 @@ users: {
       }
     },
 
-    // Cancel order and restore stock
-    cancelOrder: async (orderNumber, reason) => {
+    // Cancel order
+    cancel: async (orderNumber, reason) => {
       try {
         const updateData = {
           status: 'cancelled',
@@ -951,7 +927,6 @@ users: {
           ...(reason && { adminNotes: reason })
         };
         
-        // Restore stock
         await db.orders.restoreStockForOrder(orderNumber);
         
         return await Order.findOneAndUpdate(
@@ -960,12 +935,12 @@ users: {
           { new: true }
         ).populate('userId', 'username email firstName lastName');
       } catch (error) {
-        console.error('Error in orders.cancelOrder:', error);
+        console.error('Error in orders.cancel:', error);
         throw error;
       }
     },
 
-    // Restore stock when order is cancelled
+    // Restore stock for cancelled order
     restoreStockForOrder: async (orderNumber) => {
       try {
         const order = await Order.findOne({ orderNumber });
@@ -1035,15 +1010,31 @@ users: {
     }
   },
 
+  // ✅ FIX: OrderItems section - ĐÚNG STRUCTURE
   orderItems: {
-    // Get order items by order ID
+    // Get order items by order ID - ĐÂY LÀ FUNCTION BỊ THIẾU
     getByOrderId: async (orderId) => {
       try {
-        return await OrderItem.find({ orderId })
+        console.log('🔍 mongoRepo: Getting order items for orderId:', orderId);
+        
+        if (!orderId) {
+          console.log('❌ mongoRepo: orderId is null/undefined');
+          return [];
+        }
+        
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+          console.log('❌ mongoRepo: Invalid orderId format:', orderId);
+          return [];
+        }
+        
+        const items = await OrderItem.find({ orderId })
           .sort({ createdAt: 1 });
+        
+        console.log(`📦 mongoRepo: Found ${items?.length || 0} order items`);
+        return items || [];
       } catch (error) {
-        console.error('Error in orderItems.getByOrderId:', error);
-        throw error;
+        console.error('❌ mongoRepo: Error in orderItems.getByOrderId:', error);
+        return []; // Return empty array instead of throwing
       }
     },
 
@@ -1055,6 +1046,35 @@ users: {
           .sort({ createdAt: -1 });
       } catch (error) {
         console.error('Error in orderItems.getByProductId:', error);
+        throw error;
+      }
+    },
+
+    // Create order items (used during order creation)
+    createMany: async (orderItemsData, session = null) => {
+      try {
+        const options = session ? { session } : {};
+        return await OrderItem.create(orderItemsData, options);
+      } catch (error) {
+        console.error('Error creating order items:', error);
+        throw error;
+      }
+    },
+
+    // Get order items summary for reporting
+    getSummary: async (orderId) => {
+      try {
+        const items = await OrderItem.find({ orderId });
+        
+        const summary = {
+          totalItems: items.length,
+          totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
+          totalValue: items.reduce((sum, item) => sum + item.totalPrice, 0)
+        };
+        
+        return summary;
+      } catch (error) {
+        console.error('Error getting order items summary:', error);
         throw error;
       }
     }

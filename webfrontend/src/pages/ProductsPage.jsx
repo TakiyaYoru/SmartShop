@@ -75,6 +75,10 @@ const ProductsPage = () => {
 
   // ✅ FIXED: Logic để lấy data đúng
   const getDisplayData = () => {
+    console.log('getDisplayData - isSearchMode:', isSearchMode);
+    console.log('getDisplayData - searchResults:', searchResults);
+    console.log('getDisplayData - productsHook:', productsHook);
+    
     if (isSearchMode) {
       return {
         products: searchResults || [],
@@ -97,6 +101,10 @@ const ProductsPage = () => {
   };
 
   const { products: rawProducts, totalCount: rawTotalCount, loading, error } = getDisplayData();
+  
+  console.log('ProductsPage - rawProducts:', rawProducts);
+  console.log('ProductsPage - loading:', loading);
+  console.log('ProductsPage - error:', error);
 
   // Client-side filtering
   const filteredProducts = useMemo(() => {
@@ -127,6 +135,18 @@ const ProductsPage = () => {
       return true;
     });
   }, [rawProducts, filters]);
+
+  // ✅ FIXED: Thêm các biến còn thiếu
+  const totalFilteredCount = filteredProducts.length;
+  const totalPages = Math.ceil(totalFilteredCount / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalFilteredCount);
+
+  // Get current page products
+  const currentProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Sort options
   const sortOptions = [
@@ -218,7 +238,7 @@ const ProductsPage = () => {
     }
     
     // Stock
-    if (newFilters.stock !== 'all') {
+    if (newFilters.stock && newFilters.stock !== 'all') {
       newParams.set('stock', newFilters.stock);
     } else {
       newParams.delete('stock');
@@ -242,18 +262,6 @@ const ProductsPage = () => {
     setFilters(newFilters);
     setCurrentPage(1);
   };
-
-  // Calculate pagination for filtered products
-  const totalFilteredCount = filteredProducts.length;
-  const totalPages = Math.ceil(totalFilteredCount / itemsPerPage);
-  const startItem = ((currentPage - 1) * itemsPerPage) + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalFilteredCount);
-
-  // Get current page products
-  const currentProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   // Handle pagination
   const handlePageChange = (page) => {

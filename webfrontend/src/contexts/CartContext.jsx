@@ -1,5 +1,5 @@
-// src/contexts/CartContext.jsx
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+// src/contexts/CartContext.jsx - FIXED VERSION
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-hot-toast';
 import { useAuth } from './AuthContext';
@@ -11,6 +11,9 @@ import {
   REMOVE_FROM_CART,
   CLEAR_CART
 } from '../graphql/cart';
+
+// Cart Context
+const CartContext = createContext();
 
 // Cart state structure
 const initialState = {
@@ -43,65 +46,78 @@ const cartReducer = (state, action) => {
       return { ...state, error: action.payload, loading: false };
     
     case CART_ACTIONS.SET_CART:
+      const cartData = action.payload || { items: [], totalItems: 0, subtotal: 0 };
       return {
         ...state,
-        items: action.payload.items || [],
-        totalItems: action.payload.totalItems || 0,
-        subtotal: action.payload.subtotal || 0,
+        items: cartData.items || [],
+        totalItems: cartData.totalItems || 0,
+        subtotal: cartData.subtotal || 0,
         loading: false,
         error: null
       };
     
     case CART_ACTIONS.ADD_ITEM:
-      // Kiểm tra xem item đã tồn tại chưa
-      const existingItemIndex = state.items.findIndex(
-        item => item.product._id === action.payload.product._id
-      );
+      // Logic thêm item vào cart
+      const newItem = action.payload;
+      const existingItemIndex = state.items.findIndex(item => item.productId === newItem.productId);
       
-      if (existingItemIndex > -1) {
-        // Cập nhật item existing
-        const updatedItems = [...state.items];
-        updatedItems[existingItemIndex] = action.payload;
-        
-        return {
-          ...state,
-          items: updatedItems,
-          totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-          subtotal: updatedItems.reduce((sum, item) => sum + item.totalPrice, 0)
-        };
+      let updatedItems;
+      if (existingItemIndex >= 0) {
+        // Update existing item
+        updatedItems = state.items.map((item, index) => 
+          index === existingItemIndex 
+            ? { ...item, quantity: newItem.quantity, totalPrice: newItem.totalPrice }
+            : item
+        );
       } else {
-        // Thêm item mới
-        const newItems = [...state.items, action.payload];
-        return {
-          ...state,
-          items: newItems,
-          totalItems: newItems.reduce((sum, item) => sum + item.quantity, 0),
-          subtotal: newItems.reduce((sum, item) => sum + item.totalPrice, 0)
-        };
+        // Add new item
+        updatedItems = [...state.items, newItem];
       }
-    
-    case CART_ACTIONS.UPDATE_ITEM:
-      const updatedItems = state.items.map(item =>
-        item.product._id === action.payload.product._id ? action.payload : item
-      );
+      
+      const newTotalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
+      const newSubtotal = updatedItems.reduce((sum, item) => sum + item.totalPrice, 0);
       
       return {
         ...state,
         items: updatedItems,
-        totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-        subtotal: updatedItems.reduce((sum, item) => sum + item.totalPrice, 0)
+        totalItems: newTotalItems,
+        subtotal: newSubtotal,
+        loading: false,
+        error: null
+      };
+    
+    case CART_ACTIONS.UPDATE_ITEM:
+      const updatedItem = action.payload;
+      const updatedItemsArray = state.items.map(item =>
+        item.productId === updatedItem.productId
+          ? { ...item, quantity: updatedItem.quantity, totalPrice: updatedItem.totalPrice }
+          : item
+      );
+      
+      const updatedTotalItems = updatedItemsArray.reduce((sum, item) => sum + item.quantity, 0);
+      const updatedSubtotal = updatedItemsArray.reduce((sum, item) => sum + item.totalPrice, 0);
+      
+      return {
+        ...state,
+        items: updatedItemsArray,
+        totalItems: updatedTotalItems,
+        subtotal: updatedSubtotal,
+        loading: false,
+        error: null
       };
     
     case CART_ACTIONS.REMOVE_ITEM:
-      const filteredItems = state.items.filter(
-        item => item.product._id !== action.payload
-      );
+      const filteredItems = state.items.filter(item => item.productId !== action.payload);
+      const filteredTotalItems = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
+      const filteredSubtotal = filteredItems.reduce((sum, item) => sum + item.totalPrice, 0);
       
       return {
         ...state,
         items: filteredItems,
-        totalItems: filteredItems.reduce((sum, item) => sum + item.quantity, 0),
-        subtotal: filteredItems.reduce((sum, item) => sum + item.totalPrice, 0)
+        totalItems: filteredTotalItems,
+        subtotal: filteredSubtotal,
+        loading: false,
+        error: null
       };
     
     case CART_ACTIONS.CLEAR_CART:
@@ -109,13 +125,15 @@ const cartReducer = (state, action) => {
         ...state,
         items: [],
         totalItems: 0,
-        subtotal: 0
+        subtotal: 0,
+        loading: false,
+        error: null
       };
     
     case CART_ACTIONS.SET_ITEM_COUNT:
       return {
         ...state,
-        totalItems: action.payload
+        totalItems: action.payload || 0
       };
     
     default:
@@ -123,68 +141,79 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Create context
-const CartContext = createContext();
-
-// Cart Provider component
+// Cart Provider Component
 export const CartProvider = ({ children }) => {
+  const { isAuthenticated, user } = useAuth();
   const [state, dispatch] = useReducer(cartReducer, initialState);
-  const { user, isAuthenticated } = useAuth();
 
-  // GraphQL queries & mutations
-  const { data: cartData, loading: cartLoading, refetch: refetchCart } = useQuery(GET_CART, {
+  // GraphQL queries and mutations
+  const { data: cartData, loading: cartLoading, error: cartError, refetch: refetchCart } = useQuery(GET_CART, {
     skip: !isAuthenticated,
     errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
-      if (data?.getCart) {
-        dispatch({ type: CART_ACTIONS.SET_CART, payload: data.getCart });
-      }
+      console.log('Cart data loaded:', data);
+      dispatch({
+        type: CART_ACTIONS.SET_CART,
+        payload: data?.getMyCart
+      });
     },
     onError: (error) => {
-      console.error('Error fetching cart:', error);
-      dispatch({ type: CART_ACTIONS.SET_ERROR, payload: error.message });
+      console.error('Cart query error:', error);
+      dispatch({
+        type: CART_ACTIONS.SET_ERROR,
+        payload: error.message
+      });
     }
   });
 
   const { data: itemCountData } = useQuery(GET_CART_ITEM_COUNT, {
     skip: !isAuthenticated,
+    errorPolicy: 'all',
     pollInterval: 30000, // Poll every 30 seconds
     onCompleted: (data) => {
-      if (data?.getCartItemCount !== undefined) {
-        dispatch({ type: CART_ACTIONS.SET_ITEM_COUNT, payload: data.getCartItemCount });
-      }
+      dispatch({
+        type: CART_ACTIONS.SET_ITEM_COUNT,
+        payload: data?.getCartItemCount
+      });
     }
   });
 
+  // Mutations
   const [addToCartMutation] = useMutation(ADD_TO_CART, {
     onCompleted: (data) => {
-      dispatch({ type: CART_ACTIONS.ADD_ITEM, payload: data.addToCart });
+      dispatch({
+        type: CART_ACTIONS.ADD_ITEM,
+        payload: data.addToCart
+      });
       toast.success('Đã thêm vào giỏ hàng!');
     },
     onError: (error) => {
-      toast.error(error.message || 'Có lỗi khi thêm vào giỏ hàng');
+      toast.error(error.message || 'Không thể thêm vào giỏ hàng');
     }
   });
 
   const [updateCartItemMutation] = useMutation(UPDATE_CART_ITEM, {
     onCompleted: (data) => {
-      dispatch({ type: CART_ACTIONS.UPDATE_ITEM, payload: data.updateCartItem });
-      toast.success('Đã cập nhật giỏ hàng!');
+      dispatch({
+        type: CART_ACTIONS.UPDATE_ITEM,
+        payload: data.updateCartItem
+      });
     },
     onError: (error) => {
-      toast.error(error.message || 'Có lỗi khi cập nhật giỏ hàng');
+      toast.error(error.message || 'Không thể cập nhật giỏ hàng');
     }
   });
 
   const [removeFromCartMutation] = useMutation(REMOVE_FROM_CART, {
-    onCompleted: (data, { variables }) => {
+    onCompleted: (data) => {
       if (data.removeFromCart) {
-        dispatch({ type: CART_ACTIONS.REMOVE_ITEM, payload: variables.productId });
-        toast.success('Đã xóa khỏi giỏ hàng!');
+        // Refresh cart data
+        refetchCart();
       }
     },
     onError: (error) => {
-      toast.error(error.message || 'Có lỗi khi xóa khỏi giỏ hàng');
+      toast.error(error.message || 'Không thể xóa khỏi giỏ hàng');
     }
   });
 
@@ -192,23 +221,16 @@ export const CartProvider = ({ children }) => {
     onCompleted: (data) => {
       if (data.clearCart) {
         dispatch({ type: CART_ACTIONS.CLEAR_CART });
-        toast.success('Đã xóa toàn bộ giỏ hàng!');
+        toast.success('Đã xóa tất cả sản phẩm khỏi giỏ hàng');
       }
     },
     onError: (error) => {
-      toast.error(error.message || 'Có lỗi khi xóa giỏ hàng');
+      toast.error(error.message || 'Không thể xóa giỏ hàng');
     }
   });
 
-  // Clear cart when user logs out
-  useEffect(() => {
-    if (!isAuthenticated) {
-      dispatch({ type: CART_ACTIONS.CLEAR_CART });
-    }
-  }, [isAuthenticated]);
-
   // Cart actions
-  const addToCart = async (productId, quantity = 1) => {
+  const addToCart = useCallback(async (productId, quantity = 1) => {
     if (!isAuthenticated) {
       toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
       return;
@@ -216,9 +238,13 @@ export const CartProvider = ({ children }) => {
 
     try {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
+      
       await addToCartMutation({
         variables: {
-          input: { productId, quantity }
+          input: {
+            productId,
+            quantity
+          }
         }
       });
     } catch (error) {
@@ -226,16 +252,23 @@ export const CartProvider = ({ children }) => {
     } finally {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: false });
     }
-  };
+  }, [isAuthenticated, addToCartMutation]);
 
-  const updateCartItem = async (productId, quantity) => {
-    if (!isAuthenticated) return;
+  const updateCartItem = useCallback(async (productId, quantity) => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập');
+      return;
+    }
 
     try {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
+      
       await updateCartItemMutation({
         variables: {
-          input: { productId, quantity }
+          input: {
+            productId,
+            quantity
+          }
         }
       });
     } catch (error) {
@@ -243,25 +276,39 @@ export const CartProvider = ({ children }) => {
     } finally {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: false });
     }
-  };
+  }, [isAuthenticated, updateCartItemMutation]);
 
-  const removeFromCart = async (productId) => {
-    if (!isAuthenticated) return;
+  const removeFromCart = useCallback(async (productId) => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập');
+      return;
+    }
 
     try {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
+      
       await removeFromCartMutation({
         variables: { productId }
       });
+      
+      // Update local state immediately
+      dispatch({
+        type: CART_ACTIONS.REMOVE_ITEM,
+        payload: productId
+      });
+      
+      toast.success('Đã xóa sản phẩm khỏi giỏ hàng');
     } catch (error) {
       console.error('Remove from cart error:', error);
     } finally {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: false });
     }
-  };
+  }, [isAuthenticated, removeFromCartMutation]);
 
-  const clearCart = async () => {
-    if (!isAuthenticated) return;
+  const clearCart = useCallback(async () => {
+    if (!isAuthenticated) {
+      return;
+    }
 
     try {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
@@ -271,59 +318,83 @@ export const CartProvider = ({ children }) => {
     } finally {
       dispatch({ type: CART_ACTIONS.SET_LOADING, payload: false });
     }
-  };
+  }, [isAuthenticated, clearCartMutation]);
 
-  const refreshCart = () => {
-    if (isAuthenticated) {
-      refetchCart();
+  // ✅ FIX: Thêm refreshCart function
+  const refreshCart = useCallback(async () => {
+    if (!isAuthenticated) {
+      return;
     }
-  };
 
-  // Helper functions
-  const getItemQuantity = (productId) => {
-    const item = state.items.find(item => item.product._id === productId);
-    return item ? item.quantity : 0;
-  };
+    try {
+      console.log('Refreshing cart data...');
+      await refetchCart();
+    } catch (error) {
+      console.error('Refresh cart error:', error);
+    }
+  }, [isAuthenticated, refetchCart]);
 
-  const isInCart = (productId) => {
-    return state.items.some(item => item.product._id === productId);
-  };
+  // Effect to handle authentication changes
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Clear cart when user logs out
+      dispatch({ type: CART_ACTIONS.CLEAR_CART });
+    }
+  }, [isAuthenticated]);
 
-  const getTotalPrice = () => {
-    return state.subtotal;
-  };
+  // Effect to set loading state from query
+  useEffect(() => {
+    dispatch({ type: CART_ACTIONS.SET_LOADING, payload: cartLoading });
+  }, [cartLoading]);
 
-  const value = {
-    // State
-    cart: state,
-    loading: state.loading || cartLoading,
+  // Effect to handle cart error
+  useEffect(() => {
+    if (cartError) {
+      dispatch({ 
+        type: CART_ACTIONS.SET_ERROR, 
+        payload: cartError.message 
+      });
+    }
+  }, [cartError]);
+
+  // Create context value
+  const contextValue = {
+    // Cart state
+    cart: {
+      items: state.items,
+      totalItems: state.totalItems,
+      subtotal: state.subtotal
+    },
+    loading: state.loading,
     error: state.error,
     
-    // Actions
+    // Cart actions
     addToCart,
     updateCartItem,
     removeFromCart,
     clearCart,
-    refreshCart,
+    refreshCart, // ✅ FIX: Export refreshCart function
     
-    // Helper functions
-    getItemQuantity,
-    isInCart,
-    getTotalPrice
+    // Computed values
+    isEmpty: state.items.length === 0,
+    itemCount: state.totalItems
   };
 
   return (
-    <CartContext.Provider value={value}>
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );
 };
 
-// Custom hook to use cart context
+// Custom hook to use Cart context
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useCart must be used within CartProvider');
   }
   return context;
 };
+
+// Export default
+export default CartProvider;

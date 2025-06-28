@@ -2,6 +2,7 @@
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import React from 'react';
 
 // Import GraphQL operations
 import {
@@ -32,20 +33,50 @@ import {
 import { useUploadProductImages } from './useUpload';
 
 // Default values for null/undefined data
-const DEFAULT_BRAND = { _id: '', name: 'Unknown Brand', description: '' };
-const DEFAULT_CATEGORY = { _id: '', name: 'Unknown Category', description: '' };
+const DEFAULT_BRAND = { 
+  _id: 'default-brand', 
+  name: 'Unknown Brand', 
+  description: 'Brand information not available',
+  logo: '',
+  banner: '',
+  website: '',
+  country: '',
+  foundedYear: null,
+  isActive: true,
+  isFeatured: false
+};
+
+const DEFAULT_CATEGORY = { 
+  _id: 'default-category', 
+  name: 'Unknown Category', 
+  description: 'Category information not available',
+  image: '',
+  isActive: true
+};
 
 // Safe product data processor
 const processProductData = (product) => {
   if (!product) return null;
   
+  if (!product._id || !product.name || typeof product.price !== 'number') {
+    console.warn('Invalid product data:', product);
+    return null;
+  }
+  
   return {
     ...product,
-    brand: (product.brand && typeof product.brand === 'object') ? product.brand : DEFAULT_BRAND,
-    category: (product.category && typeof product.category === 'object') ? product.category : DEFAULT_CATEGORY,
+    brand: (product.brand && typeof product.brand === 'object' && product.brand._id) 
+      ? product.brand 
+      : DEFAULT_BRAND,
+    category: (product.category && typeof product.category === 'object' && product.category._id) 
+      ? product.category 
+      : DEFAULT_CATEGORY,
     images: Array.isArray(product.images) ? product.images : [],
     stock: typeof product.stock === 'number' ? product.stock : 0,
-    price: typeof product.price === 'number' ? product.price : 0
+    price: typeof product.price === 'number' ? product.price : 0,
+    originalPrice: typeof product.originalPrice === 'number' ? product.originalPrice : null,
+    isActive: typeof product.isActive === 'boolean' ? product.isActive : true,
+    isFeatured: typeof product.isFeatured === 'boolean' ? product.isFeatured : false
   };
 };
 
@@ -124,9 +155,12 @@ export const useProducts = (options = {}) => {
     }
   };
 
-  const products = (data?.products?.nodes || [])
-    .map(processProductData)
-    .filter(Boolean);
+  const products = React.useMemo(() => {
+    const nodes = data?.products?.nodes || [];
+    return nodes
+      .map(processProductData)
+      .filter(Boolean);
+  }, [data?.products?.nodes]);
 
   return {
     products,
@@ -146,7 +180,8 @@ export const useSearchProducts = () => {
 
   const [searchProducts] = useLazyQuery(SEARCH_PRODUCTS, {
     onCompleted: (data) => {
-      const results = (data?.searchProducts?.nodes || [])
+      const nodes = data?.searchProducts?.nodes || [];
+      const results = nodes
         .map(processProductData)
         .filter(Boolean);
       
@@ -163,7 +198,7 @@ export const useSearchProducts = () => {
   });
 
   const search = async (query, options = {}) => {
-    if (!query.trim()) {
+    if (!query || !query.trim()) {
       setSearchResults([]);
       return;
     }
