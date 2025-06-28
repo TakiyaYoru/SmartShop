@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "seed": "node seed.js",
+    "check-db": "node check-db.js",
     "start": "node index.js",
     "dev": "node --watch index.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"

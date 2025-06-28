@@ -81,4 +81,4 @@ export const OrderSchema = new Schema(
 // Index để query nhanh
 OrderSchema.index({ userId: 1, orderDate: -1 });
 OrderSchema.index({ status: 1, orderDate: -1 });
-// OrderSchema.index({ orderNumber: 1 });
+OrderSchema.index({ orderNumber: 1 });

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export const typeDef = `
   type Order {
     _id: ID!
@@ -126,7 +128,8 @@ export const typeDef = `
       first: Int = 10,
       offset: Int = 0,
       orderBy: OrdersOrderBy = DATE_DESC,
-      condition: OrderConditionInput
+      condition: OrderConditionInput,
+      search: String
     ): OrderConnection!
     
     getOrder(orderNumber: String!): Order
@@ -167,13 +170,43 @@ export const resolvers = {
     },
     
     items: async (parent, args, context) => {
-      return await context.db.orderItems.getByOrderId(parent._id);
+      console.log('Resolving order items for order:', parent._id);
+      try {
+        const items = await context.db.orderItems.getByOrderId(parent._id);
+        console.log('Order items resolved:', items);
+        return items;
+      } catch (error) {
+        console.error('Error resolving order items:', error);
+        return [];
+      }
     }
   },
 
   OrderItem: {
     product: async (parent, args, context) => {
-      return await context.db.products.findById(parent.productId);
+      try {
+        if (!parent.productId) {
+          console.log('OrderItem productId is null/undefined:', parent);
+          return null;
+        }
+        
+        // Check if productId is valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(parent.productId)) {
+          console.log('Invalid productId format:', parent.productId);
+          return null;
+        }
+        
+        const product = await context.db.products.findById(parent.productId);
+        if (!product) {
+          console.log('Product not found for productId:', parent.productId);
+          return null;
+        }
+        
+        return product;
+      } catch (error) {
+        console.error('Error resolving OrderItem product:', error);
+        return null;
+      }
     }
   },
 
@@ -222,7 +255,13 @@ export const resolvers = {
       // Admin only - will be protected by permissions
       console.log('Getting all orders with args:', args);
       
-      const result = await context.db.orders.getAll(args);
+      const result = await context.db.orders.getAll({
+        first: args.first,
+        offset: args.offset,
+        orderBy: args.orderBy,
+        condition: args.condition,
+        search: args.search
+      });
       
       const { first = 10, offset = 0 } = args;
       const hasNextPage = offset + first < result.totalCount;

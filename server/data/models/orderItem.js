@@ -56,3 +56,4 @@ export const OrderItemSchema = new Schema(
 // Index để query nhanh
 OrderItemSchema.index({ orderId: 1 });
 OrderItemSchema.index({ productId: 1 });
+OrderItemSchema.index({ orderId: 1, createdAt: 1 });

@@ -731,10 +731,16 @@ users: {
         for (const cartItem of cartItems) {
           const product = cartItem.productId;
           
+          console.log('Creating order item for product:', {
+            productId: product._id,
+            productName: product.name,
+            cartItem: cartItem
+          });
+          
           // Create order item with snapshot data
           const orderItemData = {
             orderId: savedOrder._id,
-            productId: product._id,
+            productId: product._id.toString(),
             productName: product.name,
             productSku: product.sku,
             quantity: cartItem.quantity,
@@ -748,9 +754,18 @@ users: {
             }
           };
           
+          console.log('Order item data:', orderItemData);
+          
+          // Validate order item data
+          if (!orderItemData.productId || !orderItemData.productName || !orderItemData.productSku) {
+            throw new Error(`Invalid order item data: ${JSON.stringify(orderItemData)}`);
+          }
+          
           const orderItem = new OrderItem(orderItemData);
           const savedOrderItem = await orderItem.save({ session });
           orderItems.push(savedOrderItem);
+          
+          console.log('Saved order item:', savedOrderItem);
           
           // Update stock
           await Product.findByIdAndUpdate(
@@ -778,7 +793,7 @@ users: {
     },
 
     // Get paginated orders for admin
-    getAll: async ({ first = 10, offset = 0, orderBy = 'DATE_DESC', condition } = {}) => {
+    getAll: async ({ first = 10, offset = 0, orderBy = 'DATE_DESC', condition, search } = {}) => {
       try {
         const columnMapping = {
           DATE: 'orderDate',
@@ -799,6 +814,17 @@ users: {
             if (condition.dateFrom) query.orderDate.$gte = new Date(condition.dateFrom);
             if (condition.dateTo) query.orderDate.$lte = new Date(condition.dateTo);
           }
+        }
+        
+        // Add search functionality
+        if (search && search.trim()) {
+          const searchRegex = { $regex: search.trim(), $options: 'i' };
+          query.$or = [
+            { orderNumber: searchRegex },
+            { 'customerInfo.fullName': searchRegex },
+            { 'customerInfo.phone': searchRegex },
+            { 'customerInfo.address': searchRegex }
+          ];
         }
         
         const sortOptions = buildSortOptions(orderBy, columnMapping);
@@ -1014,7 +1040,6 @@ users: {
     getByOrderId: async (orderId) => {
       try {
         return await OrderItem.find({ orderId })
-          .populate('productId')
           .sort({ createdAt: 1 });
       } catch (error) {
         console.error('Error in orderItems.getByOrderId:', error);

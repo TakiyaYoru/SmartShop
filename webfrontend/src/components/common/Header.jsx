@@ -60,6 +60,11 @@ const Header = () => {
   const navigation = [
     { name: 'Trang chủ', href: '/', current: location.pathname === '/' },
     { name: 'Sản phẩm', href: '/products', current: location.pathname === '/products' },
+    ...(isAuthenticated ? [{ 
+    name: 'Đơn hàng', 
+    href: '/orders', 
+    current: location.pathname.startsWith('/orders') 
+    }] : []),
     { name: 'Danh mục', href: '/categories', current: location.pathname === '/categories' },
     { name: 'Thương hiệu', href: '/brands', current: location.pathname === '/brands' },
   ];

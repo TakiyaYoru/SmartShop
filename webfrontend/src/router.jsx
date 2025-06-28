@@ -3,12 +3,20 @@ import { createBrowserRouter, createRoutesFromElements, Route } from 'react-rout
 // Pages
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage'; // ← THÊM IMPORT
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import NotFoundPage from './pages/NotFoundPage';
+
+// ✅ THÊM MỚI: Checkout & Orders pages
+import CheckoutPage from './pages/CheckoutPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+
+// Admin
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
@@ -18,7 +26,7 @@ import EditProductPage from './pages/admin/EditProductPage';
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
 
-// Router configuration with future flags
+// Router configuration với future flags
 const routerConfig = {
   future: {
     v7_startTransition: true,
@@ -32,17 +40,81 @@ const routes = createRoutesFromElements(
     {/* ===== PUBLIC ROUTES ===== */}
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
-    
-    {/* ← THÊM MỚI: Forgot Password Route */}
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     
-    {/* ===== PROTECTED ROUTES ===== */}
-    <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-    <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
-    <Route path="/products/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
+    {/* ===== PROTECTED CUSTOMER ROUTES ===== */}
+    <Route 
+      path="/" 
+      element={
+        <ProtectedRoute>
+          <HomePage />
+        </ProtectedRoute>
+      } 
+    />
     
-    {/* Cart Route */}
-    <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+    <Route 
+      path="/products" 
+      element={
+        <ProtectedRoute>
+          <ProductsPage />
+        </ProtectedRoute>
+      } 
+    />
+    
+    <Route 
+      path="/products/:id" 
+      element={
+        <ProtectedRoute>
+          <ProductDetailPage />
+        </ProtectedRoute>
+      } 
+    />
+    
+    <Route 
+      path="/cart" 
+      element={
+        <ProtectedRoute>
+          <CartPage />
+        </ProtectedRoute>
+      } 
+    />
+
+    {/* ✅ THÊM MỚI: Checkout & Orders routes */}
+    <Route 
+      path="/checkout" 
+      element={
+        <ProtectedRoute>
+          <CheckoutPage />
+        </ProtectedRoute>
+      } 
+    />
+
+    <Route 
+      path="/orders" 
+      element={
+        <ProtectedRoute>
+          <OrdersPage />
+        </ProtectedRoute>
+      } 
+    />
+
+    <Route 
+      path="/orders/:orderNumber" 
+      element={
+        <ProtectedRoute>
+          <OrderDetailPage />
+        </ProtectedRoute>
+      } 
+    />
+
+    <Route 
+      path="/order-success/:orderNumber" 
+      element={
+        <ProtectedRoute>
+          <OrderSuccessPage />
+        </ProtectedRoute>
+      } 
+    />
     
     {/* ===== ADMIN ROUTES ===== */}
     <Route path="/admin/*" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -51,7 +123,7 @@ const routes = createRoutesFromElements(
       <Route path="products/create" element={<CreateProductPage />} />
       <Route path="products/edit/:id" element={<EditProductPage />} />
       
-      {/* Placeholder admin routes */}
+      {/* Existing placeholder admin routes */}
       <Route path="categories" element={
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-4">Categories</h1>
@@ -131,5 +203,5 @@ const routes = createRoutesFromElements(
   </Route>
 );
 
-// Create router with configuration
+// Create router với configuration
 export const router = createBrowserRouter(routes, routerConfig);
