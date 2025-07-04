@@ -13,6 +13,7 @@ IMPORTANT_FILES = [
     "server/package.json",
     "server/index.js",
     "server/config.js",
+    "server/config/firebase.js",
     "server/permissions.js",
     "server/check-db.js",
     "server/migrate-mongo-config.js",
@@ -28,6 +29,7 @@ IMPORTANT_FILES = [
     "server/graphql/carts.js",
     "server/graphql/orders.js",
     "server/graphql/upload.js",
+    "server/graphql/upload_old.js",
     
     # Backend - Models
     "server/data/models/index.js",
@@ -49,6 +51,7 @@ IMPORTANT_FILES = [
     "server/utils/passwordReset.js",
     "server/utils/imageHelper.js",
     "server/services/emailService.js",
+    "server/services/firebaseStorageService.js",
     
     # Backend - Migrations
     "server/migrations/20250601031152-initial_smartshop_data.js",
@@ -60,6 +63,7 @@ IMPORTANT_FILES = [
     "server/test/globalSetup.js",
     "server/test/globalTeardown.js",
     "server/test/setupFileAfterEnv.js",
+    "server/test-firebase.js",
     
     # Frontend - Core files
     "webfrontend/package.json",
@@ -140,6 +144,9 @@ IMPORTANT_FILES = [
     "webfrontend/src/pages/admin/AdminProductsPage.jsx",
     "webfrontend/src/pages/admin/CreateProductPage.jsx",
     "webfrontend/src/pages/admin/EditProductPage.jsx",
+    "webfrontend/src/pages/admin/AdminOrderDetailPage.jsx",
+    "webfrontend/src/pages/admin/CreateOrderPage.jsx",
+    "webfrontend/src/pages/admin/AdminOrdersPage.jsx",
     
     # Frontend - Admin Components
     "webfrontend/src/pages/admin/products/ProductTable.jsx",
@@ -154,6 +161,7 @@ IMPORTANT_FILES = [
     
     # Frontend - Utils
     "webfrontend/src/lib/utils.js",
+    "webfrontend/src/utils/imageHelper.js",
     
     # Documentation
     "README.md",
@@ -382,7 +390,9 @@ SmartShop/
 │       │       ├── AdminProductsPage.jsx
 │       │       ├── CreateProductPage.jsx
 │       │       ├── EditProductPage.jsx
-│       │       └── products/  # Admin product components
+│       │       ├── AdminOrderDetailPage.jsx
+│       │       ├── CreateOrderPage.jsx
+│       │       └── AdminOrdersPage.jsx
 │       │           ├── ProductTable.jsx
 │       │           ├── ProductForm.jsx
 │       │           ├── ProductFilter.jsx

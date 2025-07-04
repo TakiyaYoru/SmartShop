@@ -18,7 +18,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { GET_MY_ORDER } from '../graphql/orders';
 import { useCart } from '../contexts/CartContext';
-
+import { SmartImage } from '../utils/imageHelper';
 const OrderSuccessPage = () => {
   const { orderNumber } = useParams();
   const navigate = useNavigate();
@@ -286,17 +286,12 @@ const OrderSuccessPage = () => {
                       <div key={item._id || index} className="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0">
                         {/* Product Image */}
                         <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
-                          {item.productSnapshot?.images?.[0] || item.product?.images?.[0] ? (
-                            <img
-                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/img/${item.productSnapshot?.images?.[0] || item.product?.images?.[0]}`}
-                              alt={item.productName}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
-                              }}
-                            />
-                          ) : null}
+                          <SmartImage
+                            src={item.productSnapshot?.images?.[0] || item.product?.images?.[0]}
+                            alt={item.productName}
+                            className="w-full h-full object-cover"
+                            fallback="/placeholder-product.jpg"
+                          />
                           <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
                             No Image
                           </div>

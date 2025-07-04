@@ -1,94 +1,49 @@
-// src/lib/utils.js
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+// webfrontend/src/lib/utils.js - Updated với Firebase Support
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-// Utility function to merge Tailwind classes
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-// Format price to Vietnamese currency
+// Format price in Vietnamese currency
 export const formatPrice = (price) => {
+  if (typeof price !== 'number') return '0 ₫';
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND',
+    currency: 'VND'
   }).format(price);
 };
 
-// Format date to Vietnamese format
-export const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
+// Format number with thousand separators
+export const formatNumber = (number) => {
+  if (typeof number !== 'number') return '0';
+  return new Intl.NumberFormat('vi-VN').format(number);
+};
+
+// ✅ DEPRECATED: Keep for backward compatibility, but recommend using imageHelper
+export const getImageUrl = (filename, baseUrl = "") => {
+  console.warn('getImageUrl from utils.js is deprecated. Use getImageUrl from utils/imageHelper.js instead');
   
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'N/A';
-    
-    return new Intl.DateTimeFormat('vi-VN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZone: 'Asia/Ho_Chi_Minh'
-    }).format(date);
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return 'N/A';
+  if (!filename) return '/placeholder-product.jpg';
+  
+  // Check if it's already a full URL (Firebase URL)
+  if (filename.startsWith('http') || filename.includes('firebasestorage.googleapis.com')) {
+    return filename;
   }
+  
+  // Check if it's already a relative path
+  if (filename.startsWith('/img/')) {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    return `${apiUrl}${filename}`;
+  }
+  
+  // If it's just a filename, create the local URL
+  const apiUrl = baseUrl || import.meta.env.VITE_API_URL || 'http://localhost:4000';
+  return `${apiUrl}/img/${filename}`;
 };
 
-// Format date to short format
-export const formatDateShort = (date) => {
-  return new Intl.DateTimeFormat('vi-VN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date(date));
-};
-
-// Create slug from text
-export const slugify = (text) => {
-  return text
-    .toLowerCase()
-    .replace(/[^\w ]+/g, '')
-    .replace(/ +/g, '-');
-};
-
-// Get image URL
-export const getImageUrl = (imageName) => {
-  if (!imageName) return '/placeholder-image.jpg';
-  if (imageName.startsWith('http')) return imageName;
-  return `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/img/${imageName}`;
-};
-
-// Truncate text
-export const truncateText = (text, length = 100) => {
-  if (!text) return '';
-  if (text.length <= length) return text;
-  return text.substring(0, length).trim() + '...';
-};
-
-// Debounce function
-export const debounce = (func, wait) => {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
-// Generate random ID
-export const generateId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
-
-// Validate email
+// Validate email format
 export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -124,4 +79,191 @@ export const copyToClipboard = async (text) => {
     console.error('Failed to copy to clipboard:', err);
     return false;
   }
+};
+
+// Debounce function
+export const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
+// Truncate text
+export const truncateText = (text, maxLength) => {
+  if (!text || text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+
+// Generate random string
+export const generateRandomString = (length = 8) => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+// Check if user is on mobile
+export const isMobile = () => {
+  return window.innerWidth < 768;
+};
+
+// Local storage helpers
+export const storage = {
+  get: (key) => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.error(`Error getting ${key} from localStorage:`, error);
+      return null;
+    }
+  },
+  set: (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`Error setting ${key} to localStorage:`, error);
+    }
+  },
+  remove: (key) => {
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Error removing ${key} from localStorage:`, error);
+    }
+  },
+  clear: () => {
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
+  }
+};
+
+// Date helpers
+export const formatDate = (date, options = {}) => {
+  // ✅ FIX: Handle invalid dates
+  if (!date) return 'Chưa cập nhật';
+  
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    return 'Ngày không hợp lệ';
+  }
+  
+  const defaultOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    ...options
+  };
+  return new Intl.DateTimeFormat('vi-VN', defaultOptions).format(dateObj);
+};
+
+export const formatDateTime = (date) => {
+  // ✅ FIX: Handle invalid dates
+  if (!date) return 'Chưa cập nhật';
+  
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    return 'Ngày không hợp lệ';
+  }
+  
+  return new Intl.DateTimeFormat('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(dateObj);
+};
+
+export const timeAgo = (date) => {
+  // ✅ FIX: Handle invalid dates
+  if (!date) return 'Không xác định';
+  
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    return 'Ngày không hợp lệ';
+  }
+  
+  const now = new Date();
+  const diffTime = Math.abs(now - dateObj);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 1) return 'Hôm qua';
+  if (diffDays < 7) return `${diffDays} ngày trước`;
+  if (diffDays < 30) return `${Math.ceil(diffDays / 7)} tuần trước`;
+  if (diffDays < 365) return `${Math.ceil(diffDays / 30)} tháng trước`;
+  return `${Math.ceil(diffDays / 365)} năm trước`;
+};
+
+// URL helpers
+export const buildUrl = (base, params = {}) => {
+  const url = new URL(base);
+  Object.keys(params).forEach(key => {
+    if (params[key] !== undefined && params[key] !== null) {
+      url.searchParams.append(key, params[key]);
+    }
+  });
+  return url.toString();
+};
+
+// Array helpers
+export const unique = (array, key = null) => {
+  if (key) {
+    const seen = new Set();
+    return array.filter(item => {
+      const val = item[key];
+      if (seen.has(val)) return false;
+      seen.add(val);
+      return true;
+    });
+  }
+  return [...new Set(array)];
+};
+
+export const groupBy = (array, key) => {
+  return array.reduce((groups, item) => {
+    const group = item[key];
+    groups[group] = groups[group] || [];
+    groups[group].push(item);
+    return groups;
+  }, {});
+};
+
+// Product helpers
+export const getProductStock = (product) => {
+  if (!product || typeof product.stock !== 'number') return 0;
+  return product.stock;
+};
+
+export const isProductInStock = (product) => {
+  return getProductStock(product) > 0;
+};
+
+export const getProductMainImage = (product) => {
+  if (!product || !product.images || product.images.length === 0) {
+    return '/placeholder-product.jpg';
+  }
+  return getImageUrl(product.images[0]);
+};
+
+// Cart helpers
+export const calculateCartTotal = (cartItems = []) => {
+  return cartItems.reduce((total, item) => {
+    return total + (item.price * item.quantity);
+  }, 0);
+};
+
+export const calculateCartItemCount = (cartItems = []) => {
+  return cartItems.reduce((count, item) => count + item.quantity, 0);
 };

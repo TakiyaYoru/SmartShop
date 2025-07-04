@@ -1,54 +1,12 @@
-/*
-import fs from "fs";
+// server/graphql/upload.js - Updated với Firebase Storage (FIXED)
 import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import { v4 as uuidv4 } from "uuid";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-export const typeDef = `
-  scalar File
-
-  extend type Mutation {
-    upload(file: File!): String!
-  }
-`;
-
-export const resolvers = {
-  Mutation: {
-    upload: async (_, { file }) => {
-      try {
-        const fileArrayBuffer = await file.arrayBuffer();
-        
-        // Tạo tên file unique với UUID
-        const originalName = file.name;
-        const fileExtension = path.extname(originalName);
-        const uniqueFilename = `${uuidv4()}${fileExtension}`;
-        
-        await fs.promises.writeFile(
-          path.join(__dirname + "/../img/", uniqueFilename),
-          Buffer.from(fileArrayBuffer)
-        );
-        
-        return uniqueFilename; // trả về tên file đã tạo
-      } catch (e) {
-        console.log("Cannot save uploaded file, reason: " + e);
-        return false;
-      }
-    },
-  },
-}; */
-
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import { v4 as uuidv4 } from "uuid";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { 
+  uploadFileToFirebase,
+  uploadProductImage,
+  uploadProductImages,
+  deleteProductImage
+} from "../services/firebaseStorageService.js";
 
 // Validate image file
 const validateImageFile = (filename, allowedTypes = ['.jpg', '.jpeg', '.png', '.gif', '.webp']) => {
@@ -89,29 +47,31 @@ export const typeDef = `
 
 export const resolvers = {
   Mutation: {
-    // Original upload mutation (keep for compatibility)
+    // ✅ UPDATED: Basic upload với Firebase
     upload: async (_, { file }) => {
       try {
-        const fileArrayBuffer = await file.arrayBuffer();
+        console.log('📤 Basic upload starting...');
         
-        // Tạo tên file unique với UUID
-        const originalName = file.name;
-        const fileExtension = path.extname(originalName);
-        const uniqueFilename = `${uuidv4()}${fileExtension}`;
+        // Validate image
+        validateImageFile(file.name);
         
-        await fs.promises.writeFile(
-          path.join(__dirname + "/../img/", uniqueFilename),
-          Buffer.from(fileArrayBuffer)
-        );
+        // Upload to Firebase
+        const result = await uploadFileToFirebase(file);
         
-        return uniqueFilename;
-      } catch (e) {
-        console.log("Cannot save uploaded file, reason: " + e);
-        throw new Error(`Upload failed: ${e.message}`);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+        
+        console.log('✅ Basic upload successful:', result.filename);
+        return result.filename;
+        
+      } catch (error) {
+        console.error("❌ Basic upload error:", error);
+        throw new Error(`Upload failed: ${error.message}`);
       }
     },
 
-    // Upload single image for product
+    // ✅ FIXED: Upload single product image với Firebase
     uploadProductImage: async (_, { productId, file }, context) => {
       try {
         console.log('=== UPLOAD PRODUCT IMAGE START ===');
@@ -123,48 +83,38 @@ export const resolvers = {
           throw new Error("Product not found");
         }
 
-        const fileArrayBuffer = await file.arrayBuffer();
-        const originalName = file.name;
-        
         // Validate image
-        validateImageFile(originalName);
+        validateImageFile(file.name);
         
-        const fileExtension = path.extname(originalName);
-        const uniqueFilename = `product_${productId}_${Date.now()}_${uuidv4()}${fileExtension}`;
+        // Upload to Firebase
+        const uploadResult = await uploadProductImage(productId, file);
         
-        // Save file
-        const uploadDir = path.join(__dirname, "../img/");
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.message);
         }
         
-        await fs.promises.writeFile(
-          path.join(uploadDir, uniqueFilename),
-          Buffer.from(fileArrayBuffer)
-        );
-        
-        // Update product with new image
+        // ✅ FIXED: Update product với Firebase URL (không phải filename)
         const currentImages = product.images || [];
-        const updatedImages = [...currentImages, uniqueFilename];
-        
+        const updatedImages = [...currentImages, uploadResult.url]; // ✅ LƯU URL
+
         await context.db.products.updateById(productId, {
           images: updatedImages
         });
         
-        const fileUrl = `/img/${uniqueFilename}`;
-        
-        console.log('Product image uploaded successfully:', fileUrl);
+        console.log('✅ Product image uploaded successfully');
+        console.log('🔗 Firebase URL:', uploadResult.url);
+        console.log('📁 Saved to DB:', uploadResult.url);
         console.log('=== UPLOAD PRODUCT IMAGE END ===');
         
         return {
           success: true,
-          message: "Image uploaded and added to product successfully",
-          filename: uniqueFilename,
-          url: fileUrl
+          message: "Image uploaded to Firebase and added to product successfully",
+          filename: uploadResult.filename,
+          url: uploadResult.url
         };
         
       } catch (error) {
-        console.error("Upload product image error:", error);
+        console.error("❌ Upload product image error:", error);
         return {
           success: false,
           message: `Upload failed: ${error.message}`,
@@ -174,7 +124,7 @@ export const resolvers = {
       }
     },
 
-    // Upload multiple images for product
+    // ✅ FIXED: Upload multiple product images với Firebase
     uploadProductImages: async (_, { productId, files }, context) => {
       try {
         console.log('=== UPLOAD PRODUCT IMAGES START ===');
@@ -186,74 +136,51 @@ export const resolvers = {
         if (!product) {
           throw new Error("Product not found");
         }
-
-        const uploadedFilenames = [];
-        const errors = [];
         
-        // Create upload directory if it doesn't exist
-        const uploadDir = path.join(__dirname, "../img/");
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
+        // Validate all files first
+        files.forEach(file => validateImageFile(file.name));
+        
+        // Upload to Firebase
+        const uploadResult = await uploadProductImages(productId, files);
+        
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.message);
         }
         
-        // Process each file
-        for (let i = 0; i < files.length; i++) {
-          try {
-            const file = files[i];
-            const fileArrayBuffer = await file.arrayBuffer();
-            const originalName = file.name;
-            
-            console.log(`Processing file ${i + 1}/${files.length}: ${originalName}`);
-            
-            // Validate image
-            validateImageFile(originalName);
-            
-            const fileExtension = path.extname(originalName);
-            const uniqueFilename = `product_${productId}_${Date.now()}_${i}_${uuidv4()}${fileExtension}`;
-            
-            // Save file
-            await fs.promises.writeFile(
-              path.join(uploadDir, uniqueFilename),
-              Buffer.from(fileArrayBuffer)
-            );
-            
-            uploadedFilenames.push(uniqueFilename);
-            console.log(`File ${i + 1} uploaded: ${uniqueFilename}`);
-            
-          } catch (fileError) {
-            console.error(`Error uploading file ${i + 1}:`, fileError);
-            errors.push(`File ${i + 1}: ${fileError.message}`);
-          }
-        }
+        // ✅ FIXED: Get URLs from successful uploads (không phải filename)
+        const uploadedUrls = uploadResult.uploadedFiles.map(file => file.url); // ✅ LẤY URLs
         
-        if (uploadedFilenames.length === 0) {
-          throw new Error(`No files uploaded successfully. Errors: ${errors.join('; ')}`);
-        }
-        
-        // Update product with new images
+        // ✅ FIXED: Update product với Firebase URLs
         const currentImages = product.images || [];
-        const updatedImages = [...currentImages, ...uploadedFilenames];
+        const updatedImages = [...currentImages, ...uploadedUrls]; // ✅ LƯU URLs
         
         await context.db.products.updateById(productId, {
           images: updatedImages
         });
         
-        const message = errors.length > 0 
-          ? `${uploadedFilenames.length} file(s) uploaded successfully. Some files failed: ${errors.join('; ')}`
-          : `${uploadedFilenames.length} file(s) uploaded successfully for product`;
+        // Prepare response
+        const allUrls = uploadResult.uploadedFiles.map(file => file.url);
+        const allFilenames = uploadResult.uploadedFiles.map(file => file.filename);
+        const mainUrl = allUrls.length > 0 ? allUrls[0] : null;
         
-        console.log('Product images upload completed:', message);
+        console.log('✅ Multiple images uploaded successfully');
+        console.log('📊 Upload summary:', {
+          successful: uploadResult.uploadedFiles.length,
+          failed: uploadResult.errors.length,
+          mainUrl: mainUrl
+        });
+        console.log('📁 Saved URLs to DB:', uploadedUrls);
         console.log('=== UPLOAD PRODUCT IMAGES END ===');
         
         return {
           success: true,
-          message: message,
-          filename: uploadedFilenames.join(", "),
-          url: `/img/${uploadedFilenames[0]}`
+          message: uploadResult.message,
+          filename: allFilenames.join(', '), // Tương thích với frontend
+          url: mainUrl // URL của ảnh đầu tiên
         };
         
       } catch (error) {
-        console.error("Upload product images error:", error);
+        console.error("❌ Upload product images error:", error);
         return {
           success: false,
           message: `Upload failed: ${error.message}`,
@@ -263,11 +190,10 @@ export const resolvers = {
       }
     },
 
-    // Remove image from product
+    // ✅ UPDATED: Remove product image từ Firebase
     removeProductImage: async (_, { productId, filename }, context) => {
       try {
-        console.log('=== REMOVE PRODUCT IMAGE START ===');
-        console.log('Product ID:', productId, 'Filename:', filename);
+        console.log('🗑️ Removing product image:', filename);
         
         // Check if product exists
         const product = await context.db.products.findById(productId);
@@ -275,40 +201,45 @@ export const resolvers = {
           throw new Error("Product not found");
         }
         
-        const currentImages = product.images || [];
+        // ✅ IMPROVED: Handle both URL and filename for removal
+        let imageToRemove = filename;
         
-        // Check if image exists in product
-        if (!currentImages.includes(filename)) {
-          throw new Error("Image not found in product");
+        // If it's a URL, extract filename for Firebase deletion
+        if (filename.includes('firebasestorage.googleapis.com')) {
+          const urlParts = filename.split('/');
+          const encodedFilename = urlParts[urlParts.length - 1].split('?')[0];
+          imageToRemove = decodeURIComponent(encodedFilename);
+          console.log('🔍 Extracted filename from URL:', imageToRemove);
         }
         
-        // Remove image from product
-        const updatedImages = currentImages.filter(img => img !== filename);
+        // Remove from Firebase Storage
+        const deleteResult = await deleteProductImage(imageToRemove);
+        
+        if (!deleteResult.success) {
+          console.warn('⚠️ Firebase delete failed:', deleteResult.message);
+          // Vẫn tiếp tục remove khỏi database
+        }
+        
+        // ✅ IMPROVED: Remove from product images array (support both URL and filename)
+        const currentImages = product.images || [];
+        const updatedImages = currentImages.filter(img => 
+          img !== filename && // Remove exact match
+          img !== imageToRemove && // Remove filename match
+          !img.includes(imageToRemove) // Remove URL containing filename
+        );
         
         await context.db.products.updateById(productId, {
           images: updatedImages
         });
         
-        // Try to delete physical file (optional - don't fail if file doesn't exist)
-        try {
-          const filePath = path.join(__dirname, "../img/", filename);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-            console.log('Physical file deleted:', filename);
-          }
-        } catch (deleteError) {
-          console.warn('Could not delete physical file:', deleteError.message);
-        }
-        
-        console.log('Image removed from product successfully');
-        console.log('=== REMOVE PRODUCT IMAGE END ===');
-        
+        console.log('✅ Product image removed successfully');
+        console.log('📁 Removed from DB:', filename);
         return true;
         
       } catch (error) {
-        console.error("Remove product image error:", error);
-        throw new Error(`Remove image failed: ${error.message}`);
+        console.error("❌ Remove product image error:", error);
+        throw new Error(`Remove failed: ${error.message}`);
       }
     }
-  },
+  }
 };

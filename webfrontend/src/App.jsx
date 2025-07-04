@@ -12,10 +12,10 @@ import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage'; 
-import CheckoutPage from './pages/CheckoutPage'; // ✅ THÊM
-import OrdersPage from './pages/OrdersPage'; // ✅ THÊM
-import OrderDetailPage from './pages/OrderDetailPage'; // ✅ THÊM
-import OrderSuccessPage from './pages/OrderSuccessPage'; // ✅ THÊM
+import CheckoutPage from './pages/CheckoutPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Components
@@ -25,23 +25,15 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
 
+// ✅ THÊM MỚI: Admin Orders Components
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
+import CreateOrderPage from './pages/admin/CreateOrderPage';
+
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
 
 function App() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang khởi tạo SmartShop...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="App">
       <Routes>
@@ -87,7 +79,6 @@ function App() {
           } 
         />
 
-        {/* ✅ FIX: THÊM CHECKOUT VÀ ORDER ROUTES */}
         <Route 
           path="/checkout" 
           element={
@@ -115,7 +106,6 @@ function App() {
           } 
         />
 
-        {/* ❌ MISSING: OrderSuccess Route - ĐÂY LÀ ROUTE BỊ THIẾU */}
         <Route 
           path="/order-success/:orderNumber" 
           element={
@@ -126,6 +116,8 @@ function App() {
         />
         
         {/* ===== ADMIN ROUTES ===== */}
+        
+        {/* Admin Dashboard */}
         <Route 
           path="/admin" 
           element={
@@ -137,6 +129,7 @@ function App() {
           } 
         />
         
+        {/* Admin Products Routes */}
         <Route 
           path="/admin/products" 
           element={
@@ -165,6 +158,105 @@ function App() {
             <AdminRoute>
               <AdminLayout>
                 <EditProductPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        {/* ✅ THÊM MỚI: Admin Orders Routes */}
+        <Route 
+          path="/admin/orders" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <AdminOrdersPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin/orders/create" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <CreateOrderPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin/orders/:orderNumber" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <AdminOrderDetailPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        {/* Admin placeholder routes - có thể implement sau */}
+        <Route 
+          path="/admin/categories" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Categories Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Categories management will be implemented soon! 📂</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/brands" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Brands Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Brands management will be implemented soon! 🏷️</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/users" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Users Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Users management will be implemented soon! 👥</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/reports" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Reports & Analytics</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Reports will be implemented soon! 📊</p>
+                  </div>
+                </div>
               </AdminLayout>
             </AdminRoute>
           } 

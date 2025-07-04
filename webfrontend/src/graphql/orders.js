@@ -134,6 +134,26 @@ export const GET_ORDER_STATS = gql`
   }
 `;
 
+export const GET_ORDER_ADMIN = gql`
+  query GetOrder($orderNumber: String!) {
+    getOrder(orderNumber: $orderNumber) {
+      ...OrderInfo
+      items {
+        ...OrderItemInfo
+      }
+      user {
+        _id
+        username
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+  ${ORDER_FRAGMENT}
+  ${ORDER_ITEM_FRAGMENT}
+`;
+
 // Mutations
 export const CREATE_ORDER = gql`
   mutation CreateOrderFromCart($input: CreateOrderInput!) {
@@ -156,8 +176,6 @@ export const UPDATE_ORDER_STATUS = gql`
   }
   ${ORDER_FRAGMENT}
 `;
-
-
 
 export const UPDATE_PAYMENT_STATUS = gql`
   mutation UpdatePaymentStatus($orderNumber: String!, $paymentStatus: PaymentStatus!) {

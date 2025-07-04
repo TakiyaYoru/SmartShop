@@ -1,7 +1,9 @@
-// webfrontend/src/components/cart/CartItem.jsx
+// webfrontend/src/components/cart/CartItem.jsx - Updated với Firebase Support
 import React, { useState } from 'react';
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useCart } from '../../contexts/CartContext';
+import { formatPrice } from '../../lib/utils';
+import { SmartImage } from '../../utils/imageHelper'; // ✅ UPDATED IMPORT
 
 const CartItem = ({ item }) => {
   const { updateCartItem, removeFromCart, isLoading } = useCart();
@@ -24,32 +26,21 @@ const CartItem = ({ item }) => {
     }
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price);
-  };
-
-  const productImage = item.product.images && item.product.images.length > 0 
-    ? `http://localhost:4000${item.product.images[0]}`
-    : '/placeholder-product.jpg';
-
   const isItemLoading = isLoading || isUpdating;
 
   return (
     <div className={`bg-white rounded-lg shadow-sm border p-4 ${isItemLoading ? 'opacity-50' : ''}`}>
       <div className="flex items-center space-x-4">
-        {/* Product Image */}
+        {/* ✅ UPDATED: Product Image với Firebase support */}
         <div className="flex-shrink-0">
-          <img
-            src={productImage}
-            alt={item.product.name}
-            className="w-16 h-16 object-cover rounded-md"
-            onError={(e) => {
-              e.target.src = '/placeholder-product.jpg';
-            }}
-          />
+          <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+            <SmartImage
+              src={item.product.images?.[0]}
+              alt={item.product.name}
+              className="w-full h-full object-cover"
+              fallback="/placeholder-product.jpg"
+            />
+          </div>
         </div>
 
         {/* Product Info */}
@@ -58,11 +49,18 @@ const CartItem = ({ item }) => {
             {item.product.name}
           </h3>
           <p className="text-sm text-gray-500">
-            {item.product.category?.name} • {item.product.brand?.name}
+            SKU: {item.product.sku}
           </p>
-          <p className="text-sm font-medium text-blue-600">
-            {formatPrice(item.unitPrice)}
-          </p>
+          <div className="flex items-center mt-1">
+            <span className="text-sm font-medium text-gray-900">
+              {formatPrice(item.unitPrice)}
+            </span>
+            {item.product.originalPrice && item.product.originalPrice > item.unitPrice && (
+              <span className="ml-2 text-xs text-gray-400 line-through">
+                {formatPrice(item.product.originalPrice)}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Quantity Controls */}
@@ -75,7 +73,7 @@ const CartItem = ({ item }) => {
             <MinusIcon className="w-4 h-4" />
           </button>
           
-          <span className="w-8 text-center text-sm font-medium">
+          <span className="min-w-[40px] text-center text-sm font-medium">
             {item.quantity}
           </span>
           

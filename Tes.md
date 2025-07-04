@@ -55,3 +55,35 @@ curl -X POST http://localhost:4000 \
 {"data":{"createProduct":{"_id":"683d18be3b3473c4cdeebf4b","name":"iPhone 15 Pro","price":25000000,"sku":"IPHONE15PRO-001","brand":{"name":"Apple2","slug":"apple2"},"category":{"name":"Ăn trưa tại phòng"}}}}
 
 
+
+
+curl -X POST http://localhost:4000/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWVmNGNhZDU2NDQ4NDFiOTA3MjYyMiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE2MjkyNjIsImV4cCI6MTc1MTcxNTY2Mn0.bh-_otvKsekiyX0N03ljahWBZKgq8Ykm7Z-eNSiME4s" \
+  -F operations='{"query":"mutation ($file: File!) { upload(file: $file) }","variables":{"file":null}}' \
+  -F map='{"0":["variables.file"]}' \
+  -F 0=@/path/to/your/image.jpg
+
+
+  curl -X POST http://localhost:4000/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWVmNGNhZDU2NDQ4NDFiOTA3MjYyMiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE2MjkyNjIsImV4cCI6MTc1MTcxNTY2Mn0.bh-_otvKsekiyX0N03ljahWBZKgq8Ykm7Z-eNSiME4s" \
+  -F operations='{"query":"mutation ($file: File!) { upload(file: $file) }","variables":{"file":null}}' \
+  -F map='{"0":["variables.file"]}' \
+  -F 0=@./anh1.webp
+
+  685f50456b63bdecb681d424
+
+  curl -X POST http://localhost:4000/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWVmNGNhZDU2NDQ4NDFiOTA3MjYyMiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE2MjkyNjIsImV4cCI6MTc1MTcxNTY2Mn0.bh-_otvKsekiyX0N03ljahWBZKgq8Ykm7Z-eNSiME4s" \
+  -F operations='{"query":"mutation ($productId: ID!, $file: File!) { uploadProductImage(productId: $productId, file: $file) { success message filename url } }","variables":{"productId":"685f50456b63bdecb681d424","file":null}}' \
+  -F map='{"0":["variables.file"]}' \
+  -F 0=@./anh1.webp
+
+  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWVmNGNhZDU2NDQ4NDFiOTA3MjYyMiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE2Mjk1NTUsImV4cCI6MTc1MTcxNTk1NX0.LZ9KqayYluvSSqGSkrKxFtZ8nWdg3k-3nY-smLFArgQ
+
+  # Thay YOUR_NEW_JWT_TOKEN bằng token mới
+curl -X POST http://localhost:4000/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWVmNGNhZDU2NDQ4NDFiOTA3MjYyMiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE2MzAwMTEsImV4cCI6MTc1MTcxNjQxMX0.5Ll7S8BATIF91BZcT-Z4XYD5VwDiwqVpq9U1YQL5Wqc" \
+  -F operations='{"query":"mutation ($productId: ID!, $files: [File!]!) { uploadProductImages(productId: $productId, files: $files) { success message filename url } }","variables":{"productId":"685f50456b63bdecb681d424","files":[null,null]}}' \
+  -F map='{"0":["variables.files.0"],"1":["variables.files.1"]}' \
+  -F 0=@./anh1.webp \
+  -F 1=@./anh1.webp

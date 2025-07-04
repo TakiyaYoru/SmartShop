@@ -13,6 +13,7 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "firebase": "^11.10.0",
     "graphql": "^16.8.1",
     "graphql-upload-minimal": "^1.6.1",
     "graphql-yoga": "^5.1.1",
