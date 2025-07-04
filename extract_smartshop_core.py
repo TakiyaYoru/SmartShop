@@ -19,6 +19,11 @@ IMPORTANT_FILES = [
     "server/migrate-mongo-config.js",
     "server/jest.config.json",
     
+    # Backend - VNPay Integration (NEW)
+    "server/services/vnpayService.js",
+    "server/routes/vnpayRoutes.js",
+    "server/test-vnpay-new.js",
+    
     # Backend - GraphQL
     "server/graphql/schema.js",
     "server/graphql/hello.js",
@@ -72,6 +77,7 @@ IMPORTANT_FILES = [
     "webfrontend/postcss.config.js",
     "webfrontend/eslint.config.js",
     "webfrontend/index.html",
+    "webfrontend/.gitignore",
     
     # Frontend - Main app
     "webfrontend/src/main.jsx",
@@ -95,6 +101,7 @@ IMPORTANT_FILES = [
     "webfrontend/src/graphql/orders.js",
     "webfrontend/src/graphql/upload.js",
     "webfrontend/src/graphql/admin.js",
+    "webfrontend/src/graphql/vnpay.js",
     
     # Frontend - Common Components
     "webfrontend/src/components/common/Layout.jsx",
@@ -137,6 +144,7 @@ IMPORTANT_FILES = [
     "webfrontend/src/pages/OrdersPage.jsx",
     "webfrontend/src/pages/OrderDetailPage.jsx",
     "webfrontend/src/pages/OrderSuccessPage.jsx",
+    "webfrontend/src/pages/VnpayReturnPage.jsx",
     "webfrontend/src/pages/NotFoundPage.jsx",
     
     # Frontend - Admin Pages
@@ -212,6 +220,7 @@ Authentication: JWT + bcrypt + OTP reset password
 File Upload: GraphQL Upload with multiple images
 Authorization: Role-based (admin/manager/customer)
 Email Service: Nodemailer for password reset
+Payment Gateway: VNPay integration with IPN and return URL handling
 Testing: Jest + MongoDB Memory Server
 
 {'='*100}
@@ -318,7 +327,10 @@ SmartShop/
 │   │   ├── passwordReset.js # Password reset utilities
 │   │   └── imageHelper.js # Image processing utilities
 │   ├── services/          # External services
-│   │   └── emailService.js # Email service for password reset
+│   │   ├── emailService.js # Email service for password reset
+│   │   └── vnpayService.js # VNPay payment gateway service
+│   ├── routes/            # Express routes
+│   │   └── vnpayRoutes.js # VNPay payment routes
 │   ├── migrations/        # Database migrations
 │   │   ├── 20250601031152-initial_smartshop_data.js
 │   │   └── 20250601032421-add_sample_images.js
@@ -326,6 +338,7 @@ SmartShop/
 │   │   ├── globalSetup.js
 │   │   ├── globalTeardown.js
 │   │   └── setupFileAfterEnv.js
+│   ├── test-vnpay-new.js  # VNPay integration test
 │   └── img/               # Uploaded images
 ├── webfrontend/           # Frontend React/Vite
 │   ├── index.html         # Main HTML file
@@ -384,6 +397,7 @@ SmartShop/
 │       │   ├── OrdersPage.jsx
 │       │   ├── OrderDetailPage.jsx
 │       │   ├── OrderSuccessPage.jsx
+│       │   ├── VnpayReturnPage.jsx
 │       │   ├── NotFoundPage.jsx
 │       │   └── admin/     # Admin pages
 │       │       ├── DashboardPage.jsx
@@ -406,7 +420,8 @@ SmartShop/
 │       │   ├── cart.js
 │       │   ├── orders.js
 │       │   ├── upload.js
-│       │   └── admin.js
+│       │   ├── admin.js
+│       │   └── vnpay.js
 │       └── lib/           # Utilities
 │           ├── apollo.js
 │           └── utils.js

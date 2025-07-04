@@ -8,6 +8,7 @@ import { typeDef as authentication, resolvers as authenticationResolvers } from 
 import { typeDef as upload, resolvers as uploadResolvers } from "./upload.js";
 import { typeDef as carts, resolvers as cartsResolvers } from "./carts.js";
 import { typeDef as orders, resolvers as ordersResolvers } from "./orders.js";
+import { typeDefs as vnpay, resolvers as vnpayResolvers } from "./vnpay.js";
 
 const query = `
   type Query {
@@ -19,16 +20,29 @@ const query = `
   }
 `;
 
-const typeDefs = [query, hello,  categories, products, brands, authentication, upload, carts, orders];
+const typeDefs = [
+  query,
+  hello,
+  categories,
+  products,
+  brands,
+  authentication,
+  upload,
+  carts,
+  orders,
+  vnpay
+];
+
 const resolvers = _.merge(
-  helloResolvers, 
+  helloResolvers,
   categoriesResolvers,
   productsResolvers,
   brandsResolvers,
   authenticationResolvers,
   uploadResolvers,
   cartsResolvers,
-  ordersResolvers 
+  ordersResolvers,
+  vnpayResolvers
 );
 
 export const schema = createSchema({

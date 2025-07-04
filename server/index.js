@@ -1,5 +1,3 @@
-// File: server/index.js - ORIGINAL STRUCTURE WITH DEBUG
-
 import { createYoga } from "graphql-yoga";
 import { schema } from "./graphql/schema.js";
 import { useGraphQLMiddleware } from "@envelop/graphql-middleware";
@@ -13,113 +11,31 @@ import fs from "fs";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 
+// VNPay Routes Import
+import vnpayRoutes from './routes/vnpayRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables
 dotenv.config();
 
-import { initDatabase } from "./data/init.js";
-
 // Initialize database connection
+import { initDatabase } from "./data/init.js";
 await initDatabase();
 
-// ✅ DEBUG: Log db object structure
-console.log('🔍 DEBUG: Checking db object structure...');
-console.log('🔍 Available db keys:', Object.keys(db));
-
-if (db.orders) {
-  console.log('✅ db.orders exists');
-  console.log('🔍 db.orders methods:', Object.keys(db.orders));
-} else {
-  console.error('❌ db.orders is missing!');
-}
-
-if (db.orderItems) {
-  console.log('✅ db.orderItems exists');
-  console.log('🔍 db.orderItems methods:', Object.keys(db.orderItems));
-} else {
-  console.error('❌ db.orderItems is missing!');
-}
-
-const signingKey = process.env.JWT_SECRET;
-
-const yoga = createYoga({ 
-  schema,
-  graphqlEndpoint: "/",
-  plugins: [useGraphQLMiddleware([permissions])],
-  context: async ({ request }) => {
-    const authorization = request.headers.get("authorization") || "";
-    let user = null;
-
-    if (authorization.startsWith("Bearer ")) {
-      const token = authorization.substring(7, authorization.length);
-      
-      try {
-        const decoded = jwt.verify(token, signingKey);
-        user = decoded;
-      } catch (error) {
-        console.log("JWT verification failed:", error.message);
-      }
-    }
-
-    // ✅ DEBUG: Log context creation for order queries
-    const body = await request.text();
-    if (body && body.includes('getMyOrder')) {
-      console.log('🔍 Creating context for getMyOrder query');
-      console.log('🔍 User:', user ? `${user.username} (${user.id})` : 'Not authenticated');
-      console.log('🔍 DB object keys:', Object.keys(db));
-      console.log('🔍 db.orders available:', !!db.orders);
-      console.log('🔍 db.orderItems available:', !!db.orderItems);
-      console.log('🔍 db.orderItems.getByOrderId available:', !!db.orderItems?.getByOrderId);
-    }
-
-    return {
-      db: db,
-      user: user,
-      secret: request.headers.get("secret"),
-    };
-  },
-  formatError: (error) => {
-    console.error('❌ GraphQL Error Details:');
-    console.error('Message:', error.message);
-    console.error('Path:', error.path);
-    console.error('Locations:', error.locations);
-    console.error('Extensions:', error.extensions);
-    console.error('Original Error:', error.originalError);
-    console.error('Stack:', error.stack);
-    
-    // ✅ DEBUG: Return more detailed error info in development
-    if (process.env.NODE_ENV !== 'production') {
-      return {
-        message: error.message,
-        locations: error.locations,
-        path: error.path,
-        extensions: {
-          code: error.extensions?.code,
-          exception: {
-            stacktrace: error.stack?.split('\n') || []
-          }
-        }
-      };
-    }
-    
-    return {
-      message: error.message,
-      locations: error.locations,
-      path: error.path
-    };
-  }
-});
-
-// Tạo Express app
 const app = express();
 
-// CORS middleware
+// Middleware for VNPay
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS Middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:5173');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
@@ -128,43 +44,145 @@ app.use((req, res, next) => {
   }
 });
 
-// Serving static images - theo document
-app.get("/img/:filename", (req, res) => {
-  const filename = req.params.filename;
-  const pathDir = path.join(__dirname, "/img/" + filename);
+// VNPay Routes
+app.use('/api/payment', vnpayRoutes);
+
+// Serve static files from img directory
+app.use('/img', express.static(path.join(__dirname, 'img')));
+
+// Ensure img directory exists
+const imgDir = path.join(__dirname, 'img');
+if (!fs.existsSync(imgDir)) {
+  fs.mkdirSync(imgDir, { recursive: true });
+  console.log('📁 Created img directory:', imgDir);
+}
+
+// JWT Middleware
+const getUser = (request) => {
+  console.log('🔍 JWT Debug - Full request analysis:');
+  console.log('  - Request URL:', request.url);
+  console.log('  - Request method:', request.method);
   
-  // Kiểm tra file có tồn tại không
-  if (!fs.existsSync(pathDir)) {
-    return res.status(404).send("File not found");
+  let authHeader = null;
+  
+  // Method 1: Standard headers
+  if (request.headers) {
+    authHeader = request.headers.authorization || request.headers.Authorization;
   }
   
-  res.sendFile(pathDir);
+  // Method 2: Headers as Map or Headers object
+  if (!authHeader && request.headers && typeof request.headers.get === 'function') {
+    authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+  }
+  
+  // Method 3: Headers with _map property
+  if (!authHeader && request.headers && request.headers._map) {
+    authHeader = request.headers._map.authorization || request.headers._map.Authorization;
+  }
+  
+  // Method 4: Iterate through all header properties
+  if (!authHeader && request.headers) {
+    for (const key in request.headers) {
+      if (key.toLowerCase() === 'authorization') {
+        authHeader = request.headers[key];
+        break;
+      }
+    }
+  }
+  
+  console.log('  - Authorization header:', authHeader || 'none');
+  
+  if (!authHeader) {
+    return null;
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    console.log('  - Invalid auth header format:', authHeader);
+    return null;
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  if (!token) {
+    console.log('  - No token found in auth header');
+    return null;
+  }
+
+  try {
+    const jwtSecret = process.env.JWT_SECRET || 'SmartShopSuperSecret123';
+    const decoded = jwt.verify(token, jwtSecret);
+    // Map id -> _id if needed
+    if (decoded.id && !decoded._id) decoded._id = decoded.id;
+    console.log('  ✅ Decoded user:', { 
+      _id: decoded._id, 
+      username: decoded.username, 
+      role: decoded.role
+    });
+    return decoded;
+  } catch (error) {
+    console.log('  ❌ JWT verification failed:', error.message);
+    return null;
+  }
+};
+
+// Create GraphQL server with context
+const yoga = createYoga({
+  schema,
+  context: async ({ request }) => {
+    const user = getUser(request);
+    return {
+      req: request,
+      user,
+      db
+    };
+  },
+  plugins: [
+    useGraphQLMiddleware([permissions])
+  ],
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'authorization']
+  },
+  graphqlEndpoint: '/graphql',
+  landingPage: false
 });
 
 // GraphQL endpoint
-app.use(yoga.graphqlEndpoint, yoga);
+app.use('/graphql', yoga);
+
+// Health check with VNPay status
+app.get('/health', (req, res) => {
+  const vnpayStatus = {
+    configured: !!(process.env.VNP_TMN_CODE && process.env.VNP_HASH_SECRET),
+    tmnCode: process.env.VNP_TMN_CODE || 'Not configured',
+    returnUrl: process.env.VNP_RETURN_URL || 'Not configured',
+    ipnUrl: process.env.VNP_IPN_URL || 'Not configured'
+  };
+
+  res.json({
+    status: '✅ SmartShop server is healthy',
+    mongodb: db.isConnected ? '✅ Connected' : '❌ Disconnected',
+    vnpay: vnpayStatus,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('❌ Server error:', err.stack);
+  res.status(500).json({
+    status: 'error',
+    message: 'Internal server error',
+    error: err.message
+  });
+});
 
 const PORT = process.env.PORT || 4000;
 
-// Tạo thư mục img nếu chưa có
-const imgDir = path.join(__dirname, "img");
-if (!fs.existsSync(imgDir)) {
-  console.log('Creating img directory...');
-  fs.mkdirSync(imgDir, { recursive: true });
-}
-
 app.listen(PORT, () => {
-  console.info(`🚀 SmartShop GraphQL Server ready at http://localhost:${PORT}/`);
-  console.info(`📊 Health check available at http://localhost:${PORT}/health`);
-  console.info(`🖼️  Static images served at http://localhost:${PORT}/img`);
-  
-  // ✅ DEBUG: Final check
-  console.log('🔍 Final db object check:');
-  console.log('  - db.orders:', !!db.orders);
-  console.log('  - db.orderItems:', !!db.orderItems);
-  console.log('  - db.orderItems.getByOrderId:', !!db.orderItems?.getByOrderId);
-});
-
-app.get('/health', (req, res) => {
-  res.send('✅ MongoDB is connected & SmartShop is healthy');
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📊 GraphQL endpoint: http://localhost:${PORT}/graphql`);
+  console.log(`💳 VNPay IPN URL: http://localhost:${PORT}/api/payment/vnpay-ipn`);
+  console.log(`🧪 VNPay Test URL: http://localhost:${PORT}/api/payment/test-vnpay`);
+  console.log(`🖼️ Static images served at http://localhost:${PORT}/img`);
 });

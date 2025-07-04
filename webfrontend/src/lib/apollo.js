@@ -1,66 +1,74 @@
-// src/lib/apollo.js
-import { ApolloClient, InMemoryCache, from } from '@apollo/client';
+// ==========================================
+// FILE: webfrontend/src/lib/apollo.js - FIXED AUTH HEADER
+// ==========================================
+
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
-import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
 
-// Upload link cho file uploads
-const uploadLink = createUploadLink({
-  uri: import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/',
+// Create HTTP link
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000/graphql',
+  // ✅ Add credentials
+  credentials: 'include',
 });
 
-// Auth link để thêm JWT token vào headers
+// ✅ AUTH LINK - FIXED
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('smartshop_token');
   
+  console.log('🔍 Apollo Auth Link Debug:');
+  console.log('  - token exists:', !!token);
+  console.log('  - token value:', token ? `${token.substring(0, 30)}...` : 'NO TOKEN');
+  
+  const authHeaders = {
+    ...headers,
+    ...(token && { authorization: `Bearer ${token}` })
+  };
+  
+  console.log('  - final headers:', authHeaders);
+  
   return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    }
+    headers: authHeaders
   };
 });
 
-// Error link để handle errors
+// ✅ ERROR LINK
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
-      console.error(`GraphQL error: Message: ${message}, Location: ${locations}, Path: ${path}`);
-      
-      // Nếu token expired, redirect to login
-      if (message.includes('Authentication required') || message.includes('jwt')) {
-        localStorage.removeItem('smartshop_token');
-        localStorage.removeItem('smartshop_user');
-        window.location.href = '/login';
-      }
+      console.error(`🔴 GraphQL error: ${message} at ${path}`);
     });
   }
 
   if (networkError) {
-    console.error(`Network error: ${networkError}`);
+    console.error(`🔴 Network error:`, networkError);
+    
+    if (networkError.statusCode === 401) {
+      console.log('🔄 Clearing auth and redirecting to login');
+      localStorage.removeItem('smartshop_token');
+      localStorage.removeItem('smartshop_user');
+      window.location.href = '/login';
+    }
   }
 });
 
-// Apollo Client instance với upload support
+// ✅ APOLLO CLIENT
 export const client = new ApolloClient({
-  link: from([errorLink, authLink, uploadLink]),
+  link: errorLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
         fields: {
+          getMyCart: {
+            merge(existing, incoming) {
+              return incoming;
+            },
+          },
           products: {
-            keyArgs: ['condition', 'orderBy'],
-            merge(existing = { nodes: [], totalCount: 0 }, incoming, { args }) {
-              // If offset is 0 or not provided, replace the entire list
-              if (!args?.offset || args.offset === 0) {
-                return incoming;
-              }
-              
-              // Otherwise, append new items
-              return {
-                ...incoming,
-                nodes: [...(existing.nodes || []), ...incoming.nodes],
-              };
+            keyArgs: ["condition", "orderBy"],
+            merge(existing = { nodes: [], totalCount: 0 }, incoming) {
+              return incoming;
             },
           },
         },
@@ -70,9 +78,26 @@ export const client = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       errorPolicy: 'all',
+      notifyOnNetworkStatusChange: false,
     },
     query: {
       errorPolicy: 'all',
+      fetchPolicy: 'cache-first',
+    },
+    mutate: {
+      errorPolicy: 'all',
     },
   },
+  connectToDevTools: false,
 });
+
+// ✅ UTILITY FUNCTIONS
+export const clearApolloCache = () => {
+  client.cache.reset();
+};
+
+export const refetchQueries = (queries) => {
+  return client.refetchQueries({
+    include: queries,
+  });
+};

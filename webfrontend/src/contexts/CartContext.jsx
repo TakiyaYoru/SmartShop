@@ -150,7 +150,7 @@ export const CartProvider = ({ children }) => {
   const { data: cartData, loading: cartLoading, error: cartError, refetch: refetchCart } = useQuery(GET_CART, {
     skip: !isAuthenticated,
     errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
+    notifyOnNetworkStatusChange: false,
     onCompleted: (data) => {
       console.log('Cart data loaded:', data);
       dispatch({
@@ -170,7 +170,8 @@ export const CartProvider = ({ children }) => {
   const { data: itemCountData } = useQuery(GET_CART_ITEM_COUNT, {
     skip: !isAuthenticated,
     errorPolicy: 'all',
-    pollInterval: 30000, // Poll every 30 seconds
+    fetchPolicy: 'cache-first',
+    // pollInterval: 30000, // Poll every 30 seconds
     onCompleted: (data) => {
       dispatch({
         type: CART_ACTIONS.SET_ITEM_COUNT,

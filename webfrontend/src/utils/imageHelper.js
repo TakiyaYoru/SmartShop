@@ -1,7 +1,11 @@
-// webfrontend/src/utils/imageHelper.js
-// Helper functions để xử lý image URLs từ Firebase và local
+// ==========================================
+// FILE: webfrontend/src/utils/imageHelper.js - NO JSX SYNTAX
+// ==========================================
 
 import React, { useState } from 'react';
+
+// ✅ DEFAULT PLACEHOLDER - SVG Data URL (không cần HTTP request)
+const DEFAULT_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='sans-serif' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 /**
  * Kiểm tra xem string có phải là Firebase URL không
@@ -10,7 +14,9 @@ import React, { useState } from 'react';
  */
 export const isFirebaseUrl = (url) => {
   if (!url || typeof url !== 'string') return false;
-  return url.includes('firebasestorage.googleapis.com') || url.startsWith('https://');
+  return url.includes('firebasestorage.googleapis.com') || 
+         url.includes('firebaseapp.com') ||
+         (url.startsWith('https://') && url.includes('firebase'));
 };
 
 /**
@@ -32,14 +38,24 @@ export const isFilename = (imageString) => {
  * @param {string} fallback - URL fallback nếu không tìm thấy ảnh
  * @returns {string} - Full URL để hiển thị
  */
-export const getImageUrl = (imageString, fallback = '/placeholder-product.jpg') => {
+export const getImageUrl = (imageString, fallback = DEFAULT_PLACEHOLDER) => {
   // Nếu không có imageString
   if (!imageString) {
     return fallback;
   }
 
+  // ✅ Nếu đã là data URL, return nguyên
+  if (imageString.startsWith('data:')) {
+    return imageString;
+  }
+
   // Nếu đã là Firebase URL hoặc full URL, return nguyên
   if (isFirebaseUrl(imageString)) {
+    return imageString;
+  }
+
+  // ✅ Nếu là full HTTP URL, return nguyên
+  if (imageString.startsWith('http://') || imageString.startsWith('https://')) {
     return imageString;
   }
 
@@ -55,6 +71,12 @@ export const getImageUrl = (imageString, fallback = '/placeholder-product.jpg') 
     return `${apiUrl}${imageString}`;
   }
 
+  // ✅ Nếu chỉ là relative path khác
+  if (imageString.startsWith('/')) {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    return `${apiUrl}${imageString}`;
+  }
+
   // Default fallback
   return fallback;
 };
@@ -65,7 +87,7 @@ export const getImageUrl = (imageString, fallback = '/placeholder-product.jpg') 
  * @param {string} fallback - URL fallback
  * @returns {string}
  */
-export const getFirstImageUrl = (images, fallback = '/placeholder-product.jpg') => {
+export const getFirstImageUrl = (images, fallback = DEFAULT_PLACEHOLDER) => {
   if (!images || !Array.isArray(images) || images.length === 0) {
     return fallback;
   }
@@ -83,7 +105,9 @@ export const getAllImageUrls = (images) => {
     return [];
   }
   
-  return images.map(image => getImageUrl(image)).filter(url => url !== '/placeholder-product.jpg');
+  return images
+    .map(image => getImageUrl(image))
+    .filter(url => url && url !== DEFAULT_PLACEHOLDER);
 };
 
 /**
@@ -93,40 +117,85 @@ export const getAllImageUrls = (images) => {
  */
 export const checkImageExists = (url) => {
   return new Promise((resolve) => {
+    // ✅ Nếu là data URL, luôn resolve true
+    if (url.startsWith('data:')) {
+      resolve(true);
+      return;
+    }
+
     const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
+    
+    // ✅ Timeout để tránh hang
+    const timeout = setTimeout(() => {
+      resolve(false);
+    }, 5000);
+
+    img.onload = () => {
+      clearTimeout(timeout);
+      resolve(true);
+    };
+    
+    img.onerror = () => {
+      clearTimeout(timeout);
+      resolve(false);
+    };
+    
     img.src = url;
   });
 };
 
 /**
- * Component để hiển thị ảnh với fallback tự động
+ * ✅ Component để hiển thị ảnh với fallback tự động - NO JSX
  */
 export const SmartImage = ({ 
   src, 
-  alt = '', 
+  alt = 'Product image', 
   className = '', 
-  fallback = '/placeholder-product.jpg',
+  fallback = DEFAULT_PLACEHOLDER,
   style = {},
   onClick,
+  loading = "lazy",
   ...props 
 }) => {
-  const imageUrl = getImageUrl(src, fallback);
-  
+  const [imageSrc, setImageSrc] = useState(() => getImageUrl(src, fallback));
+  const [hasError, setHasError] = useState(false);
+
+  // ✅ Update src khi prop thay đổi
+  React.useEffect(() => {
+    if (src !== imageSrc && !hasError) {
+      const newSrc = getImageUrl(src, fallback);
+      setImageSrc(newSrc);
+    }
+  }, [src, fallback, imageSrc, hasError]);
+
   const handleError = (e) => {
-    if (e.target.src !== fallback) {
-      e.target.src = fallback;
+    console.warn('Image failed to load:', e.target.src);
+    
+    // ✅ Chỉ fallback nếu chưa là fallback
+    if (e.target.src !== fallback && e.target.src !== DEFAULT_PLACEHOLDER) {
+      setImageSrc(fallback);
+      setHasError(true);
     }
   };
 
+  const handleLoad = () => {
+    // ✅ Reset error state khi load thành công
+    if (hasError) {
+      setHasError(false);
+    }
+  };
+
+  // ✅ Sử dụng React.createElement thay vì JSX
   return React.createElement('img', {
-    src: imageUrl,
+    src: imageSrc,
     alt: alt,
     className: className,
     style: style,
     onError: handleError,
+    onLoad: handleLoad,
     onClick: onClick,
+    loading: loading,
+    decoding: "async",
     ...props
   });
 };
@@ -175,7 +244,50 @@ export const useImageManager = (initialImages = []) => {
   };
 };
 
-// Export default object với tất cả utilities
+/**
+ * ✅ Preload images utility
+ * @param {string[]} urls - Array of image URLs to preload
+ * @returns {Promise<string[]>} - Promise resolving to successfully loaded URLs
+ */
+export const preloadImages = async (urls) => {
+  if (!urls || !Array.isArray(urls)) return [];
+  
+  const promises = urls.map(async (url) => {
+    try {
+      const exists = await checkImageExists(url);
+      return exists ? url : null;
+    } catch {
+      return null;
+    }
+  });
+  
+  const results = await Promise.all(promises);
+  return results.filter(Boolean);
+};
+
+/**
+ * ✅ Generate responsive image URLs for different sizes
+ * @param {string} baseUrl - Base image URL
+ * @param {number[]} sizes - Array of widths
+ * @returns {Object} - Object with size keys and URLs
+ */
+export const generateResponsiveUrls = (baseUrl, sizes = [150, 300, 600, 1200]) => {
+  if (!baseUrl) return {};
+  
+  const urls = {};
+  sizes.forEach(size => {
+    // For Firebase Storage, you can add size parameters
+    if (isFirebaseUrl(baseUrl)) {
+      urls[size] = `${baseUrl}?w=${size}&h=${size}&c=fill`;
+    } else {
+      urls[size] = baseUrl; // Fallback to original
+    }
+  });
+  
+  return urls;
+};
+
+// ✅ Export default object với tất cả utilities
 export default {
   isFirebaseUrl,
   isFilename,
@@ -184,5 +296,8 @@ export default {
   getAllImageUrls,
   checkImageExists,
   SmartImage,
-  useImageManager
+  useImageManager,
+  preloadImages,
+  generateResponsiveUrls,
+  DEFAULT_PLACEHOLDER
 };

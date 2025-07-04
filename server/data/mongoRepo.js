@@ -785,6 +785,22 @@ const db = {
       }
     },
 
+    // Thêm method create cho orders
+    create: async (orderData) => {
+      return await Order.create(orderData);
+    },
+
+    // Thêm method findById cho orders
+    findById: async (id) => {
+      return await Order.findById(id).populate('userId', 'username email firstName lastName');
+    },
+
+    // Thêm method updateById cho orders
+    updateById: async (id, updateData) => {
+      return await Order.findByIdAndUpdate(id, updateData, { new: true })
+        .populate('userId', 'username email firstName lastName');
+    },
+
     // Get orders by user ID
     getByUserId: async (userId, { first = 10, offset = 0, orderBy = 'DATE_DESC' } = {}) => {
       try {
@@ -1036,6 +1052,11 @@ const db = {
         console.error('❌ mongoRepo: Error in orderItems.getByOrderId:', error);
         return []; // Return empty array instead of throwing
       }
+    },
+
+    // Thêm method create cho orderItems
+    create: async (orderItemData) => {
+      return await OrderItem.create(orderItemData);
     },
 
     // Get order items by product ID (for analytics)
