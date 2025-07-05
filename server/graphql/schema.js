@@ -1,3 +1,4 @@
+// File: server/graphql/schema.js - ADD Reviews import
 import { createSchema } from "graphql-yoga";
 import _ from "lodash";
 import { typeDef as hello, resolvers as helloResolvers } from "./hello.js";
@@ -8,6 +9,7 @@ import { typeDef as authentication, resolvers as authenticationResolvers } from 
 import { typeDef as upload, resolvers as uploadResolvers } from "./upload.js";
 import { typeDef as carts, resolvers as cartsResolvers } from "./carts.js";
 import { typeDef as orders, resolvers as ordersResolvers } from "./orders.js";
+import { typeDef as reviews, resolvers as reviewsResolvers } from "./reviews.js"; // ADD THIS LINE
 
 const query = `
   type Query {
@@ -19,7 +21,19 @@ const query = `
   }
 `;
 
-const typeDefs = [query, hello,  categories, products, brands, authentication, upload, carts, orders];
+const typeDefs = [
+  query, 
+  hello, 
+  categories, 
+  products, 
+  brands, 
+  authentication, 
+  upload, 
+  carts, 
+  orders,
+  reviews  // ADD THIS LINE
+];
+
 const resolvers = _.merge(
   helloResolvers, 
   categoriesResolvers,
@@ -28,7 +42,8 @@ const resolvers = _.merge(
   authenticationResolvers,
   uploadResolvers,
   cartsResolvers,
-  ordersResolvers 
+  ordersResolvers,
+  reviewsResolvers  // ADD THIS LINE
 );
 
 export const schema = createSchema({

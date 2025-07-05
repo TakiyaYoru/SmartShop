@@ -168,3 +168,11 @@ app.listen(PORT, () => {
 app.get('/health', (req, res) => {
   res.send('✅ MongoDB is connected & SmartShop is healthy');
 });
+
+// ✅ DEBUG: Check reviews repository
+if (db.reviews) {
+  console.log('✅ db.reviews exists');
+  console.log('🔍 db.reviews methods:', Object.keys(db.reviews));
+} else {
+  console.error('❌ db.reviews is missing!');
+}

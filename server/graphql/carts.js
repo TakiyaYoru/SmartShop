@@ -2,7 +2,7 @@ export const typeDef = `
   type CartItem {
     _id: ID!
     userId: ID!
-    product: Product!
+    product: Product
     quantity: Int!
     unitPrice: Float!
     productName: String!
@@ -36,6 +36,7 @@ export const typeDef = `
     updateCartItem(input: UpdateCartInput!): CartItem!
     removeFromCart(productId: ID!): Boolean!
     clearCart: Boolean!
+    cleanInvalidCartItems: Boolean!
   }
 `;
 
@@ -46,9 +47,25 @@ export const resolvers = {
       return parent.quantity * parent.unitPrice;
     },
     
-    // Populate product information
+    // Populate product information - FIXED: Handle null product gracefully
     product: async (parent, args, context) => {
-      return await context.db.products.findById(parent.productId);
+      const product = await context.db.products.findById(parent.productId);
+      if (!product) {
+        // Return a placeholder product object instead of null
+        return {
+          _id: parent.productId,
+          name: parent.productName || 'Product no longer available',
+          price: parent.unitPrice,
+          stock: 0,
+          isActive: false,
+          description: 'This product has been removed from our catalog',
+          images: [],
+          sku: 'N/A',
+          category: null,
+          brand: null
+        };
+      }
+      return product;
     }
   },
 
@@ -183,6 +200,32 @@ export const resolvers = {
 
       const result = await context.db.carts.clearByUserId(context.user.id);
       return result;
+    },
+
+    cleanInvalidCartItems: async (parent, args, context, info) => {
+      if (!context.user) {
+        throw new Error("Authentication required");
+      }
+
+      console.log('Cleaning invalid cart items for user:', context.user.id);
+
+      // Get all cart items for user
+      const cartItems = await context.db.carts.getByUserId(context.user.id);
+      const invalidItems = [];
+
+      for (const item of cartItems) {
+        const product = await context.db.products.findById(item.productId);
+        if (!product || !product.isActive) {
+          invalidItems.push(item._id);
+        }
+      }
+
+      if (invalidItems.length > 0) {
+        await context.db.carts.removeItemsByIds(invalidItems);
+        console.log(`🧹 Cleaned ${invalidItems.length} invalid cart items`);
+      }
+
+      return true;
     }
   }
 };

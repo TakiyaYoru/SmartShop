@@ -10,7 +10,7 @@ export const typeDef = `
     user: UserInfo
     customerInfo: CustomerInfo!
     status: OrderStatus!
-    paymentMethod: PaymentMethod!
+    paymentMethod: PaymentMethod
     paymentStatus: PaymentStatus!
     subtotal: Float!
     totalAmount: Float!
@@ -142,11 +142,103 @@ export const typeDef = `
     updateOrderStatus(orderNumber: String!, status: OrderStatus!, adminNotes: String): Order!
     updatePaymentStatus(orderNumber: String!, paymentStatus: PaymentStatus!): Order!
     cancelOrder(orderNumber: String!, reason: String): Order!
+    fixInvalidOrders: Boolean!
+    clearAllOrders: Boolean!
   }
 `;
 
 export const resolvers = {
   Order: {
+    paymentMethod: (parent) => {
+      try {
+        // Handle null or invalid paymentMethod values
+        console.log('🔍 Order.paymentMethod resolver - value:', parent.paymentMethod);
+        
+        // Always return a valid value
+        if (!parent.paymentMethod || typeof parent.paymentMethod !== 'string') {
+          console.log('🔍 Order.paymentMethod - returning default: cod');
+          return 'cod';
+        }
+        
+        // Check if the value is valid for the enum
+        const validPaymentMethods = ['cod', 'bank_transfer'];
+        if (!validPaymentMethods.includes(parent.paymentMethod)) {
+          console.log('🔍 Order.paymentMethod - invalid value, returning default: cod');
+          return 'cod';
+        }
+        
+        console.log('🔍 Order.paymentMethod - returning valid value:', parent.paymentMethod);
+        return parent.paymentMethod;
+      } catch (error) {
+        console.error('❌ Error in paymentMethod resolver:', error);
+        return 'cod'; // Fallback to COD
+      }
+    },
+    
+    paymentStatus: (parent) => {
+      try {
+        // Handle null or invalid paymentStatus values
+        console.log('🔍 Order.paymentStatus resolver - value:', parent.paymentStatus);
+        
+        if (!parent.paymentStatus) {
+          console.log('🔍 Order.paymentStatus - returning default: pending');
+          return 'pending'; // Default to pending
+        }
+        
+        // Check if the value is valid for the enum
+        const validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
+        if (!validPaymentStatuses.includes(parent.paymentStatus)) {
+          console.log('🔍 Order.paymentStatus - invalid value, returning default: pending');
+          return 'pending'; // Default to pending for invalid values
+        }
+        
+        console.log('🔍 Order.paymentStatus - returning valid value:', parent.paymentStatus);
+        return parent.paymentStatus;
+      } catch (error) {
+        console.error('❌ Error in paymentStatus resolver:', error);
+        return 'pending'; // Fallback to pending
+      }
+    },
+    
+    status: (parent) => {
+      try {
+        // Handle null or invalid status values
+        console.log('🔍 Order.status resolver - value:', parent.status);
+        
+        if (!parent.status) {
+          console.log('🔍 Order.status - returning default: pending');
+          return 'pending'; // Default to pending
+        }
+        
+        // Check if the value is valid for the enum
+        const validStatuses = ['pending', 'confirmed', 'processing', 'shipping', 'delivered', 'cancelled'];
+        if (!validStatuses.includes(parent.status)) {
+          console.log('🔍 Order.status - invalid value, returning default: pending');
+          return 'pending'; // Default to pending for invalid values
+        }
+        
+        console.log('🔍 Order.status - returning valid value:', parent.status);
+        return parent.status;
+      } catch (error) {
+        console.error('❌ Error in status resolver:', error);
+        return 'pending'; // Fallback to pending
+      }
+    },
+    
+    customerInfo: (parent) => {
+      // Handle null or invalid customerInfo values
+      if (!parent.customerInfo) {
+        return {
+          fullName: 'Unknown Customer',
+          phone: 'N/A',
+          address: 'N/A',
+          city: 'N/A',
+          notes: ''
+        };
+      }
+      return parent.customerInfo;
+    },
+    
     user: async (parent, args, context) => {
       try {
         console.log('🔍 Order.user resolver - parent.userId:', parent.userId);
@@ -194,6 +286,53 @@ export const resolvers = {
         console.error('❌ Full error stack:', error.stack);
         return [];
       }
+    },
+    
+    // Handle null values for numeric fields
+    subtotal: (parent) => {
+      return parent.subtotal || 0;
+    },
+    
+    totalAmount: (parent) => {
+      return parent.totalAmount || 0;
+    },
+    
+    // Handle null values for date fields
+    orderDate: (parent) => {
+      return parent.orderDate || new Date().toISOString();
+    },
+    
+    confirmedAt: (parent) => {
+      return parent.confirmedAt || null;
+    },
+    
+    processedAt: (parent) => {
+      return parent.processedAt || null;
+    },
+    
+    shippedAt: (parent) => {
+      return parent.shippedAt || null;
+    },
+    
+    deliveredAt: (parent) => {
+      return parent.deliveredAt || null;
+    },
+    
+    cancelledAt: (parent) => {
+      return parent.cancelledAt || null;
+    },
+    
+    // Handle all potentially null fields
+    orderNumber: (parent) => {
+      return parent.orderNumber || `ORDER_${parent._id || 'UNKNOWN'}`;
+    },
+    
+    customerNotes: (parent) => {
+      return parent.customerNotes || '';
+    },
+    
+    adminNotes: (parent) => {
+      return parent.adminNotes || '';
     }
   },
 
@@ -220,6 +359,79 @@ export const resolvers = {
         console.error('❌ Error resolving OrderItem product:', error);
         return null;
       }
+    },
+    
+    // Handle null values for OrderItem fields
+    productName: (parent) => {
+      return parent.productName || 'Unknown Product';
+    },
+    
+    productSku: (parent) => {
+      return parent.productSku || 'N/A';
+    },
+    
+    quantity: (parent) => {
+      return parent.quantity || 0;
+    },
+    
+    unitPrice: (parent) => {
+      return parent.unitPrice || 0;
+    },
+    
+    totalPrice: (parent) => {
+      return parent.totalPrice || (parent.quantity || 0) * (parent.unitPrice || 0);
+    },
+    
+    productSnapshot: (parent) => {
+      if (!parent.productSnapshot) {
+        return {
+          description: 'Product information not available',
+          images: [],
+          brand: 'Unknown',
+          category: 'Unknown'
+        };
+      }
+      return parent.productSnapshot;
+    }
+  },
+  
+  ProductSnapshot: {
+    description: (parent) => {
+      return parent.description || 'No description available';
+    },
+    
+    images: (parent) => {
+      return parent.images || [];
+    },
+    
+    brand: (parent) => {
+      return parent.brand || 'Unknown';
+    },
+    
+    category: (parent) => {
+      return parent.category || 'Unknown';
+    }
+  },
+  
+  CustomerInfo: {
+    fullName: (parent) => {
+      return parent.fullName || 'Unknown Customer';
+    },
+    
+    phone: (parent) => {
+      return parent.phone || 'N/A';
+    },
+    
+    address: (parent) => {
+      return parent.address || 'N/A';
+    },
+    
+    city: (parent) => {
+      return parent.city || 'N/A';
+    },
+    
+    notes: (parent) => {
+      return parent.notes || '';
     }
   },
 
@@ -231,19 +443,38 @@ export const resolvers = {
         }
 
         console.log('🔍 getMyOrders - userId:', context.user.id);
+        console.log('🔍 getMyOrders - userId type:', typeof context.user.id);
+        console.log('🔍 getMyOrders - args:', args);
         
-        const result = await context.db.orders.getByUserId(context.user.id, args);
+        // Convert string userId to ObjectId if needed
+        const userId = context.user.id;
+        const result = await context.db.orders.getByUserId(userId, args);
+        
+        console.log('📦 getMyOrders result:', {
+          itemsCount: result.items?.length || 0,
+          totalCount: result.totalCount || 0,
+          hasItems: !!result.items
+        });
         
         const { first = 10, offset = 0 } = args;
         const hasNextPage = offset + first < result.totalCount;
         const hasPreviousPage = offset > 0;
         
-        return {
+        const response = {
           nodes: result.items || [],
           totalCount: result.totalCount || 0,
           hasNextPage,
           hasPreviousPage
         };
+        
+        console.log('✅ getMyOrders response:', {
+          nodesCount: response.nodes.length,
+          totalCount: response.totalCount,
+          hasNextPage: response.hasNextPage,
+          hasPreviousPage: response.hasPreviousPage
+        });
+        
+        return response;
       } catch (error) {
         console.error('❌ Error in getMyOrders:', error);
         throw new Error(`Failed to fetch orders: ${error.message}`);
@@ -306,19 +537,49 @@ export const resolvers = {
           search: args.search
         });
         
+        // Filter out orders with invalid data
+        const validOrders = (result.items || []).filter(order => {
+          try {
+            // Check if order has required fields
+            if (!order._id || !order.orderNumber) {
+              console.log('❌ Filtering out order with missing required fields:', order._id);
+              return false;
+            }
+            
+            // Check if paymentMethod is valid
+            if (order.paymentMethod && !['cod', 'bank_transfer'].includes(order.paymentMethod)) {
+              console.log('❌ Filtering out order with invalid paymentMethod:', order.paymentMethod);
+              return false;
+            }
+            
+            return true;
+          } catch (error) {
+            console.error('❌ Error filtering order:', error);
+            return false;
+          }
+        });
+        
+        console.log(`🔍 getAllOrders - Total orders: ${result.items?.length || 0}, Valid orders: ${validOrders.length}`);
+        
         const { first = 10, offset = 0 } = args;
         const hasNextPage = offset + first < result.totalCount;
         const hasPreviousPage = offset > 0;
         
         return {
-          nodes: result.items || [],
+          nodes: validOrders,
           totalCount: result.totalCount || 0,
           hasNextPage,
           hasPreviousPage
         };
       } catch (error) {
         console.error('❌ Error in getAllOrders:', error);
-        throw new Error(`Failed to fetch orders: ${error.message}`);
+        // Return empty result instead of throwing error
+        return {
+          nodes: [],
+          totalCount: 0,
+          hasNextPage: false,
+          hasPreviousPage: false
+        };
       }
     },
 
@@ -471,6 +732,95 @@ export const resolvers = {
         return cancelledOrder;
       } catch (error) {
         console.error('❌ Error cancelling order:', error);
+        throw error;
+      }
+    },
+
+    fixInvalidOrders: async (parent, args, context, info) => {
+      try {
+        if (!context.user || context.user.role !== 'admin') {
+          throw new Error("Admin access required");
+        }
+
+        console.log('🔧 Fixing invalid orders...');
+        
+        // Get all orders
+        const allOrders = await context.db.orders.getAll({ first: 1000, offset: 0 });
+        let fixedCount = 0;
+        
+        for (const order of allOrders.items) {
+          let needsUpdate = false;
+          const updateData = {};
+          
+          // Fix paymentMethod
+          if (!order.paymentMethod || !['cod', 'bank_transfer'].includes(order.paymentMethod)) {
+            updateData.paymentMethod = 'cod';
+            needsUpdate = true;
+            console.log(`🔧 Fixing paymentMethod for order ${order.orderNumber}: ${order.paymentMethod} -> cod`);
+          }
+          
+          // Fix paymentStatus
+          if (!order.paymentStatus || !['pending', 'paid', 'failed', 'refunded'].includes(order.paymentStatus)) {
+            updateData.paymentStatus = 'pending';
+            needsUpdate = true;
+            console.log(`🔧 Fixing paymentStatus for order ${order.orderNumber}: ${order.paymentStatus} -> pending`);
+          }
+          
+          // Fix status
+          if (!order.status || !['pending', 'confirmed', 'processing', 'shipping', 'delivered', 'cancelled'].includes(order.status)) {
+            updateData.status = 'pending';
+            needsUpdate = true;
+            console.log(`🔧 Fixing status for order ${order.orderNumber}: ${order.status} -> pending`);
+          }
+          
+          // Fix customerInfo if missing
+          if (!order.customerInfo) {
+            updateData.customerInfo = {
+              fullName: 'Unknown Customer',
+              phone: 'N/A',
+              address: 'N/A',
+              city: 'N/A',
+              notes: ''
+            };
+            needsUpdate = true;
+            console.log(`🔧 Fixing customerInfo for order ${order.orderNumber}`);
+          }
+          
+          if (needsUpdate) {
+            await context.db.orders.updateById(order._id, updateData);
+            fixedCount++;
+            console.log(`🔧 Fixed order ${order.orderNumber}`);
+          }
+        }
+        
+        console.log(`✅ Fixed ${fixedCount} invalid orders`);
+        return true;
+      } catch (error) {
+        console.error('❌ Error fixing invalid orders:', error);
+        throw error;
+      }
+    },
+
+    clearAllOrders: async (parent, args, context, info) => {
+      try {
+        if (!context.user || context.user.role !== 'admin') {
+          throw new Error("Admin access required");
+        }
+
+        console.log('🗑️ Clearing all orders and order items...');
+        
+        // Delete all order items first (to maintain referential integrity)
+        const orderItemsResult = await context.db.orderItems.deleteAll();
+        console.log(`🗑️ Deleted ${orderItemsResult.deletedCount || 0} order items`);
+        
+        // Delete all orders
+        const ordersResult = await context.db.orders.deleteAll();
+        console.log(`🗑️ Deleted ${ordersResult.deletedCount || 0} orders`);
+        
+        console.log('✅ All orders and order items cleared successfully');
+        return true;
+      } catch (error) {
+        console.error('❌ Error clearing all orders:', error);
         throw error;
       }
     }

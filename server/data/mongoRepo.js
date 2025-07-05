@@ -611,6 +611,17 @@ const db = {
       }
     },
 
+    // Xóa nhiều cart items theo IDs
+    removeItemsByIds: async (itemIds) => {
+      try {
+        const result = await Cart.deleteMany({ _id: { $in: itemIds } });
+        return result.deletedCount > 0;
+      } catch (error) {
+        console.error('Error in carts.removeItemsByIds:', error);
+        throw error;
+      }
+    },
+
     // Lấy tổng số items trong cart (để hiển thị badge)
     getItemCount: async (userId) => {
       try {
@@ -629,15 +640,18 @@ const db = {
         
         const validationErrors = [];
         const validItems = [];
+        const invalidItems = [];
 
         for (const item of cartItems) {
           if (!item.productId) {
             validationErrors.push(`Product ${item.productName} no longer exists`);
+            invalidItems.push(item._id);
             continue;
           }
 
           if (!item.productId.isActive) {
             validationErrors.push(`Product ${item.productName} is no longer available`);
+            invalidItems.push(item._id);
             continue;
           }
 
@@ -649,9 +663,18 @@ const db = {
           // Kiểm tra giá có thay đổi không
           if (item.unitPrice !== item.productId.price) {
             validationErrors.push(`${item.productName}: Price changed from ${item.unitPrice} to ${item.productId.price}`);
+            // Update the price in cart
+            item.unitPrice = item.productId.price;
+            await item.save();
           }
 
           validItems.push(item);
+        }
+
+        // Auto-remove invalid items from cart
+        if (invalidItems.length > 0) {
+          await Cart.deleteMany({ _id: { $in: invalidItems } });
+          console.log(`🧹 Auto-removed ${invalidItems.length} invalid items from cart`);
         }
 
         return {
@@ -680,15 +703,22 @@ const db = {
           throw new Error('Cart is empty');
         }
         
-        // 2. Calculate order totals
+        // 2. Filter out invalid items and calculate totals
         let subtotal = 0;
         const orderItemsData = [];
+        const validCartItems = [];
         
         for (const cartItem of cartItems) {
           const product = cartItem.productId;
           
           if (!product) {
-            throw new Error(`Product not found for cart item ${cartItem._id}`);
+            console.log(`⚠️ Skipping invalid cart item: ${cartItem._id} - Product not found`);
+            continue;
+          }
+          
+          if (!product.isActive) {
+            console.log(`⚠️ Skipping inactive product: ${product.name}`);
+            continue;
           }
           
           if (product.stock < cartItem.quantity) {
@@ -713,6 +743,12 @@ const db = {
               category: product.category?.name || 'Unknown'
             }
           });
+          
+          validCartItems.push(cartItem);
+        }
+        
+        if (orderItemsData.length === 0) {
+          throw new Error('No valid items found in cart');
         }
         
         // 3. Generate order number
@@ -744,8 +780,8 @@ const db = {
         
         await OrderItem.create(orderItemsWithOrderId, { session });
         
-        // 6. Update product stock and clear cart
-        for (const cartItem of cartItems) {
+        // 6. Update product stock and clear valid cart items
+        for (const cartItem of validCartItems) {
           await Product.findByIdAndUpdate(
             cartItem.productId._id,
             { $inc: { stock: -cartItem.quantity } },
@@ -753,8 +789,9 @@ const db = {
           );
         }
         
-        // Clear cart
-        await Cart.deleteMany({ userId }, { session });
+        // Clear only valid cart items
+        const validCartItemIds = validCartItems.map(item => item._id);
+        await Cart.deleteMany({ _id: { $in: validCartItemIds } }, { session });
         
         await session.commitTransaction();
         
@@ -788,24 +825,59 @@ const db = {
     // Get orders by user ID
     getByUserId: async (userId, { first = 10, offset = 0, orderBy = 'DATE_DESC' } = {}) => {
       try {
+        console.log('🔍 orders.getByUserId - userId:', userId);
+        console.log('🔍 orders.getByUserId - args:', { first, offset, orderBy });
+        
         const columnMapping = {
           DATE: 'orderDate',
           STATUS: 'status',
           TOTAL: 'totalAmount'
         };
         
-        const query = { userId };
+        // Convert userId to ObjectId if it's a string
+        const userIdObj = typeof userId === 'string' ? userId : userId.toString();
+        const query = { userId: userIdObj };
         const sortOptions = buildSortOptions(orderBy, columnMapping);
+        
+        console.log('🔍 orders.getByUserId - userId:', userId);
+        console.log('🔍 orders.getByUserId - userIdObj:', userIdObj);
+        console.log('🔍 orders.getByUserId - query:', query);
+        console.log('🔍 orders.getByUserId - sortOptions:', sortOptions);
         
         const totalCount = await Order.countDocuments(query);
         const safeOffset = Math.min(offset, Math.max(0, totalCount - 1));
+        
+        console.log('📊 orders.getByUserId - totalCount:', totalCount);
+        console.log('📊 orders.getByUserId - safeOffset:', safeOffset);
+        
+        // Debug: Check all orders in database
+        const allOrders = await Order.find({});
+        console.log('🔍 orders.getByUserId - All orders in DB:', allOrders.length);
+        allOrders.forEach(order => {
+          console.log('  - Order:', order.orderNumber, 'UserID:', order.userId, 'Type:', typeof order.userId);
+        });
         
         const items = await Order.find(query)
           .sort(sortOptions)
           .skip(safeOffset)
           .limit(first);
         
-        return { items, totalCount };
+        console.log('📦 orders.getByUserId - found items:', items.length);
+        
+        // Populate order items for each order
+        const ordersWithItems = await Promise.all(
+          items.map(async (order) => {
+            const orderItems = await OrderItem.find({ orderId: order._id });
+            return {
+              ...order.toObject(),
+              items: orderItems
+            };
+          })
+        );
+        
+        console.log('✅ orders.getByUserId - returning orders with items');
+        
+        return { items: ordersWithItems, totalCount };
       } catch (error) {
         console.error('Error in orders.getByUserId:', error);
         throw error;
@@ -962,6 +1034,28 @@ const db = {
       }
     },
 
+    // Update order by ID
+    updateById: async (id, updateData) => {
+      try {
+        return await Order.findByIdAndUpdate(id, updateData, { new: true });
+      } catch (error) {
+        console.error('Error in orders.updateById:', error);
+        throw error;
+      }
+    },
+
+    // Delete all orders
+    deleteAll: async () => {
+      try {
+        const result = await Order.deleteMany({});
+        console.log(`🗑️ Deleted ${result.deletedCount} orders`);
+        return result;
+      } catch (error) {
+        console.error('Error in orders.deleteAll:', error);
+        throw error;
+      }
+    },
+
     // Get order statistics
     getStats: async () => {
       try {
@@ -1075,6 +1169,18 @@ const db = {
         return summary;
       } catch (error) {
         console.error('Error getting order items summary:', error);
+        throw error;
+      }
+    },
+
+    // Delete all order items
+    deleteAll: async () => {
+      try {
+        const result = await OrderItem.deleteMany({});
+        console.log(`🗑️ Deleted ${result.deletedCount} order items`);
+        return result;
+      } catch (error) {
+        console.error('Error in orderItems.deleteAll:', error);
         throw error;
       }
     }

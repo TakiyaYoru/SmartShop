@@ -108,7 +108,7 @@ export const resolvers = {
         };
       }
 
-      const user = await context.db.users.findOne(username);
+      const user = await context.db.users.findByUsername(username);
       if (!user) {
         return {
           success: false,
@@ -163,7 +163,7 @@ export const resolvers = {
     register: async (parent, args, context, info) => {
       const { username, email, password, firstName, lastName, phone } = args.input;
 
-      const existingUserByUsername = await context.db.users.findOne(username);
+      const existingUserByUsername = await context.db.users.findByUsername(username);
       if (existingUserByUsername) {
         return {
           success: false,
