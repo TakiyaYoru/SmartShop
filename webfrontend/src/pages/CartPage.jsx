@@ -50,6 +50,11 @@ const CartPage = () => {
     subtotal = items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.unitPrice || 0)), 0);
   }
 
+  // Recalculate with only valid items
+  const validItems = items.filter(item => item.product && item.product.isActive);
+  const validSubtotal = validItems.reduce((sum, item) => sum + ((item.quantity || 0) * (item.unitPrice || 0)), 0);
+  const validTotalItems = validItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
   // Fallback: use direct query if context has no data
   const { data: directCartData } = useQuery(GET_CART, {
     skip: !authData.isAuthenticated,
@@ -103,7 +108,7 @@ const CartPage = () => {
   };
 
   const handleClearCart = async () => {
-    if (window.confirm(`Bạn có chắc muốn xóa toàn bộ ${totalItems} sản phẩm khỏi giỏ hàng?`)) {
+    if (window.confirm(`Bạn có chắc muốn xóa toàn bộ ${validTotalItems} sản phẩm khỏi giỏ hàng?`)) {
       if (cartData?.clearCart) {
         await cartData.clearCart();
       }
@@ -111,10 +116,13 @@ const CartPage = () => {
   };
 
   // Calculate shipping and total
-  const shippingFee = subtotal >= 500000 ? 0 : 30000;
+  const shippingFee = validSubtotal >= 500000 ? 0 : 30000;
   const taxRate = 0.1;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shippingFee + tax;
+  const tax = validSubtotal * taxRate;
+  const total = validSubtotal + shippingFee + tax;
+
+  // Check for invalid products
+  const invalidItems = items.filter(item => !item.product || !item.product.isActive);
 
   return (
     <ProtectedRoute>
@@ -135,9 +143,9 @@ const CartPage = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
                   <ShoppingCartIcon className="w-7 h-7 sm:w-8 sm:h-8" />
                   Giỏ hàng
-                  {!isEmpty && totalItems > 0 && (
+                  {!isEmpty && validTotalItems > 0 && (
                     <span className="bg-blue-100 text-blue-800 text-sm sm:text-lg font-semibold px-2 sm:px-3 py-1 rounded-full">
-                      {totalItems}
+                      {validTotalItems}
                     </span>
                   )}
                 </h1>
@@ -163,6 +171,40 @@ const CartPage = () => {
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-6"></div>
                   <p className="text-gray-600 text-lg">Đang tải giỏ hàng...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Invalid Items Warning */}
+            {!isLoading && invalidItems.length > 0 && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                      <span className="text-red-600 text-sm font-bold">!</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-red-800 font-semibold mb-2">
+                      Có {invalidItems.length} sản phẩm không khả dụng
+                    </h3>
+                    <p className="text-red-700 text-sm mb-3">
+                      Một số sản phẩm trong giỏ hàng đã bị xóa hoặc không còn khả dụng. 
+                      Chúng sẽ được tự động loại bỏ khi bạn thanh toán.
+                    </p>
+                    <div className="space-y-2">
+                      {invalidItems.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm">
+                          <span className="text-red-700">
+                            {item.productName || 'Sản phẩm không xác định'}
+                          </span>
+                          <span className="text-red-600 font-medium">
+                            {item.quantity} x {formatPrice(item.unitPrice)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -218,7 +260,7 @@ const CartPage = () => {
             )}
 
             {/* Cart Content */}
-            {!isEmpty && items.length > 0 && (
+            {!isEmpty && validItems.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Cart Items */}
                 <div className="lg:col-span-8 space-y-6">
@@ -227,11 +269,11 @@ const CartPage = () => {
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 p-6">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-xl font-bold text-gray-900">
-                          Sản phẩm trong giỏ ({items.length} sản phẩm)
+                          Sản phẩm trong giỏ ({validItems.length} sản phẩm)
                         </h2>
                         <div className="text-sm text-gray-600">
                           Tạm tính: <span className="font-bold text-gray-900 text-base">
-                            {formatPrice(subtotal)}
+                            {formatPrice(validSubtotal)}
                           </span>
                         </div>
                       </div>
@@ -239,7 +281,7 @@ const CartPage = () => {
 
                     {/* Cart Items List */}
                     <div className="divide-y divide-gray-100">
-                      {items.map((item, index) => {
+                      {validItems.map((item, index) => {
                         const product = item.product || {};
                         const productImage = getProductImage(product);
                         const originalPrice = product.originalPrice;

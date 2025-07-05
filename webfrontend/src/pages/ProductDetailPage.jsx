@@ -1,470 +1,441 @@
-// webfrontend/src/pages/ProductDetailPage.jsx - Updated với Firebase Support
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+// File: webfrontend/src/pages/ProductDetailPage.jsx - Add Reviews section
+// UPDATE: Add reviews imports and integrate review components
+
+import React, { useState } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import {
+  ArrowLeftIcon,
+  StarIcon,
+  ShoppingCartIcon,
   HeartIcon,
   ShareIcon,
-  ShoppingCartIcon,
-  StarIcon,
-  CheckCircleIcon,
   TruckIcon,
-  ArrowLeftIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  XMarkIcon,
-  MinusIcon,
-  PlusIcon
+  ShieldCheckIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 import Layout from '../components/common/Layout';
-import { GET_PRODUCT } from '../graphql/products';
-import { formatPrice, calculateDiscountPercentage } from '../lib/utils';
-import { getImageUrl, SmartImage } from '../utils/imageHelper'; // ✅ UPDATED IMPORT
-import { useCart } from '../contexts/CartContext';
+import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import AddToCartButton from '../components/cart/AddToCartButton';
-import toast from 'react-hot-toast';
+import { SmartImage } from '../utils/imageHelper';
+import { GET_PRODUCT } from '../graphql/products';
+
+// NEW: Import Review Components
+import ReviewList from '../components/reviews/ReviewList';
+import CreateReviewForm from '../components/reviews/CreateReviewForm';
+import { renderStarRating } from '../utils/reviewHelper';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
-  
+  const location = useLocation();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('description'); // 'description', 'reviews', 'write-review'
 
   const { data, loading, error } = useQuery(GET_PRODUCT, {
     variables: { id },
     errorPolicy: 'all'
   });
 
-  const product = data?.product;
-
-  // Redirect if product not found
-  useEffect(() => {
-    if (!loading && !product && !error) {
-      navigate('/products', { replace: true });
+  // NEW: Auto-switch to review form if coming from OrdersPage
+  React.useEffect(() => {
+    if (location.state?.openReviewForm) {
+      setActiveTab('write-review');
     }
-  }, [loading, product, error, navigate]);
+  }, [location.state]);
 
-  // Reset states when product changes
-  useEffect(() => {
-    if (product) {
-      setSelectedImageIndex(0);
-      setQuantity(1);
-      setIsWishlisted(false);
-    }
-  }, [product]);
-
-  const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 1 && newQuantity <= (product?.stock || 0)) {
-      setQuantity(newQuantity);
-    }
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
   };
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    addToCart({
-      productId: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0] || null,
-      quantity: quantity
-    });
-    
-    toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <LoadingSkeleton type="product-detail" />
+        </div>
+      </Layout>
+    );
+  }
 
-  const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted);
-    toast.success(isWishlisted ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích');
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: `Xem sản phẩm này trên SmartShop: ${product.name}`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log('Share failed:', err);
-      }
-    } else {
-      // Fallback to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Đã copy link sản phẩm!');
-    }
-  };
-
-  if (loading) return <Layout><ProductDetailSkeleton /></Layout>;
-
-  if (error) {
+  if (error || !data?.product) {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Không thể tải sản phẩm</h2>
-            <p className="text-gray-600 mb-8">{error.message}</p>
-            <button
-              onClick={() => navigate('/products')}
-              className="btn btn-primary"
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Sản phẩm không tồn tại</h1>
+            <Link
+              to="/products"
+              className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              Quay lại danh sách sản phẩm
-            </button>
+              ← Quay lại danh sách sản phẩm
+            </Link>
           </div>
         </div>
       </Layout>
     );
   }
 
-  if (!product) {
-    return (
-      <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Không tìm thấy sản phẩm</h2>
-            <p className="text-gray-600 mb-8">Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-            <button
-              onClick={() => navigate('/products')}
-              className="btn btn-primary"
-            >
-              Quay lại danh sách sản phẩm
-            </button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  const {
-    name,
-    description,
-    price,
-    originalPrice,
-    images = [],
-    stock,
-    category,
-    brand,
-    sku,
-    isFeatured
-  } = product;
-
-  const discount = originalPrice && originalPrice > price 
-    ? calculateDiscountPercentage(originalPrice, price)
-    : null;
-
-  const isInStock = stock > 0;
-  const maxQuantity = Math.min(stock, 10); // Limit to 10 per purchase
+  const product = data.product;
+  const hasImages = product.images && product.images.length > 0;
+  const isOutOfStock = product.stock === 0;
+  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasDiscount 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
 
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <button
-            onClick={() => navigate('/products')}
-            className="flex items-center hover:text-gray-700 transition-colors"
-          >
-            <ArrowLeftIcon className="w-4 h-4 mr-1" />
-            Quay lại
-          </button>
+          <Link to="/" className="hover:text-gray-700">Trang chủ</Link>
           <span>/</span>
-          <span>{category?.name || 'Sản phẩm'}</span>
+          <Link to="/products" className="hover:text-gray-700">Sản phẩm</Link>
           <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{name}</span>
+          <Link to={`/categories/${product.category._id}`} className="hover:text-gray-700">
+            {product.category.name}
+          </Link>
+          <span>/</span>
+          <span className="text-gray-900 font-medium truncate">{product.name}</span>
         </nav>
 
-        <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
-          {/* Product Images */}
-          <div className="flex flex-col-reverse">
-            {/* Thumbnail Images */}
-            {images.length > 1 && (
-              <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-                <div className="grid grid-cols-4 gap-6">
-                  {images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={`relative h-24 bg-white rounded-md flex items-center justify-center text-sm font-medium uppercase text-gray-900 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4 ${
-                        index === selectedImageIndex ? 'ring-2 ring-blue-500' : ''
-                      }`}
-                    >
-                      <span className="sr-only">Ảnh {index + 1}</span>
-                      <span className="absolute inset-0 rounded-md overflow-hidden">
-                        {/* ✅ UPDATED: Sử dụng SmartImage */}
-                        <SmartImage
-                          src={image}
-                          alt=""
-                          className="w-full h-full object-center object-cover"
-                          fallback="/placeholder-product.jpg"
-                        />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
+        {/* Product Info Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Images */}
+          <div className="space-y-4">
             {/* Main Image */}
-            <div className="aspect-w-1 aspect-h-1 w-full">
-              <div className="relative">
-                {/* ✅ UPDATED: Sử dụng SmartImage */}
+            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              {hasImages ? (
                 <SmartImage
-                  src={images[selectedImageIndex] || images[0]}
-                  alt={name}
-                  className="w-full h-full object-center object-cover sm:rounded-lg cursor-zoom-in"
-                  onClick={() => setShowImageModal(true)}
+                  src={product.images[selectedImageIndex]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
                   fallback="/placeholder-product.jpg"
                 />
-                
-                {/* Navigation Arrows */}
-                {images.length > 1 && (
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4"></div>
+                    <p className="text-gray-500">Không có hình ảnh</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnail Images */}
+            {hasImages && product.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {product.images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${
+                      selectedImageIndex === index 
+                        ? 'border-blue-500' 
+                        : 'border-transparent hover:border-gray-300'
+                    }`}
+                  >
+                    <SmartImage
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      fallback="/placeholder-product.jpg"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-6">
+            {/* Header */}
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Link 
+                  to={`/brands/${product.brand._id}`}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {product.brand.name}
+                </Link>
+                {product.isFeatured && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <StarIcon className="h-3 w-3 mr-1" />
+                    Nổi bật
+                  </span>
+                )}
+              </div>
+              
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+              
+              {/* NEW: Rating Display */}
+              {product.totalReviews > 0 && (
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="flex items-center space-x-1">
+                    {renderStarRating(product.averageRating, 'md')}
+                    <span className="text-lg font-medium text-gray-900 ml-2">
+                      {product.averageRating.toFixed(1)}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('reviews')}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    ({product.totalReviews} đánh giá)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Price */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <span className="text-3xl font-bold text-red-600">
+                  {formatPrice(product.price)}
+                </span>
+                {hasDiscount && (
                   <>
-                    <button
-                      onClick={() => setSelectedImageIndex(selectedImageIndex > 0 ? selectedImageIndex - 1 : images.length - 1)}
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                    >
-                      <ChevronLeftIcon className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => setSelectedImageIndex(selectedImageIndex < images.length - 1 ? selectedImageIndex + 1 : 0)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                    >
-                      <ChevronRightIcon className="w-5 h-5" />
-                    </button>
+                    <span className="text-xl text-gray-400 line-through">
+                      {formatPrice(product.originalPrice)}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                      -{discountPercent}%
+                    </span>
                   </>
                 )}
+              </div>
+              
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <span>SKU: {product.sku}</span>
+                <span>|</span>
+                <span className={`${isOutOfStock ? 'text-red-600' : 'text-green-600'} font-medium`}>
+                  {isOutOfStock ? 'Hết hàng' : `Còn ${product.stock} sản phẩm`}
+                </span>
+              </div>
+            </div>
 
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  {isFeatured && (
-                    <span className="inline-flex items-center px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full">
-                      HOT
-                    </span>
-                  )}
-                  {discount && (
-                    <span className="inline-flex items-center px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                      -{discount}%
-                    </span>
-                  )}
+            {/* Purchase Section */}
+            <div className="space-y-4 p-6 bg-gray-50 rounded-lg">
+              {!isOutOfStock && (
+                <div className="flex items-center space-x-4">
+                  <label className="text-sm font-medium text-gray-700">Số lượng:</label>
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      min="1"
+                      max={product.stock}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1)))}
+                      className="w-16 px-2 py-2 text-center border-0 focus:ring-0"
+                    />
+                    <button
+                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex space-x-3">
+                <AddToCartButton
+                  product={product}
+                  quantity={quantity}
+                  disabled={isOutOfStock}
+                  className="flex-1"
+                />
+                <button className="p-3 text-gray-400 hover:text-red-500 border border-gray-300 rounded-lg transition-colors">
+                  <HeartIcon className="h-5 w-5" />
+                </button>
+                <button className="p-3 text-gray-400 hover:text-blue-500 border border-gray-300 rounded-lg transition-colors">
+                  <ShareIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                <TruckIcon className="h-8 w-8 text-green-600" />
+                <div>
+                  <p className="font-medium text-green-900">Miễn phí vận chuyển</p>
+                  <p className="text-sm text-green-700">Đơn hàng từ 500k</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
+                <div>
+                  <p className="font-medium text-blue-900">Bảo hành chính hãng</p>
+                  <p className="text-sm text-blue-700">12 tháng</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-600" />
+                <div>
+                  <p className="font-medium text-purple-900">Hỗ trợ 24/7</p>
+                  <p className="text-sm text-purple-700">Tư vấn miễn phí</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Product Info */}
-          <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
-            {/* Title & Category */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                <span>{category?.name || 'Chưa phân loại'}</span>
-                <span>•</span>
-                <span>{brand?.name || 'Không xác định'}</span>
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                {name}
-              </h1>
-            </div>
+        {/* NEW: Tabs Section for Description and Reviews */}
+        <div className="border-t border-gray-200">
+          {/* Tab Navigation */}
+          <div className="flex space-x-8 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('description')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'description'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Mô tả sản phẩm
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'reviews'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Đánh giá ({product.totalReviews || 0})
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('write-review')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'write-review'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Viết đánh giá
+            </button>
+          </div>
 
-            {/* Price */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-red-600">
-                  {formatPrice(price)}
-                </span>
-                {originalPrice && originalPrice > price && (
-                  <span className="text-xl text-gray-400 line-through">
-                    {formatPrice(originalPrice)}
-                  </span>
-                )}
-                {discount && (
-                  <span className="inline-flex items-center px-2 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
-                    Tiết kiệm {discount}%
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Stock & SKU */}
-            <div className="mb-6">
-              <div className="flex items-center gap-4 text-sm">
-                <div className={`flex items-center gap-1 ${isInStock ? 'text-green-600' : 'text-red-600'}`}>
-                  <CheckCircleIcon className="w-4 h-4" />
-                  <span>{isInStock ? `Còn ${stock} sản phẩm` : 'Hết hàng'}</span>
+          {/* Tab Content */}
+          <div className="py-8">
+            {activeTab === 'description' && (
+              <div className="max-w-4xl">
+                <div className="prose prose-gray max-w-none">
+                  {product.description ? (
+                    <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                      {product.description}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <p>Chưa có mô tả cho sản phẩm này.</p>
+                    </div>
+                  )}
                 </div>
-                <div className="text-gray-500">
-                  SKU: {sku}
-                </div>
-              </div>
-            </div>
 
-            {/* Rating (Mock) */}
-            <div className="flex items-center mb-6">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, index) => (
-                  <StarSolidIcon
-                    key={index}
-                    className={`w-5 h-5 ${index < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
-                  />
-                ))}
-              </div>
-              <span className="ml-2 text-sm text-gray-500">(4.0 • 127 đánh giá)</span>
-            </div>
-
-            {/* Quantity Selector */}
-            {isInStock && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Số lượng
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-gray-300 rounded-lg">
-                    <button
-                      onClick={() => handleQuantityChange(quantity - 1)}
-                      disabled={quantity <= 1}
-                      className="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <MinusIcon className="w-4 h-4" />
-                    </button>
-                    <span className="px-4 py-2 min-w-[60px] text-center font-medium">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => handleQuantityChange(quantity + 1)}
-                      disabled={quantity >= maxQuantity}
-                      className="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <PlusIcon className="w-4 h-4" />
-                    </button>
+                {/* Product Specifications */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Thông tin sản phẩm</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Thương hiệu:</span>
+                        <span className="font-medium">{product.brand?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Danh mục:</span>
+                        <span className="font-medium">{product.category?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">SKU:</span>
+                        <span className="font-medium">{product.sku}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tình trạng:</span>
+                        <span className={`font-medium ${isOutOfStock ? 'text-red-600' : 'text-green-600'}`}>
+                          {isOutOfStock ? 'Hết hàng' : 'Còn hàng'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    (Tối đa {Math.min(stock, 10)} sản phẩm)
-                  </span>
+
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Chính sách</h3>
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Bảo hành chính hãng 12 tháng</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Miễn phí vận chuyển đơn hàng từ 500.000đ</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Đổi trả trong 7 ngày nếu có lỗi từ nhà sản xuất</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Hỗ trợ kỹ thuật 24/7</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-4 mb-8">
-              <AddToCartButton 
-                product={product}
-                quantity={quantity}
-                size="lg"
-                variant="primary"
-                disabled={!isInStock}
-                className="flex-1"
-              />
-              
-              <button
-                onClick={handleWishlistToggle}
-                className={`p-3 rounded-lg border transition-colors ${
-                  isWishlisted 
-                    ? 'border-red-300 bg-red-50 text-red-600' 
-                    : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {isWishlisted ? (
-                  <HeartSolidIcon className="w-6 h-6" />
-                ) : (
-                  <HeartIcon className="w-6 h-6" />
-                )}
-              </button>
-              
-              <button
-                onClick={handleShare}
-                className="p-3 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                <ShareIcon className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Shipping Info */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
-              <div className="flex items-center gap-2 text-green-800">
-                <TruckIcon className="w-5 h-5" />
-                <span className="font-medium">Miễn phí vận chuyển</span>
+            {activeTab === 'reviews' && (
+              <div className="max-w-6xl">
+                <ReviewList 
+                  productId={product._id} 
+                  productReviewStats={product.reviewStats}
+                  isAdmin={false}
+                />
               </div>
-              <p className="text-sm text-green-600 mt-1">
-                Đơn hàng từ 500.000₫ được miễn phí ship toàn quốc
-              </p>
-            </div>
+            )}
 
-            {/* Description */}
-            {description && (
-              <div className="mb-8">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Mô tả sản phẩm</h3>
-                <div className="prose prose-sm text-gray-600">
-                  <p>{description}</p>
-                </div>
+            {activeTab === 'write-review' && (
+              <div className="max-w-4xl">
+                <CreateReviewForm
+                  productId={product._id}
+                  product={product}
+                  onReviewCreated={() => {
+                    setActiveTab('reviews');
+                    // Optionally refetch product data to update review stats
+                  }}
+                  onCancel={() => setActiveTab('reviews')}
+                />
               </div>
             )}
           </div>
         </div>
 
-        {/* Image Modal */}
-        {showImageModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="relative max-w-4xl max-h-full">
-              <button
-                onClick={() => setShowImageModal(false)}
-                className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
-              >
-                <XMarkIcon className="w-8 h-8" />
-              </button>
-              {/* ✅ UPDATED: Sử dụng SmartImage */}
-              <SmartImage
-                src={images[selectedImageIndex] || images[0]}
-                alt={name}
-                className="max-w-full max-h-full object-contain"
-                fallback="/placeholder-product.jpg"
-              />
-            </div>
+        {/* Related Products Section (Optional) */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Sản phẩm liên quan</h2>
+          <div className="text-center py-12 text-gray-500">
+            <p>Chức năng sản phẩm liên quan sẽ được cập nhật sau.</p>
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   );
 };
-
-// Loading Skeleton Component
-const ProductDetailSkeleton = () => (
-  <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start animate-pulse">
-    <div className="flex flex-col-reverse">
-      <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-        <div className="grid grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 rounded" />
-          ))}
-        </div>
-      </div>
-      <div className="aspect-w-1 aspect-h-1 w-full">
-        <div className="w-full h-96 bg-gray-200 rounded-lg" />
-      </div>
-    </div>
-    <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
-      <div className="h-8 bg-gray-200 rounded w-3/4" />
-      <div className="h-4 bg-gray-200 rounded w-1/2 mt-4" />
-      <div className="h-10 bg-gray-200 rounded w-1/3 mt-6" />
-      <div className="h-6 bg-gray-200 rounded w-1/4 mt-4" />
-      <div className="h-4 bg-gray-200 rounded w-1/3 mt-4" />
-      <div className="flex gap-4 mt-8">
-        <div className="h-10 bg-gray-200 rounded w-20" />
-      </div>
-      <div className="flex gap-4 mt-6">
-        <div className="h-12 bg-gray-200 rounded flex-1" />
-        <div className="h-12 bg-gray-200 rounded flex-1" />
-        <div className="h-12 w-12 bg-gray-200 rounded" />
-        <div className="h-12 w-12 bg-gray-200 rounded" />
-      </div>
-      <div className="h-40 bg-gray-200 rounded mt-8" />
-    </div>
-  </div>
-);
 
 export default ProductDetailPage;

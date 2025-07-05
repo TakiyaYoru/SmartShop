@@ -195,6 +195,18 @@ export const CANCEL_ORDER = gql`
   ${ORDER_FRAGMENT}
 `;
 
+export const FIX_INVALID_ORDERS = gql`
+  mutation FixInvalidOrders {
+    fixInvalidOrders
+  }
+`;
+
+export const CLEAR_ALL_ORDERS = gql`
+  mutation ClearAllOrders {
+    clearAllOrders
+  }
+`;
+
 // Order status options for forms
 export const ORDER_STATUS_OPTIONS = [
   { value: 'pending', label: 'Chờ xác nhận', color: 'yellow' },

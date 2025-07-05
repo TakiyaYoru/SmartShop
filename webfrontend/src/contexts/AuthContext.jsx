@@ -82,6 +82,10 @@ export const AuthProvider = ({ children }) => {
     const token = getToken();
     const user = getUser();
     
+    console.log('🔐 AuthContext - Initializing auth state');
+    console.log('🔐 AuthContext - Token:', token ? 'Present' : 'Missing');
+    console.log('🔐 AuthContext - User:', user);
+    
     dispatch({
       type: 'INIT',
       payload: { token, user }

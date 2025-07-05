@@ -28,6 +28,7 @@ IMPORTANT_FILES = [
     "server/graphql/brands.js",
     "server/graphql/carts.js",
     "server/graphql/orders.js",
+    "server/graphql/reviews.js",
     "server/graphql/upload.js",
     "server/graphql/upload_old.js",
     
@@ -40,6 +41,7 @@ IMPORTANT_FILES = [
     "server/data/models/cart.js",
     "server/data/models/order.js",
     "server/data/models/orderItem.js",
+    "server/data/models/review.js",
     
     # Backend - Data layer
     "server/data/mongoRepo.js",
@@ -93,6 +95,7 @@ IMPORTANT_FILES = [
     "webfrontend/src/graphql/brands.js",
     "webfrontend/src/graphql/cart.js",
     "webfrontend/src/graphql/orders.js",
+    "webfrontend/src/graphql/reviews.js",
     "webfrontend/src/graphql/upload.js",
     "webfrontend/src/graphql/admin.js",
     
@@ -119,6 +122,11 @@ IMPORTANT_FILES = [
     "webfrontend/src/components/cart/CartItem.jsx",
     "webfrontend/src/components/cart/CartSummary.jsx",
     "webfrontend/src/components/cart/AddToCartButton.jsx",
+    
+    # Frontend - Reviews Components
+    "webfrontend/src/components/reviews/ReviewCard.jsx",
+    "webfrontend/src/components/reviews/ReviewList.jsx",
+    "webfrontend/src/components/reviews/CreateReviewForm.jsx",
     
     # Frontend - Admin Components
     "webfrontend/src/components/admin/AdminLayout.jsx",
@@ -296,6 +304,7 @@ SmartShop/
 │   │   ├── brands.js
 │   │   ├── carts.js
 │   │   ├── orders.js
+│   │   ├── reviews.js
 │   │   └── upload.js
 │   ├── data/              # Data layer
 │   │   ├── models/        # Mongoose models
@@ -306,7 +315,8 @@ SmartShop/
 │   │   │   ├── brand.js
 │   │   │   ├── cart.js
 │   │   │   ├── order.js
-│   │   │   └── orderItem.js
+│   │   │   ├── orderItem.js
+│   │   │   └── review.js
 │   │   ├── mongoRepo.js   # Repository pattern
 │   │   ├── mockRepo.js    # Mock repository for tests
 │   │   ├── init.js        # Database initialization
@@ -368,6 +378,10 @@ SmartShop/
 │       │   │   ├── CartItem.jsx
 │       │   │   ├── CartSummary.jsx
 │       │   │   └── AddToCartButton.jsx
+│       │   ├── reviews/   # Review components
+│       │   │   ├── ReviewCard.jsx
+│       │   │   ├── ReviewList.jsx
+│       │   │   └── CreateReviewForm.jsx
 │       │   └── admin/     # Admin components
 │       │       └── AdminLayout.jsx
 │       ├── pages/         # Page components
@@ -393,6 +407,7 @@ SmartShop/
 │       │       ├── AdminOrderDetailPage.jsx
 │       │       ├── CreateOrderPage.jsx
 │       │       └── AdminOrdersPage.jsx
+│       │       └── products/     # Admin product components
 │       │           ├── ProductTable.jsx
 │       │           ├── ProductForm.jsx
 │       │           ├── ProductFilter.jsx
@@ -405,6 +420,7 @@ SmartShop/
 │       │   ├── brands.js
 │       │   ├── cart.js
 │       │   ├── orders.js
+│       │   ├── reviews.js
 │       │   ├── upload.js
 │       │   └── admin.js
 │       └── lib/           # Utilities

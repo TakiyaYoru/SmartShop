@@ -2,7 +2,7 @@
 ====================================================================================================
 SMARTSHOP CORE CODE EXTRACTION - COMPLETE VERSION
 ====================================================================================================
-Generated on: Fri Jul  4 13:04:08 UTC 2025
+Generated on: Sat Jul  5 03:56:58 UTC 2025
 Project: SmartShop E-commerce System
 Description: Complete core files for backend (Node.js/GraphQL) and frontend (React/Vite)
 
@@ -36,106 +36,112 @@ CORE FILES LIST - UPDATED
 14. server/graphql/brands.js
 15. server/graphql/carts.js
 16. server/graphql/orders.js
-17. server/graphql/upload.js
-18. server/graphql/upload_old.js
-19. server/data/models/index.js
-20. server/data/models/user.js
-21. server/data/models/product.js
-22. server/data/models/category.js
-23. server/data/models/brand.js
-24. server/data/models/cart.js
-25. server/data/models/order.js
-26. server/data/models/orderItem.js
-27. server/data/mongoRepo.js
-28. server/data/mockRepo.js
-29. server/data/init.js
-30. server/utils/otpUtils.js
-31. server/utils/passwordReset.js
-32. server/utils/imageHelper.js
-33. server/services/emailService.js
-34. server/services/firebaseStorageService.js
-35. server/migrations/20250601031152-initial_smartshop_data.js
-36. server/migrations/20250601032421-add_sample_images.js
-37. server/data/__tests__/categories.test.js
-38. server/data/__tests__/products.test.js
-39. server/test/globalSetup.js
-40. server/test/globalTeardown.js
-41. server/test/setupFileAfterEnv.js
-42. server/test-firebase.js
-43. webfrontend/package.json
-44. webfrontend/vite.config.js
-45. webfrontend/tailwind.config.js
-46. webfrontend/postcss.config.js
-47. webfrontend/eslint.config.js
-48. webfrontend/index.html
-49. webfrontend/src/main.jsx
-50. webfrontend/src/App.jsx
-51. webfrontend/src/router.jsx
-52. webfrontend/src/contexts/AuthContext.jsx
-53. webfrontend/src/contexts/CartContext.jsx
-54. webfrontend/src/hooks/useAuth.js
-55. webfrontend/src/hooks/useProducts.js
-56. webfrontend/src/hooks/useUpload.js
-57. webfrontend/src/lib/apollo.js
-58. webfrontend/src/graphql/auth.js
-59. webfrontend/src/graphql/products.js
-60. webfrontend/src/graphql/categories.js
-61. webfrontend/src/graphql/brands.js
-62. webfrontend/src/graphql/cart.js
-63. webfrontend/src/graphql/orders.js
-64. webfrontend/src/graphql/upload.js
-65. webfrontend/src/graphql/admin.js
-66. webfrontend/src/components/common/Layout.jsx
-67. webfrontend/src/components/common/Header.jsx
-68. webfrontend/src/components/common/Sidebar.jsx
-69. webfrontend/src/components/common/Footer.jsx
-70. webfrontend/src/components/common/LoadingSkeleton.jsx
-71. webfrontend/src/components/auth/LoginForm.jsx
-72. webfrontend/src/components/auth/RegisterForm.jsx
-73. webfrontend/src/components/auth/ProtectedRoute.jsx
-74. webfrontend/src/components/products/ProductCard.jsx
-75. webfrontend/src/components/products/ProductList.jsx
-76. webfrontend/src/components/products/ProductFilter.jsx
-77. webfrontend/src/components/products/ProductSearch.jsx
-78. webfrontend/src/components/cart/CartIcon.jsx
-79. webfrontend/src/components/cart/CartItem.jsx
-80. webfrontend/src/components/cart/CartSummary.jsx
-81. webfrontend/src/components/cart/AddToCartButton.jsx
-82. webfrontend/src/components/admin/AdminLayout.jsx
-83. webfrontend/src/pages/HomePage.jsx
-84. webfrontend/src/pages/LoginPage.jsx
-85. webfrontend/src/pages/RegisterPage.jsx
-86. webfrontend/src/pages/ForgotPasswordPage.jsx
-87. webfrontend/src/pages/ProductsPage.jsx
-88. webfrontend/src/pages/ProductDetailPage.jsx
-89. webfrontend/src/pages/CategoriesPage.jsx
-90. webfrontend/src/pages/BrandsPage.jsx
-91. webfrontend/src/pages/CartPage.jsx
-92. webfrontend/src/pages/CheckoutPage.jsx
-93. webfrontend/src/pages/OrdersPage.jsx
-94. webfrontend/src/pages/OrderDetailPage.jsx
-95. webfrontend/src/pages/OrderSuccessPage.jsx
-96. webfrontend/src/pages/NotFoundPage.jsx
-97. webfrontend/src/pages/admin/DashboardPage.jsx
-98. webfrontend/src/pages/admin/AdminProductsPage.jsx
-99. webfrontend/src/pages/admin/CreateProductPage.jsx
-100. webfrontend/src/pages/admin/EditProductPage.jsx
-101. webfrontend/src/pages/admin/AdminOrderDetailPage.jsx
-102. webfrontend/src/pages/admin/CreateOrderPage.jsx
-103. webfrontend/src/pages/admin/AdminOrdersPage.jsx
-104. webfrontend/src/pages/admin/products/ProductTable.jsx
-105. webfrontend/src/pages/admin/products/ProductForm.jsx
-106. webfrontend/src/pages/admin/products/ProductFilter.jsx
-107. webfrontend/src/pages/admin/products/AdminProductFilter.jsx
-108. webfrontend/src/pages/admin/products/ImageUpload.jsx
-109. webfrontend/src/index.css
-110. webfrontend/src/App.css
-111. webfrontend/src/lib/utils.js
-112. webfrontend/src/utils/imageHelper.js
-113. README.md
+17. server/graphql/reviews.js
+18. server/graphql/upload.js
+19. server/graphql/upload_old.js
+20. server/data/models/index.js
+21. server/data/models/user.js
+22. server/data/models/product.js
+23. server/data/models/category.js
+24. server/data/models/brand.js
+25. server/data/models/cart.js
+26. server/data/models/order.js
+27. server/data/models/orderItem.js
+28. server/data/models/review.js
+29. server/data/mongoRepo.js
+30. server/data/mockRepo.js
+31. server/data/init.js
+32. server/utils/otpUtils.js
+33. server/utils/passwordReset.js
+34. server/utils/imageHelper.js
+35. server/services/emailService.js
+36. server/services/firebaseStorageService.js
+37. server/migrations/20250601031152-initial_smartshop_data.js
+38. server/migrations/20250601032421-add_sample_images.js
+39. server/data/__tests__/categories.test.js
+40. server/data/__tests__/products.test.js
+41. server/test/globalSetup.js
+42. server/test/globalTeardown.js
+43. server/test/setupFileAfterEnv.js
+44. server/test-firebase.js
+45. webfrontend/package.json
+46. webfrontend/vite.config.js
+47. webfrontend/tailwind.config.js
+48. webfrontend/postcss.config.js
+49. webfrontend/eslint.config.js
+50. webfrontend/index.html
+51. webfrontend/src/main.jsx
+52. webfrontend/src/App.jsx
+53. webfrontend/src/router.jsx
+54. webfrontend/src/contexts/AuthContext.jsx
+55. webfrontend/src/contexts/CartContext.jsx
+56. webfrontend/src/hooks/useAuth.js
+57. webfrontend/src/hooks/useProducts.js
+58. webfrontend/src/hooks/useUpload.js
+59. webfrontend/src/lib/apollo.js
+60. webfrontend/src/graphql/auth.js
+61. webfrontend/src/graphql/products.js
+62. webfrontend/src/graphql/categories.js
+63. webfrontend/src/graphql/brands.js
+64. webfrontend/src/graphql/cart.js
+65. webfrontend/src/graphql/orders.js
+66. webfrontend/src/graphql/reviews.js
+67. webfrontend/src/graphql/upload.js
+68. webfrontend/src/graphql/admin.js
+69. webfrontend/src/components/common/Layout.jsx
+70. webfrontend/src/components/common/Header.jsx
+71. webfrontend/src/components/common/Sidebar.jsx
+72. webfrontend/src/components/common/Footer.jsx
+73. webfrontend/src/components/common/LoadingSkeleton.jsx
+74. webfrontend/src/components/auth/LoginForm.jsx
+75. webfrontend/src/components/auth/RegisterForm.jsx
+76. webfrontend/src/components/auth/ProtectedRoute.jsx
+77. webfrontend/src/components/products/ProductCard.jsx
+78. webfrontend/src/components/products/ProductList.jsx
+79. webfrontend/src/components/products/ProductFilter.jsx
+80. webfrontend/src/components/products/ProductSearch.jsx
+81. webfrontend/src/components/cart/CartIcon.jsx
+82. webfrontend/src/components/cart/CartItem.jsx
+83. webfrontend/src/components/cart/CartSummary.jsx
+84. webfrontend/src/components/cart/AddToCartButton.jsx
+85. webfrontend/src/components/reviews/ReviewCard.jsx
+86. webfrontend/src/components/reviews/ReviewList.jsx
+87. webfrontend/src/components/reviews/CreateReviewForm.jsx
+88. webfrontend/src/components/admin/AdminLayout.jsx
+89. webfrontend/src/pages/HomePage.jsx
+90. webfrontend/src/pages/LoginPage.jsx
+91. webfrontend/src/pages/RegisterPage.jsx
+92. webfrontend/src/pages/ForgotPasswordPage.jsx
+93. webfrontend/src/pages/ProductsPage.jsx
+94. webfrontend/src/pages/ProductDetailPage.jsx
+95. webfrontend/src/pages/CategoriesPage.jsx
+96. webfrontend/src/pages/BrandsPage.jsx
+97. webfrontend/src/pages/CartPage.jsx
+98. webfrontend/src/pages/CheckoutPage.jsx
+99. webfrontend/src/pages/OrdersPage.jsx
+100. webfrontend/src/pages/OrderDetailPage.jsx
+101. webfrontend/src/pages/OrderSuccessPage.jsx
+102. webfrontend/src/pages/NotFoundPage.jsx
+103. webfrontend/src/pages/admin/DashboardPage.jsx
+104. webfrontend/src/pages/admin/AdminProductsPage.jsx
+105. webfrontend/src/pages/admin/CreateProductPage.jsx
+106. webfrontend/src/pages/admin/EditProductPage.jsx
+107. webfrontend/src/pages/admin/AdminOrderDetailPage.jsx
+108. webfrontend/src/pages/admin/CreateOrderPage.jsx
+109. webfrontend/src/pages/admin/AdminOrdersPage.jsx
+110. webfrontend/src/pages/admin/products/ProductTable.jsx
+111. webfrontend/src/pages/admin/products/ProductForm.jsx
+112. webfrontend/src/pages/admin/products/ProductFilter.jsx
+113. webfrontend/src/pages/admin/products/AdminProductFilter.jsx
+114. webfrontend/src/pages/admin/products/ImageUpload.jsx
+115. webfrontend/src/index.css
+116. webfrontend/src/App.css
+117. webfrontend/src/lib/utils.js
+118. webfrontend/src/utils/imageHelper.js
+119. README.md
 
 ====================================================================================================
-TOTAL CORE FILES: 113
+TOTAL CORE FILES: 119
 ====================================================================================================
 
 
@@ -6256,10 +6262,10 @@ import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage'; 
-import CheckoutPage from './pages/CheckoutPage'; // ✅ THÊM
-import OrdersPage from './pages/OrdersPage'; // ✅ THÊM
-import OrderDetailPage from './pages/OrderDetailPage'; // ✅ THÊM
-import OrderSuccessPage from './pages/OrderSuccessPage'; // ✅ THÊM
+import CheckoutPage from './pages/CheckoutPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Components
@@ -6269,23 +6275,15 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
 
+// ✅ THÊM MỚI: Admin Orders Components
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
+import CreateOrderPage from './pages/admin/CreateOrderPage';
+
 // Protected Routes
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
 
 function App() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang khởi tạo SmartShop...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="App">
       <Routes>
@@ -6331,7 +6329,6 @@ function App() {
           } 
         />
 
-        {/* ✅ FIX: THÊM CHECKOUT VÀ ORDER ROUTES */}
         <Route 
           path="/checkout" 
           element={
@@ -6359,7 +6356,6 @@ function App() {
           } 
         />
 
-        {/* ❌ MISSING: OrderSuccess Route - ĐÂY LÀ ROUTE BỊ THIẾU */}
         <Route 
           path="/order-success/:orderNumber" 
           element={
@@ -6370,6 +6366,8 @@ function App() {
         />
         
         {/* ===== ADMIN ROUTES ===== */}
+        
+        {/* Admin Dashboard */}
         <Route 
           path="/admin" 
           element={
@@ -6381,6 +6379,7 @@ function App() {
           } 
         />
         
+        {/* Admin Products Routes */}
         <Route 
           path="/admin/products" 
           element={
@@ -6409,6 +6408,105 @@ function App() {
             <AdminRoute>
               <AdminLayout>
                 <EditProductPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        {/* ✅ THÊM MỚI: Admin Orders Routes */}
+        <Route 
+          path="/admin/orders" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <AdminOrdersPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin/orders/create" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <CreateOrderPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin/orders/:orderNumber" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <AdminOrderDetailPage />
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        {/* Admin placeholder routes - có thể implement sau */}
+        <Route 
+          path="/admin/categories" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Categories Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Categories management will be implemented soon! 📂</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/brands" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Brands Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Brands management will be implemented soon! 🏷️</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/users" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Users Management</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Users management will be implemented soon! 👥</p>
+                  </div>
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          } 
+        />
+        
+        <Route 
+          path="/admin/reports" 
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Reports & Analytics</h1>
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <p className="text-gray-600">Reports will be implemented soon! 📊</p>
+                  </div>
+                </div>
               </AdminLayout>
             </AdminRoute>
           } 
@@ -6450,9 +6548,11 @@ END OF FILE: webfrontend/src/App.jsx
 FILE: webfrontend/src/router.jsx
 ====================================================================================================
 
+// webfrontend/src/router.jsx - Complete with Admin Orders Routes
+
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 
-// Pages
+// ===== CUSTOMER PAGES =====
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -6460,22 +6560,25 @@ import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
-import NotFoundPage from './pages/NotFoundPage';
-
-// ✅ THÊM MỚI: Checkout & Orders pages
 import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-// Admin
+// ===== ADMIN COMPONENTS =====
 import AdminLayout from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import CreateProductPage from './pages/admin/CreateProductPage';
 import EditProductPage from './pages/admin/EditProductPage';
 
-// Protected Routes
+// ✅ THÊM MỚI: Admin Orders Components
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
+import CreateOrderPage from './pages/admin/CreateOrderPage';
+
+// ===== PROTECTED ROUTES =====
 import ProtectedRoute, { AdminRoute, ManagerRoute } from './components/auth/ProtectedRoute';
 
 // Router configuration với future flags
@@ -6531,7 +6634,6 @@ const routes = createRoutesFromElements(
       } 
     />
 
-    {/* ✅ THÊM MỚI: Checkout & Orders routes */}
     <Route 
       path="/checkout" 
       element={
@@ -6570,62 +6672,106 @@ const routes = createRoutesFromElements(
     
     {/* ===== ADMIN ROUTES ===== */}
     <Route path="/admin/*" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+      {/* Dashboard */}
       <Route index element={<DashboardPage />} />
+      
+      {/* Products Management */}
       <Route path="products" element={<AdminProductsPage />} />
       <Route path="products/create" element={<CreateProductPage />} />
       <Route path="products/edit/:id" element={<EditProductPage />} />
       
-      {/* Existing placeholder admin routes */}
+      {/* ✅ THÊM MỚI: Orders Management Routes */}
+      <Route path="orders" element={<AdminOrdersPage />} />
+      <Route path="orders/create" element={<CreateOrderPage />} />
+      <Route path="orders/:orderNumber" element={<AdminOrderDetailPage />} />
+      
+      {/* Placeholder admin routes - sẽ implement sau */}
       <Route path="categories" element={
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Categories</h1>
+          <h1 className="text-2xl font-bold mb-4">Categories Management</h1>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-gray-600">Categories management will be implemented soon! 📂</p>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>Features sẽ có:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Tạo/sửa/xóa danh mục</li>
+                <li>Cây danh mục phân cấp</li>
+                <li>Upload hình ảnh danh mục</li>
+                <li>SEO optimization</li>
+              </ul>
+            </div>
           </div>
         </div>
       } />
       
       <Route path="brands" element={
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Brands</h1>
+          <h1 className="text-2xl font-bold mb-4">Brands Management</h1>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-gray-600">Brands management will be implemented soon! 🏷️</p>
-          </div>
-        </div>
-      } />
-      
-      <Route path="orders" element={
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Orders</h1>
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-600">Orders management will be implemented soon! 📦</p>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>Features sẽ có:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Quản lý thương hiệu</li>
+                <li>Logo và mô tả thương hiệu</li>
+                <li>Thống kê sản phẩm theo thương hiệu</li>
+                <li>Featured brands</li>
+              </ul>
+            </div>
           </div>
         </div>
       } />
       
       <Route path="users" element={
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Users</h1>
+          <h1 className="text-2xl font-bold mb-4">Users Management</h1>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-gray-600">Users management will be implemented soon! 👥</p>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>Features sẽ có:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Quản lý tài khoản khách hàng</li>
+                <li>Phân quyền admin/manager</li>
+                <li>Lịch sử hoạt động</li>
+                <li>Báo cáo khách hàng</li>
+              </ul>
+            </div>
           </div>
         </div>
       } />
       
       <Route path="reports" element={
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Reports</h1>
+          <h1 className="text-2xl font-bold mb-4">Reports & Analytics</h1>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-gray-600">Reports will be implemented soon! 📊</p>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>Features sẽ có:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Báo cáo doanh thu</li>
+                <li>Thống kê sản phẩm bán chạy</li>
+                <li>Phân tích khách hàng</li>
+                <li>Export Excel/PDF</li>
+              </ul>
+            </div>
           </div>
         </div>
       } />
       
       <Route path="settings" element={
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Settings</h1>
+          <h1 className="text-2xl font-bold mb-4">System Settings</h1>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-gray-600">Settings panel will be implemented soon! ⚙️</p>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>Features sẽ có:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Cấu hình hệ thống</li>
+                <li>Cài đặt email</li>
+                <li>Phương thức thanh toán</li>
+                <li>Backup & restore</li>
+              </ul>
+            </div>
           </div>
         </div>
       } />
@@ -6635,16 +6781,45 @@ const routes = createRoutesFromElements(
     <Route path="/manager/*" element={
       <ManagerRoute>
         <div className="min-h-screen bg-gray-100 p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
-            Manager Dashboard
-          </h1>
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-600">
-              Welcome to SmartShop Manager Panel! 📊
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-              Manager features will be implemented here.
-            </p>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                👨‍💼 Manager Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Welcome to SmartShop Manager Panel!
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-semibold mb-3">📊 Thống kê nhanh</h3>
+                <p className="text-gray-600 text-sm">
+                  Dashboard với các KPI quan trọng sẽ được triển khai ở đây.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-semibold mb-3">📋 Quản lý đơn hàng</h3>
+                <p className="text-gray-600 text-sm">
+                  Manager có thể xem và cập nhật trạng thái đơn hàng.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-semibold mb-3">📦 Quản lý kho</h3>
+                <p className="text-gray-600 text-sm">
+                  Theo dõi tồn kho và cảnh báo hết hàng.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-semibold mb-3">👥 Hỗ trợ khách hàng</h3>
+                <p className="text-gray-600 text-sm">
+                  Công cụ chat và hỗ trợ khách hàng trực tuyến.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </ManagerRoute>
@@ -6749,6 +6924,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = getToken();
     const user = getUser();
+    
+    console.log('🔐 AuthContext - Initializing auth state');
+    console.log('🔐 AuthContext - Token:', token ? 'Present' : 'Missing');
+    console.log('🔐 AuthContext - User:', user);
     
     dispatch({
       type: 'INIT',
@@ -8109,6 +8288,10 @@ const uploadLink = createUploadLink({
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('smartshop_token');
   
+  console.log('🔐 Apollo - Adding auth header');
+  console.log('🔐 Apollo - Token present:', !!token);
+  console.log('🔐 Apollo - Operation:', _.operationName);
+  
   return {
     headers: {
       ...headers,
@@ -8954,6 +9137,26 @@ export const GET_ORDER_STATS = gql`
   }
 `;
 
+export const GET_ORDER_ADMIN = gql`
+  query GetOrder($orderNumber: String!) {
+    getOrder(orderNumber: $orderNumber) {
+      ...OrderInfo
+      items {
+        ...OrderItemInfo
+      }
+      user {
+        _id
+        username
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+  ${ORDER_FRAGMENT}
+  ${ORDER_ITEM_FRAGMENT}
+`;
+
 // Mutations
 export const CREATE_ORDER = gql`
   mutation CreateOrderFromCart($input: CreateOrderInput!) {
@@ -8977,8 +9180,6 @@ export const UPDATE_ORDER_STATUS = gql`
   ${ORDER_FRAGMENT}
 `;
 
-
-
 export const UPDATE_PAYMENT_STATUS = gql`
   mutation UpdatePaymentStatus($orderNumber: String!, $paymentStatus: PaymentStatus!) {
     updatePaymentStatus(orderNumber: $orderNumber, paymentStatus: $paymentStatus) {
@@ -8995,6 +9196,18 @@ export const CANCEL_ORDER = gql`
     }
   }
   ${ORDER_FRAGMENT}
+`;
+
+export const FIX_INVALID_ORDERS = gql`
+  mutation FixInvalidOrders {
+    fixInvalidOrders
+  }
+`;
+
+export const CLEAR_ALL_ORDERS = gql`
+  mutation ClearAllOrders {
+    clearAllOrders
+  }
 `;
 
 // Order status options for forms
@@ -9065,6 +9278,304 @@ export const ORDER_BY_OPTIONS = {
 };
 ====================================================================================================
 END OF FILE: webfrontend/src/graphql/orders.js
+====================================================================================================
+
+
+====================================================================================================
+FILE: webfrontend/src/graphql/reviews.js
+====================================================================================================
+
+// File: webfrontend/src/graphql/reviews.js - Frontend GraphQL for Reviews (NO JSX)
+
+import { gql } from '@apollo/client';
+
+// Fragments
+export const REVIEW_FRAGMENT = gql`
+  fragment ReviewData on Review {
+    _id
+    userId
+    user {
+      _id
+      username
+      firstName
+      lastName
+    }
+    productId
+    product {
+      _id
+      name
+      images
+    }
+    orderId
+    order {
+      _id
+      orderNumber
+      orderDate
+    }
+    orderItemId
+    rating
+    comment
+    images
+    adminResponse {
+      responseText
+      respondedBy {
+        _id
+        username
+        firstName
+        lastName
+      }
+      respondedAt
+    }
+    isVerified
+    helpfulVotes
+    status
+    createdAt
+    updatedAt
+  }
+`;
+
+export const REVIEW_STATS_FRAGMENT = gql`
+  fragment ReviewStatsData on ReviewStatsInfo {
+    averageRating
+    totalReviews
+    distribution {
+      _1
+      _2
+      _3
+      _4
+      _5
+    }
+    percentages {
+      _1
+      _2
+      _3
+      _4
+      _5
+    }
+  }
+`;
+
+// ============= CUSTOMER QUERIES =============
+
+// Get reviews for a product (public - no auth required)
+export const GET_PRODUCT_REVIEWS = gql`
+  query GetProductReviews(
+    $productId: ID!,
+    $first: Int = 10,
+    $offset: Int = 0,
+    $orderBy: ReviewsOrderBy = CREATED_DESC,
+    $ratingFilter: Int
+  ) {
+    getProductReviews(
+      productId: $productId,
+      first: $first,
+      offset: $offset,
+      orderBy: $orderBy,
+      ratingFilter: $ratingFilter
+    ) {
+      nodes {
+        ...ReviewData
+      }
+      totalCount
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Get current user's reviews
+export const GET_MY_REVIEWS = gql`
+  query GetMyReviews(
+    $first: Int = 10,
+    $offset: Int = 0,
+    $orderBy: ReviewsOrderBy = CREATED_DESC
+  ) {
+    getMyReviews(
+      first: $first,
+      offset: $offset,
+      orderBy: $orderBy
+    ) {
+      nodes {
+        ...ReviewData
+      }
+      totalCount
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Get single review by ID
+export const GET_REVIEW = gql`
+  query GetReview($reviewId: ID!) {
+    getReview(reviewId: $reviewId) {
+      ...ReviewData
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Check if user can review a product
+export const CAN_REVIEW_PRODUCT = gql`
+  query CanReviewProduct($productId: ID!) {
+    canReviewProduct(productId: $productId) {
+      canReview
+      reason
+      orderId
+      orderItemId
+    }
+  }
+`;
+
+// ============= ADMIN QUERIES =============
+
+// Get all reviews for admin dashboard
+export const GET_ALL_REVIEWS_ADMIN = gql`
+  query GetAllReviewsAdmin(
+    $first: Int = 10,
+    $offset: Int = 0,
+    $orderBy: ReviewsOrderBy = CREATED_DESC,
+    $condition: ReviewConditionInput
+  ) {
+    getAllReviews(
+      first: $first,
+      offset: $offset,
+      orderBy: $orderBy,
+      condition: $condition
+    ) {
+      nodes {
+        ...ReviewData
+      }
+      totalCount
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Get review statistics for admin dashboard
+export const GET_REVIEW_STATS = gql`
+  query GetReviewStats {
+    getReviewStats {
+      totalReviews
+      activeReviews
+      hiddenReviews
+      flaggedReviews
+      averageRating
+      recentReviews
+    }
+  }
+`;
+
+// ============= MUTATIONS =============
+
+// Create a new review
+export const CREATE_REVIEW = gql`
+  mutation CreateReview($input: CreateReviewInput!) {
+    createReview(input: $input) {
+      ...ReviewData
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Admin: Add response to review
+export const ADD_ADMIN_RESPONSE = gql`
+  mutation AddAdminResponse($input: AdminResponseInput!) {
+    addAdminResponse(input: $input) {
+      ...ReviewData
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Admin: Remove response from review
+export const REMOVE_ADMIN_RESPONSE = gql`
+  mutation RemoveAdminResponse($reviewId: ID!) {
+    removeAdminResponse(reviewId: $reviewId) {
+      ...ReviewData
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Admin: Update review status
+export const UPDATE_REVIEW_STATUS = gql`
+  mutation UpdateReviewStatus($reviewId: ID!, $status: ReviewStatus!) {
+    updateReviewStatus(reviewId: $reviewId, status: $status) {
+      ...ReviewData
+    }
+  }
+  ${REVIEW_FRAGMENT}
+`;
+
+// Mark review as helpful
+export const MARK_REVIEW_HELPFUL = gql`
+  mutation MarkReviewHelpful($reviewId: ID!) {
+    markReviewHelpful(reviewId: $reviewId) {
+      _id
+      helpfulVotes
+    }
+  }
+`;
+
+// ============= HELPER CONSTANTS =============
+
+// Review status options for forms
+export const REVIEW_STATUS_OPTIONS = [
+  { value: 'active', label: 'Hiển thị', color: 'green' },
+  { value: 'hidden', label: 'Ẩn', color: 'gray' },
+  { value: 'flagged', label: 'Đánh dấu', color: 'red' }
+];
+
+// Review order by options
+export const REVIEW_ORDER_OPTIONS = [
+  { value: 'CREATED_DESC', label: 'Mới nhất' },
+  { value: 'CREATED_ASC', label: 'Cũ nhất' },
+  { value: 'RATING_DESC', label: 'Rating cao nhất' },
+  { value: 'RATING_ASC', label: 'Rating thấp nhất' },
+  { value: 'HELPFUL_DESC', label: 'Hữu ích nhất' }
+];
+
+// Rating options for filter
+export const RATING_FILTER_OPTIONS = [
+  { value: null, label: 'Tất cả đánh giá' },
+  { value: 5, label: '⭐⭐⭐⭐⭐ (5 sao)' },
+  { value: 4, label: '⭐⭐⭐⭐ (4 sao)' },
+  { value: 3, label: '⭐⭐⭐ (3 sao)' },
+  { value: 2, label: '⭐⭐ (2 sao)' },
+  { value: 1, label: '⭐ (1 sao)' }
+];
+
+// ============= HELPER FUNCTIONS =============
+
+export const getReviewStatusInfo = (status) => {
+  return REVIEW_STATUS_OPTIONS.find(option => option.value === status) || 
+         { value: status, label: status, color: 'gray' };
+};
+
+export const formatReviewDate = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 1) return 'Hôm qua';
+  if (diffDays < 7) return `${diffDays} ngày trước`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} tuần trước`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} tháng trước`;
+  
+  return date.toLocaleDateString('vi-VN');
+};
+
+export const calculateRatingPercentage = (count, total) => {
+  return total > 0 ? Math.round((count / total) * 100) : 0;
+};
+====================================================================================================
+END OF FILE: webfrontend/src/graphql/reviews.js
 ====================================================================================================
 
 
@@ -9702,7 +10213,7 @@ END OF FILE: webfrontend/src/components/common/Header.jsx
 FILE: webfrontend/src/components/common/Sidebar.jsx
 ====================================================================================================
 
-// src/components/common/Sidebar.jsx - Complete updated version
+// src/components/common/Sidebar.jsx - Complete updated version with Orders
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9718,7 +10229,12 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronDownIcon,
-  ChevronUpIcon
+  ChevronUpIcon,
+  XMarkIcon,
+  DocumentTextIcon,
+  PlusIcon,
+  ClockIcon,
+  TruckIcon
 } from '@heroicons/react/24/outline';
 
 const Sidebar = ({ 
@@ -9728,7 +10244,10 @@ const Sidebar = ({
 }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const [expandedMenus, setExpandedMenus] = useState({});
+  const [expandedMenus, setExpandedMenus] = useState({
+    products: true, // Mặc định mở sản phẩm
+    orders: true    // Mặc định mở đơn hàng
+  });
 
   const toggleSubmenu = (menuKey) => {
     setExpandedMenus(prev => ({
@@ -9737,63 +10256,239 @@ const Sidebar = ({
     }));
   };
 
-  // Admin Navigation - Updated
-// src/components/common/Sidebar.jsx - Updated Admin Navigation with Orders
+  // ✅ UPDATED: Admin Navigation with Orders section
+  const adminNavigation = [
+    {
+      name: 'Dashboard',
+      href: '/admin',
+      icon: HomeIcon,
+      current: location.pathname === '/admin'
+    },
+    {
+      name: 'Sản phẩm',
+      icon: CubeIcon,
+      key: 'products',
+      current: location.pathname.startsWith('/admin/products'),
+      children: [
+        { 
+          name: 'Tất cả sản phẩm', 
+          href: '/admin/products',
+          current: location.pathname === '/admin/products'
+        },
+        { 
+          name: 'Thêm sản phẩm', 
+          href: '/admin/products/create',
+          current: location.pathname === '/admin/products/create'
+        }
+      ]
+    },
+    {
+      name: 'Đơn hàng', // 🆕 NEW ORDERS SECTION
+      icon: ShoppingCartIcon,
+      key: 'orders',
+      current: location.pathname.startsWith('/admin/orders'),
+      children: [
+        { 
+          name: 'Tất cả đơn hàng', 
+          href: '/admin/orders',
+          current: location.pathname === '/admin/orders',
+          icon: DocumentTextIcon
+        },
+        { 
+          name: 'Tạo đơn hàng', 
+          href: '/admin/orders/create',
+          current: location.pathname === '/admin/orders/create',
+          icon: PlusIcon
+        },
+        { 
+          name: 'Đơn chờ xử lý', 
+          href: '/admin/orders?status=pending',
+          current: location.pathname === '/admin/orders' && location.search.includes('status=pending'),
+          icon: ClockIcon
+        },
+        { 
+          name: 'Đơn đang giao', 
+          href: '/admin/orders?status=shipping',
+          current: location.pathname === '/admin/orders' && location.search.includes('status=shipping'),
+          icon: TruckIcon
+        }
+      ]
+    },
+    {
+      name: 'Danh mục',
+      href: '/admin/categories',
+      icon: TagIcon,
+      current: location.pathname === '/admin/categories'
+    },
+    {
+      name: 'Thương hiệu',
+      href: '/admin/brands',
+      icon: BuildingStorefrontIcon,
+      current: location.pathname === '/admin/brands'
+    },
+    {
+      name: 'Khách hàng',
+      href: '/admin/users',
+      icon: UserGroupIcon,
+      current: location.pathname === '/admin/users'
+    },
+    {
+      name: 'Báo cáo',
+      href: '/admin/reports',
+      icon: ChartBarIcon,
+      current: location.pathname === '/admin/reports'
+    },
+    {
+      name: 'Cài đặt',
+      href: '/admin/settings',
+      icon: Cog6ToothIcon,
+      current: location.pathname === '/admin/settings'
+    }
+  ];
 
-// Update the adminNavigation array in Sidebar component:
+  // Admin Sidebar Component
+  const AdminSidebar = () => (
+    <div className={`bg-white h-full shadow-lg transition-all duration-300 ${
+      isOpen ? 'w-64' : 'w-16'
+    } relative z-50`}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        {isOpen && (
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">S</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">SmartShop</h2>
+              <p className="text-xs text-gray-500">Admin Panel</p>
+            </div>
+          </div>
+        )}
+        
+        <button
+          onClick={onToggle}
+          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          {isOpen ? (
+            <ChevronLeftIcon className="h-4 w-4 text-gray-600" />
+          ) : (
+            <ChevronRightIcon className="h-4 w-4 text-gray-600" />
+          )}
+        </button>
+      </div>
 
-const adminNavigation = [
-  {
-    name: 'Dashboard',
-    href: '/admin',
-    icon: HomeIcon
-  },
-  {
-    name: 'Sản phẩm',
-    icon: CubeIcon,
-    children: [
-      { name: 'Tất cả sản phẩm', href: '/admin/products' },
-      { name: 'Thêm sản phẩm', href: '/admin/products/create' }
-    ]
-  },
-  {
-    name: 'Đơn hàng', // 🆕 NEW ORDERS SECTION
-    icon: ShoppingCartIcon,
-    children: [
-      { name: 'Tất cả đơn hàng', href: '/admin/orders' },
-      { name: 'Tạo đơn hàng', href: '/admin/orders/create' },
-      { name: 'Đơn chờ xử lý', href: '/admin/orders?status=pending' },
-      { name: 'Đơn đang giao', href: '/admin/orders?status=shipping' }
-    ]
-  },
-  {
-    name: 'Danh mục',
-    href: '/admin/categories',
-    icon: TagIcon
-  },
-  {
-    name: 'Thương hiệu',
-    href: '/admin/brands',
-    icon: BuildingStorefrontIcon
-  },
-  {
-    name: 'Khách hàng',
-    href: '/admin/users',
-    icon: UserGroupIcon
-  },
-  {
-    name: 'Báo cáo',
-    href: '/admin/reports',
-    icon: ChartBarIcon
-  },
-  {
-    name: 'Cài đặt',
-    href: '/admin/settings',
-    icon: Cog6ToothIcon
-  }
-];
+      {/* User Info */}
+      {isOpen && user && (
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <span className="text-white font-medium text-sm">
+                {user.fullName?.charAt(0)?.toUpperCase() || 'A'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user.fullName || 'Admin User'}
+              </p>
+              <div className="flex items-center space-x-2">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  user.role === 'admin' 
+                    ? 'bg-red-100 text-red-800' 
+                    : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {user.role === 'admin' ? '👑 Admin' : '👨‍💼 Manager'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-// The rest of the Sidebar component remains the same, but now includes proper Orders navigation
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {adminNavigation.map((item) => {
+          // Menu có submenu
+          if (item.children) {
+            const isExpanded = expandedMenus[item.key];
+            const hasCurrentChild = item.children.some(child => child.current);
+            
+            return (
+              <div key={item.name}>
+                {/* Parent menu item */}
+                <button
+                  onClick={() => toggleSubmenu(item.key)}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    item.current || hasCurrentChild
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <item.icon className="h-5 w-5 mr-3 flex-shrink-0" />
+                    {isOpen && <span>{item.name}</span>}
+                  </div>
+                  {isOpen && (
+                    <span className="ml-2">
+                      {isExpanded ? (
+                        <ChevronUpIcon className="h-4 w-4" />
+                      ) : (
+                        <ChevronDownIcon className="h-4 w-4" />
+                      )}
+                    </span>
+                  )}
+                </button>
+
+                {/* Submenu */}
+                {isOpen && isExpanded && (
+                  <div className="mt-1 ml-8 space-y-1">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        to={child.href}
+                        className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
+                          child.current
+                            ? 'bg-blue-50 text-blue-600 border-l-2 border-blue-600'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        }`}
+                      >
+                        {child.icon && <child.icon className="h-4 w-4 mr-2" />}
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Menu đơn lẻ
+          return (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                item.current
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              <item.icon className="h-5 w-5 mr-3 flex-shrink-0" />
+              {isOpen && <span>{item.name}</span>}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      {isOpen && (
+        <div className="p-4 border-t border-gray-200">
+          <div className="text-xs text-gray-500 text-center">
+            SmartShop Admin v1.0.0
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   // Filter Sidebar (cho trang products)
   const FilterSidebar = () => (
@@ -9823,41 +10518,16 @@ const adminNavigation = [
         </div>
       </div>
 
-      {/* Categories */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-700 mb-3">Danh mục</h4>
-        <div className="space-y-2">
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Điện thoại</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Laptop</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Tablet</span>
-          </label>
-        </div>
-      </div>
-
       {/* Brands */}
       <div className="mb-6">
         <h4 className="font-medium text-gray-700 mb-3">Thương hiệu</h4>
         <div className="space-y-2">
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Apple</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Samsung</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">Xiaomi</span>
-          </label>
+          {['Apple', 'Samsung', 'Xiaomi', 'OPPO', 'Vivo'].map((brand) => (
+            <label key={brand} className="flex items-center">
+              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <span className="ml-2 text-sm text-gray-600">{brand}</span>
+            </label>
+          ))}
         </div>
       </div>
 
@@ -9865,156 +10535,16 @@ const adminNavigation = [
       <div className="mb-6">
         <h4 className="font-medium text-gray-700 mb-3">Đánh giá</h4>
         <div className="space-y-2">
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">⭐⭐⭐⭐⭐ 5 sao</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">⭐⭐⭐⭐ 4 sao trở lên</span>
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-            <span className="ml-2 text-sm text-gray-600">⭐⭐⭐ 3 sao trở lên</span>
-          </label>
-        </div>
-      </div>
-
-      <button className="w-full btn btn-primary">
-        Áp dụng bộ lọc
-      </button>
-    </div>
-  );
-
-  // Admin Sidebar
-  const AdminSidebar = () => (
-    <div className={`${isOpen ? 'w-64' : 'w-16'} bg-white border-r border-gray-200 transition-all duration-300 flex flex-col`}>
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          {isOpen && (
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <div>
-                <h2 className="font-semibold text-gray-900">Admin Panel</h2>
-                <p className="text-xs text-gray-500">SmartShop</p>
-              </div>
-            </div>
-          )}
-          
-          {onToggle && (
-            <button
-              onClick={onToggle}
-              className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              {isOpen ? (
-                <ChevronLeftIcon className="h-4 w-4 text-gray-500" />
-              ) : (
-                <ChevronRightIcon className="h-4 w-4 text-gray-500" />
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* User Info */}
-      {isOpen && (
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 text-sm truncate">
-                {user?.firstName} {user?.lastName}
-              </p>
-              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-              <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full mt-1">
-                {user?.role}
+          {[5, 4, 3, 2, 1].map((rating) => (
+            <label key={rating} className="flex items-center">
+              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <span className="ml-2 text-sm text-gray-600">
+                {rating} sao trở lên
               </span>
-            </div>
-          </div>
+            </label>
+          ))}
         </div>
-      )}
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4">
-        <div className="space-y-1 px-2">
-          {adminNavigation.map((item) => {
-            if (item.children) {
-              const isExpanded = expandedMenus[item.name];
-              return (
-                <div key={item.name}>
-                  <button
-                    onClick={() => toggleSubmenu(item.name)}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      isExpanded 
-                        ? 'bg-gray-100 text-gray-900' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {isOpen && <span>{item.name}</span>}
-                    </div>
-                    {isOpen && (
-                      isExpanded ? (
-                        <ChevronUpIcon className="h-4 w-4" />
-                      ) : (
-                        <ChevronDownIcon className="h-4 w-4" />
-                      )
-                    )}
-                  </button>
-                  
-                  {isOpen && isExpanded && (
-                    <div className="mt-1 space-y-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          to={child.href}
-                          className={`block px-6 py-2 text-sm rounded-lg transition-colors ${
-                            location.pathname === child.href
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                          }`}
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  item.current
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <item.icon className="h-5 w-5 mr-3" />
-                {isOpen && <span>{item.name}</span>}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Footer */}
-      {isOpen && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="text-xs text-gray-500 text-center">
-            SmartShop Admin v1.0.0
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 
@@ -13151,6 +13681,884 @@ END OF FILE: webfrontend/src/components/cart/AddToCartButton.jsx
 
 
 ====================================================================================================
+FILE: webfrontend/src/components/reviews/ReviewCard.jsx
+====================================================================================================
+
+// File: webfrontend/src/components/reviews/ReviewCard.jsx - FIXED VERSION
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { toast } from 'react-hot-toast';
+import {
+  HandThumbUpIcon,
+  ChatBubbleLeftIcon,
+  ExclamationTriangleIcon,
+  PhotoIcon
+} from '@heroicons/react/24/outline';
+import { HandThumbUpIcon as HandThumbUpSolid } from '@heroicons/react/24/solid';
+
+import { MARK_REVIEW_HELPFUL, formatReviewDate } from '../../graphql/reviews';
+import { renderStarRating } from '../../utils/reviewHelper';
+import { SmartImage } from '../../utils/imageHelper';
+
+const ReviewCard = ({ review, showProductInfo = false, isAdmin = false }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hasVoted, setHasVoted] = useState(false);
+
+  const [markHelpful, { loading: markingHelpful }] = useMutation(MARK_REVIEW_HELPFUL, {
+    onCompleted: () => {
+      toast.success('Cảm ơn bạn đã đánh giá!');
+      setHasVoted(true);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra');
+    }
+  });
+
+  const handleMarkHelpful = () => {
+    if (!hasVoted) {
+      markHelpful({ variables: { reviewId: review._id } });
+    }
+  };
+
+  const truncateComment = (text, maxLength = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-start space-x-4">
+          {/* User Avatar */}
+          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+            {review.user?.firstName?.[0] || review.user?.username?.[0] || 'U'}
+          </div>
+          
+          {/* User Info & Rating */}
+          <div className="flex-1">
+            <div className="flex items-center space-x-2 mb-1">
+              <span className="font-medium text-gray-900">
+                {review.user?.firstName ? 
+                  `${review.user.firstName} ${review.user.lastName || ''}`.trim() : 
+                  review.user?.username || 'Người dùng'
+                }
+              </span>
+              {review.isVerified && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Đã mua hàng
+                </span>
+              )}
+            </div>
+            
+            {/* Rating Stars */}
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center">
+                {renderStarRating(review.rating, 'sm')}
+              </div>
+              <span className="text-sm text-gray-500">
+                {formatReviewDate(review.createdAt)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Admin Actions */}
+        {isAdmin && (
+          <div className="flex items-center space-x-2">
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              review.status === 'active' ? 'bg-green-100 text-green-800' :
+              review.status === 'hidden' ? 'bg-gray-100 text-gray-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              {review.status === 'active' ? 'Hiển thị' :
+               review.status === 'hidden' ? 'Ẩn' : 'Đánh dấu'}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Product Info (if needed) */}
+      {showProductInfo && review.product && (
+        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+          <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+            {review.product.images?.[0] ? (
+              <SmartImage
+                src={review.product.images[0]}
+                alt={review.product.name}
+                className="w-full h-full object-cover"
+                fallback="/placeholder-product.jpg"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <PhotoIcon className="h-6 w-6 text-gray-400" />
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="font-medium text-gray-900">{review.product.name}</p>
+            <p className="text-sm text-gray-500">Đơn hàng #{review.order?.orderNumber}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Review Content */}
+      <div className="space-y-3">
+        {/* Comment */}
+        <div className="text-gray-700">
+          {isExpanded ? (
+            <p className="whitespace-pre-wrap">{review.comment}</p>
+          ) : (
+            <p className="whitespace-pre-wrap">
+              {truncateComment(review.comment)}
+            </p>
+          )}
+          
+          {review.comment.length > 200 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-1"
+            >
+              {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+            </button>
+          )}
+        </div>
+
+        {/* Review Images */}
+        {review.images && review.images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {review.images.map((image, index) => (
+              <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                <SmartImage
+                  src={image}
+                  alt={`Review image ${index + 1}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                  fallback="/placeholder-image.jpg"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Admin Response */}
+      {review.adminResponse && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <ChatBubbleLeftIcon className="h-4 w-4 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="font-medium text-blue-900">
+                  {review.adminResponse.respondedBy?.firstName || 'Admin'} phản hồi
+                </span>
+                <span className="text-sm text-blue-600">
+                  {formatReviewDate(review.adminResponse.respondedAt)}
+                </span>
+              </div>
+              <p className="text-blue-800 whitespace-pre-wrap">
+                {review.adminResponse.responseText}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+        <div className="flex items-center space-x-4">
+          {/* Helpful Button */}
+          <button
+            onClick={handleMarkHelpful}
+            disabled={hasVoted || markingHelpful}
+            className={`flex items-center space-x-1 text-sm ${
+              hasVoted 
+                ? 'text-blue-600 cursor-default' 
+                : 'text-gray-500 hover:text-blue-600'
+            } transition-colors`}
+          >
+            {hasVoted ? (
+              <HandThumbUpSolid className="h-4 w-4" />
+            ) : (
+              <HandThumbUpIcon className="h-4 w-4" />
+            )}
+            <span>Hữu ích ({review.helpfulVotes})</span>
+          </button>
+        </div>
+
+        {/* Report Button (for non-admin users) */}
+        {!isAdmin && (
+          <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-red-600 transition-colors">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <span>Báo cáo</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ReviewCard;
+====================================================================================================
+END OF FILE: webfrontend/src/components/reviews/ReviewCard.jsx
+====================================================================================================
+
+
+====================================================================================================
+FILE: webfrontend/src/components/reviews/ReviewList.jsx
+====================================================================================================
+
+// File: webfrontend/src/components/reviews/ReviewList.jsx
+import React, { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import {
+  ChevronDownIcon,
+  FunnelIcon,
+  StarIcon
+} from '@heroicons/react/24/outline';
+
+import ReviewCard from './ReviewCard';
+import LoadingSkeleton from '../common/LoadingSkeleton';
+import { 
+  GET_PRODUCT_REVIEWS, 
+  RATING_FILTER_OPTIONS,
+  REVIEW_ORDER_OPTIONS,
+  calculateRatingPercentage
+} from '../../graphql/reviews';
+import { renderStarRating } from '../../utils/reviewHelper';
+
+const ReviewList = ({ productId, productReviewStats = null, isAdmin = false }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [orderBy, setOrderBy] = useState('CREATED_DESC');
+  const [ratingFilter, setRatingFilter] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const itemsPerPage = 10;
+
+  const { data, loading, error, fetchMore } = useQuery(GET_PRODUCT_REVIEWS, {
+    variables: {
+      productId,
+      first: itemsPerPage,
+      offset: 0,
+      orderBy,
+      ratingFilter
+    },
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true
+  });
+
+  const handleFilterChange = (newRatingFilter, newOrderBy) => {
+    setRatingFilter(newRatingFilter);
+    setOrderBy(newOrderBy || orderBy);
+    setCurrentPage(1);
+  };
+
+  const handleLoadMore = () => {
+    if (data?.getProductReviews?.hasNextPage) {
+      fetchMore({
+        variables: {
+          offset: data.getProductReviews.nodes.length
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          
+          return {
+            getProductReviews: {
+              ...fetchMoreResult.getProductReviews,
+              nodes: [
+                ...prev.getProductReviews.nodes,
+                ...fetchMoreResult.getProductReviews.nodes
+              ]
+            }
+          };
+        }
+      });
+    }
+  };
+
+  if (loading && !data) {
+    return (
+      <div className="space-y-6">
+        <LoadingSkeleton type="review-card" count={3} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Không thể tải đánh giá. Vui lòng thử lại sau.</p>
+      </div>
+    );
+  }
+
+  const reviews = data?.getProductReviews?.nodes || [];
+  const totalCount = data?.getProductReviews?.totalCount || 0;
+  const hasNextPage = data?.getProductReviews?.hasNextPage || false;
+
+  return (
+    <div className="space-y-6">
+      {/* Review Summary */}
+      {productReviewStats && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Average Rating */}
+            <div className="text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start space-x-4 mb-4">
+                <div className="text-4xl font-bold text-gray-900">
+                  {productReviewStats.averageRating.toFixed(1)}
+                </div>
+                <div>
+                  <div className="flex items-center mb-1">
+                    {renderStarRating(productReviewStats.averageRating, 'lg')}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {productReviewStats.totalReviews} đánh giá
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Rating Distribution */}
+            <div className="space-y-2">
+              {[5, 4, 3, 2, 1].map((rating) => {
+                const count = productReviewStats.distribution[`_${rating}`] || 0;
+                const percentage = calculateRatingPercentage(count, productReviewStats.totalReviews);
+                
+                return (
+                  <div key={rating} className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleFilterChange(rating, orderBy)}
+                      className="flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                    >
+                      <span>{rating}</span>
+                      <StarIcon className="h-4 w-4 text-yellow-400 fill-current" />
+                    </button>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-yellow-400 transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-600 w-12 text-right">
+                      {percentage}%
+                    </span>
+                    <span className="text-sm text-gray-500 w-8 text-right">
+                      ({count})
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Đánh giá ({totalCount})
+          </h3>
+          
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <FunnelIcon className="h-4 w-4" />
+            <span>Lọc & Sắp xếp</span>
+            <ChevronDownIcon className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Rating Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lọc theo số sao
+                </label>
+                <select
+                  value={ratingFilter || ''}
+                  onChange={(e) => handleFilterChange(e.target.value ? parseInt(e.target.value) : null, orderBy)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {RATING_FILTER_OPTIONS.map((option) => (
+                    <option key={option.value || 'all'} value={option.value || ''}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sort Order */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sắp xếp theo
+                </label>
+                <select
+                  value={orderBy}
+                  onChange={(e) => handleFilterChange(ratingFilter, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {REVIEW_ORDER_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filters */}
+            {(ratingFilter || orderBy !== 'CREATED_DESC') && (
+              <div className="mt-3 flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Bộ lọc đang áp dụng:</span>
+                {ratingFilter && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {ratingFilter} sao
+                    <button
+                      onClick={() => handleFilterChange(null, orderBy)}
+                      className="ml-1 text-blue-600 hover:text-blue-800"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+                <button
+                  onClick={() => handleFilterChange(null, 'CREATED_DESC')}
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Xóa tất cả
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Reviews List */}
+      {reviews.length === 0 ? (
+        <div className="text-center py-12">
+          <StarIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {ratingFilter ? `Chưa có đánh giá ${ratingFilter} sao` : 'Chưa có đánh giá nào'}
+          </h3>
+          <p className="text-gray-500">
+            {ratingFilter ? 
+              'Hãy thử lọc theo số sao khác hoặc xóa bộ lọc.' :
+              'Hãy là người đầu tiên đánh giá sản phẩm này.'
+            }
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <ReviewCard
+              key={review._id}
+              review={review}
+              showProductInfo={false}
+              isAdmin={isAdmin}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Load More */}
+      {hasNextPage && (
+        <div className="text-center">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? 'Đang tải...' : 'Xem thêm đánh giá'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ReviewList;
+====================================================================================================
+END OF FILE: webfrontend/src/components/reviews/ReviewList.jsx
+====================================================================================================
+
+
+====================================================================================================
+FILE: webfrontend/src/components/reviews/CreateReviewForm.jsx
+====================================================================================================
+
+// File: webfrontend/src/components/reviews/CreateReviewForm.jsx
+import React, { useState, useCallback } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { toast } from 'react-hot-toast';
+import {
+  StarIcon,
+  PhotoIcon,
+  XMarkIcon,
+  PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
+import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
+
+import { CREATE_REVIEW, CAN_REVIEW_PRODUCT, GET_PRODUCT_REVIEWS } from '../../graphql/reviews';
+import { useAuth } from '../../contexts/AuthContext';
+import { SmartImage } from '../../utils/imageHelper';
+
+const CreateReviewForm = ({ productId, product, onReviewCreated, onCancel }) => {
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    rating: 0,
+    comment: '',
+    images: []
+  });
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Check if user can review this product
+  const { data: eligibilityData, loading: checkingEligibility } = useQuery(CAN_REVIEW_PRODUCT, {
+    variables: { productId },
+    skip: !user
+  });
+
+  const [createReview, { loading: creating }] = useMutation(CREATE_REVIEW, {
+    onCompleted: (data) => {
+      toast.success('Đánh giá của bạn đã được gửi thành công!');
+      setFormData({ rating: 0, comment: '', images: [] });
+      if (onReviewCreated) {
+        onReviewCreated(data.createReview);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi gửi đánh giá');
+    },
+    refetchQueries: [
+      {
+        query: GET_PRODUCT_REVIEWS,
+        variables: { productId, first: 10, offset: 0, orderBy: 'CREATED_DESC' }
+      }
+    ]
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.rating) {
+      toast.error('Vui lòng chọn số sao đánh giá');
+      return;
+    }
+    
+    if (!formData.comment.trim() || formData.comment.trim().length < 10) {
+      toast.error('Vui lòng nhập ít nhất 10 ký tự cho nhận xét');
+      return;
+    }
+
+    const eligibility = eligibilityData?.canReviewProduct;
+    if (!eligibility?.canReview) {
+      toast.error('Bạn không thể đánh giá sản phẩm này');
+      return;
+    }
+
+    try {
+      await createReview({
+        variables: {
+          input: {
+            productId,
+            orderId: eligibility.orderId,
+            orderItemId: eligibility.orderItemId,
+            rating: formData.rating,
+            comment: formData.comment.trim(),
+            images: formData.images
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error creating review:', error);
+    }
+  };
+
+  const handleImageUpload = useCallback((files) => {
+    const maxImages = 5;
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+    const validFiles = Array.from(files).filter(file => {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`${file.name}: Chỉ hỗ trợ file JPG, PNG, WEBP`);
+        return false;
+      }
+      if (file.size > maxFileSize) {
+        toast.error(`${file.name}: File quá lớn (tối đa 5MB)`);
+        return false;
+      }
+      return true;
+    });
+
+    if (formData.images.length + validFiles.length > maxImages) {
+      toast.error(`Chỉ có thể tải lên tối đa ${maxImages} ảnh`);
+      return;
+    }
+
+    // Convert files to base64 URLs for preview
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, e.target.result]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  }, [formData.images.length]);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    handleImageUpload(files);
+  }, [handleImageUpload]);
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const removeImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const renderStars = () => {
+    return [1, 2, 3, 4, 5].map((rating) => {
+      const isFilled = rating <= (hoveredRating || formData.rating);
+      return (
+        <button
+          key={rating}
+          type="button"
+          onClick={() => setFormData(prev => ({ ...prev, rating }))}
+          onMouseEnter={() => setHoveredRating(rating)}
+          onMouseLeave={() => setHoveredRating(0)}
+          className="focus:outline-none transition-transform hover:scale-110"
+        >
+          {isFilled ? (
+            <StarSolid className="h-8 w-8 text-yellow-400" />
+          ) : (
+            <StarIcon className="h-8 w-8 text-gray-300" />
+          )}
+        </button>
+      );
+    });
+  };
+
+  if (checkingEligibility) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-20 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded w-1/3"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const eligibility = eligibilityData?.canReviewProduct;
+  
+  if (!user) {
+    return (
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+        <p className="text-yellow-800">
+          Vui lòng <strong>đăng nhập</strong> để viết đánh giá cho sản phẩm này.
+        </p>
+      </div>
+    );
+  }
+
+  if (!eligibility?.canReview) {
+    const messages = {
+      already_reviewed: "Bạn đã đánh giá sản phẩm này rồi.",
+      not_purchased: "Chỉ khách hàng đã mua và nhận hàng mới có thể đánh giá sản phẩm."
+    };
+    
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+        <p className="text-gray-600">
+          {messages[eligibility?.reason] || "Bạn không thể đánh giá sản phẩm này."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-6">Đánh giá sản phẩm</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Product Info */}
+        {product && (
+          <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+            <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+              {product.images?.[0] ? (
+                <SmartImage
+                  src={product.images[0]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  fallback="/placeholder-product.jpg"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <PhotoIcon className="h-8 w-8 text-gray-400" />
+                </div>
+              )}
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900">{product.name}</h4>
+              <p className="text-sm text-gray-500">
+                Bạn đã mua sản phẩm này và có thể đánh giá
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Rating */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Đánh giá của bạn *
+          </label>
+          <div className="flex items-center space-x-1">
+            {renderStars()}
+          </div>
+          {formData.rating > 0 && (
+            <p className="mt-2 text-sm text-gray-600">
+              Bạn đã chọn {formData.rating} sao
+            </p>
+          )}
+        </div>
+
+        {/* Comment */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Nhận xét của bạn *
+          </label>
+          <textarea
+            value={formData.comment}
+            onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+            maxLength={1000}
+          />
+          <div className="mt-1 flex justify-between text-sm text-gray-500">
+            <span>Tối thiểu 10 ký tự</span>
+            <span>{formData.comment.length}/1000</span>
+          </div>
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Thêm hình ảnh (không bắt buộc)
+          </label>
+          
+          {/* Upload Area */}
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              isDragging 
+                ? 'border-blue-400 bg-blue-50' 
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+          >
+            <PhotoIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                Kéo thả ảnh vào đây hoặc{' '}
+                <label className="text-blue-600 hover:text-blue-700 cursor-pointer">
+                  <span>chọn file</span>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e.target.files)}
+                    className="hidden"
+                  />
+                </label>
+              </p>
+              <p className="text-xs text-gray-500">
+                JPG, PNG, WEBP - Tối đa 5 ảnh, mỗi ảnh không quá 5MB
+              </p>
+            </div>
+          </div>
+
+          {/* Image Previews */}
+          {formData.images.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4">
+              {formData.images.map((image, index) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      src={image}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Hủy
+            </button>
+          )}
+          <button
+            type="submit"
+            disabled={creating || !formData.rating || formData.comment.trim().length < 10}
+            className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <PaperAirplaneIcon className="h-4 w-4" />
+            <span>{creating ? 'Đang gửi...' : 'Gửi đánh giá'}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default CreateReviewForm;
+====================================================================================================
+END OF FILE: webfrontend/src/components/reviews/CreateReviewForm.jsx
+====================================================================================================
+
+
+====================================================================================================
 FILE: webfrontend/src/components/admin/AdminLayout.jsx
 ====================================================================================================
 
@@ -15234,474 +16642,445 @@ END OF FILE: webfrontend/src/pages/ProductsPage.jsx
 FILE: webfrontend/src/pages/ProductDetailPage.jsx
 ====================================================================================================
 
-// webfrontend/src/pages/ProductDetailPage.jsx - Updated với Firebase Support
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+// File: webfrontend/src/pages/ProductDetailPage.jsx - Add Reviews section
+// UPDATE: Add reviews imports and integrate review components
+
+import React, { useState } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import {
+  ArrowLeftIcon,
+  StarIcon,
+  ShoppingCartIcon,
   HeartIcon,
   ShareIcon,
-  ShoppingCartIcon,
-  StarIcon,
-  CheckCircleIcon,
   TruckIcon,
-  ArrowLeftIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  XMarkIcon,
-  MinusIcon,
-  PlusIcon
+  ShieldCheckIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 import Layout from '../components/common/Layout';
-import { GET_PRODUCT } from '../graphql/products';
-import { formatPrice, calculateDiscountPercentage } from '../lib/utils';
-import { getImageUrl, SmartImage } from '../utils/imageHelper'; // ✅ UPDATED IMPORT
-import { useCart } from '../contexts/CartContext';
+import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import AddToCartButton from '../components/cart/AddToCartButton';
-import toast from 'react-hot-toast';
+import { SmartImage } from '../utils/imageHelper';
+import { GET_PRODUCT } from '../graphql/products';
+
+// NEW: Import Review Components
+import ReviewList from '../components/reviews/ReviewList';
+import CreateReviewForm from '../components/reviews/CreateReviewForm';
+import { renderStarRating } from '../utils/reviewHelper';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
-  
+  const location = useLocation();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('description'); // 'description', 'reviews', 'write-review'
 
   const { data, loading, error } = useQuery(GET_PRODUCT, {
     variables: { id },
     errorPolicy: 'all'
   });
 
-  const product = data?.product;
-
-  // Redirect if product not found
-  useEffect(() => {
-    if (!loading && !product && !error) {
-      navigate('/products', { replace: true });
+  // NEW: Auto-switch to review form if coming from OrdersPage
+  React.useEffect(() => {
+    if (location.state?.openReviewForm) {
+      setActiveTab('write-review');
     }
-  }, [loading, product, error, navigate]);
+  }, [location.state]);
 
-  // Reset states when product changes
-  useEffect(() => {
-    if (product) {
-      setSelectedImageIndex(0);
-      setQuantity(1);
-      setIsWishlisted(false);
-    }
-  }, [product]);
-
-  const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 1 && newQuantity <= (product?.stock || 0)) {
-      setQuantity(newQuantity);
-    }
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
   };
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    addToCart({
-      productId: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0] || null,
-      quantity: quantity
-    });
-    
-    toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <LoadingSkeleton type="product-detail" />
+        </div>
+      </Layout>
+    );
+  }
 
-  const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted);
-    toast.success(isWishlisted ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích');
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: `Xem sản phẩm này trên SmartShop: ${product.name}`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log('Share failed:', err);
-      }
-    } else {
-      // Fallback to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Đã copy link sản phẩm!');
-    }
-  };
-
-  if (loading) return <Layout><ProductDetailSkeleton /></Layout>;
-
-  if (error) {
+  if (error || !data?.product) {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Không thể tải sản phẩm</h2>
-            <p className="text-gray-600 mb-8">{error.message}</p>
-            <button
-              onClick={() => navigate('/products')}
-              className="btn btn-primary"
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Sản phẩm không tồn tại</h1>
+            <Link
+              to="/products"
+              className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              Quay lại danh sách sản phẩm
-            </button>
+              ← Quay lại danh sách sản phẩm
+            </Link>
           </div>
         </div>
       </Layout>
     );
   }
 
-  if (!product) {
-    return (
-      <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Không tìm thấy sản phẩm</h2>
-            <p className="text-gray-600 mb-8">Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-            <button
-              onClick={() => navigate('/products')}
-              className="btn btn-primary"
-            >
-              Quay lại danh sách sản phẩm
-            </button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  const {
-    name,
-    description,
-    price,
-    originalPrice,
-    images = [],
-    stock,
-    category,
-    brand,
-    sku,
-    isFeatured
-  } = product;
-
-  const discount = originalPrice && originalPrice > price 
-    ? calculateDiscountPercentage(originalPrice, price)
-    : null;
-
-  const isInStock = stock > 0;
-  const maxQuantity = Math.min(stock, 10); // Limit to 10 per purchase
+  const product = data.product;
+  const hasImages = product.images && product.images.length > 0;
+  const isOutOfStock = product.stock === 0;
+  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasDiscount 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
 
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <button
-            onClick={() => navigate('/products')}
-            className="flex items-center hover:text-gray-700 transition-colors"
-          >
-            <ArrowLeftIcon className="w-4 h-4 mr-1" />
-            Quay lại
-          </button>
+          <Link to="/" className="hover:text-gray-700">Trang chủ</Link>
           <span>/</span>
-          <span>{category?.name || 'Sản phẩm'}</span>
+          <Link to="/products" className="hover:text-gray-700">Sản phẩm</Link>
           <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{name}</span>
+          <Link to={`/categories/${product.category._id}`} className="hover:text-gray-700">
+            {product.category.name}
+          </Link>
+          <span>/</span>
+          <span className="text-gray-900 font-medium truncate">{product.name}</span>
         </nav>
 
-        <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
-          {/* Product Images */}
-          <div className="flex flex-col-reverse">
-            {/* Thumbnail Images */}
-            {images.length > 1 && (
-              <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-                <div className="grid grid-cols-4 gap-6">
-                  {images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={`relative h-24 bg-white rounded-md flex items-center justify-center text-sm font-medium uppercase text-gray-900 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4 ${
-                        index === selectedImageIndex ? 'ring-2 ring-blue-500' : ''
-                      }`}
-                    >
-                      <span className="sr-only">Ảnh {index + 1}</span>
-                      <span className="absolute inset-0 rounded-md overflow-hidden">
-                        {/* ✅ UPDATED: Sử dụng SmartImage */}
-                        <SmartImage
-                          src={image}
-                          alt=""
-                          className="w-full h-full object-center object-cover"
-                          fallback="/placeholder-product.jpg"
-                        />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
+        {/* Product Info Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Images */}
+          <div className="space-y-4">
             {/* Main Image */}
-            <div className="aspect-w-1 aspect-h-1 w-full">
-              <div className="relative">
-                {/* ✅ UPDATED: Sử dụng SmartImage */}
+            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              {hasImages ? (
                 <SmartImage
-                  src={images[selectedImageIndex] || images[0]}
-                  alt={name}
-                  className="w-full h-full object-center object-cover sm:rounded-lg cursor-zoom-in"
-                  onClick={() => setShowImageModal(true)}
+                  src={product.images[selectedImageIndex]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
                   fallback="/placeholder-product.jpg"
                 />
-                
-                {/* Navigation Arrows */}
-                {images.length > 1 && (
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4"></div>
+                    <p className="text-gray-500">Không có hình ảnh</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnail Images */}
+            {hasImages && product.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {product.images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${
+                      selectedImageIndex === index 
+                        ? 'border-blue-500' 
+                        : 'border-transparent hover:border-gray-300'
+                    }`}
+                  >
+                    <SmartImage
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      fallback="/placeholder-product.jpg"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-6">
+            {/* Header */}
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Link 
+                  to={`/brands/${product.brand._id}`}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {product.brand.name}
+                </Link>
+                {product.isFeatured && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <StarIcon className="h-3 w-3 mr-1" />
+                    Nổi bật
+                  </span>
+                )}
+              </div>
+              
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+              
+              {/* NEW: Rating Display */}
+              {product.totalReviews > 0 && (
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="flex items-center space-x-1">
+                    {renderStarRating(product.averageRating, 'md')}
+                    <span className="text-lg font-medium text-gray-900 ml-2">
+                      {product.averageRating.toFixed(1)}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('reviews')}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    ({product.totalReviews} đánh giá)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Price */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <span className="text-3xl font-bold text-red-600">
+                  {formatPrice(product.price)}
+                </span>
+                {hasDiscount && (
                   <>
-                    <button
-                      onClick={() => setSelectedImageIndex(selectedImageIndex > 0 ? selectedImageIndex - 1 : images.length - 1)}
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                    >
-                      <ChevronLeftIcon className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => setSelectedImageIndex(selectedImageIndex < images.length - 1 ? selectedImageIndex + 1 : 0)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                    >
-                      <ChevronRightIcon className="w-5 h-5" />
-                    </button>
+                    <span className="text-xl text-gray-400 line-through">
+                      {formatPrice(product.originalPrice)}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                      -{discountPercent}%
+                    </span>
                   </>
                 )}
+              </div>
+              
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <span>SKU: {product.sku}</span>
+                <span>|</span>
+                <span className={`${isOutOfStock ? 'text-red-600' : 'text-green-600'} font-medium`}>
+                  {isOutOfStock ? 'Hết hàng' : `Còn ${product.stock} sản phẩm`}
+                </span>
+              </div>
+            </div>
 
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  {isFeatured && (
-                    <span className="inline-flex items-center px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full">
-                      HOT
-                    </span>
-                  )}
-                  {discount && (
-                    <span className="inline-flex items-center px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                      -{discount}%
-                    </span>
-                  )}
+            {/* Purchase Section */}
+            <div className="space-y-4 p-6 bg-gray-50 rounded-lg">
+              {!isOutOfStock && (
+                <div className="flex items-center space-x-4">
+                  <label className="text-sm font-medium text-gray-700">Số lượng:</label>
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      min="1"
+                      max={product.stock}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1)))}
+                      className="w-16 px-2 py-2 text-center border-0 focus:ring-0"
+                    />
+                    <button
+                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex space-x-3">
+                <AddToCartButton
+                  product={product}
+                  quantity={quantity}
+                  disabled={isOutOfStock}
+                  className="flex-1"
+                />
+                <button className="p-3 text-gray-400 hover:text-red-500 border border-gray-300 rounded-lg transition-colors">
+                  <HeartIcon className="h-5 w-5" />
+                </button>
+                <button className="p-3 text-gray-400 hover:text-blue-500 border border-gray-300 rounded-lg transition-colors">
+                  <ShareIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                <TruckIcon className="h-8 w-8 text-green-600" />
+                <div>
+                  <p className="font-medium text-green-900">Miễn phí vận chuyển</p>
+                  <p className="text-sm text-green-700">Đơn hàng từ 500k</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
+                <div>
+                  <p className="font-medium text-blue-900">Bảo hành chính hãng</p>
+                  <p className="text-sm text-blue-700">12 tháng</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-600" />
+                <div>
+                  <p className="font-medium text-purple-900">Hỗ trợ 24/7</p>
+                  <p className="text-sm text-purple-700">Tư vấn miễn phí</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Product Info */}
-          <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
-            {/* Title & Category */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                <span>{category?.name || 'Chưa phân loại'}</span>
-                <span>•</span>
-                <span>{brand?.name || 'Không xác định'}</span>
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                {name}
-              </h1>
-            </div>
+        {/* NEW: Tabs Section for Description and Reviews */}
+        <div className="border-t border-gray-200">
+          {/* Tab Navigation */}
+          <div className="flex space-x-8 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('description')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'description'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Mô tả sản phẩm
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'reviews'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Đánh giá ({product.totalReviews || 0})
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('write-review')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'write-review'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Viết đánh giá
+            </button>
+          </div>
 
-            {/* Price */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-red-600">
-                  {formatPrice(price)}
-                </span>
-                {originalPrice && originalPrice > price && (
-                  <span className="text-xl text-gray-400 line-through">
-                    {formatPrice(originalPrice)}
-                  </span>
-                )}
-                {discount && (
-                  <span className="inline-flex items-center px-2 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
-                    Tiết kiệm {discount}%
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Stock & SKU */}
-            <div className="mb-6">
-              <div className="flex items-center gap-4 text-sm">
-                <div className={`flex items-center gap-1 ${isInStock ? 'text-green-600' : 'text-red-600'}`}>
-                  <CheckCircleIcon className="w-4 h-4" />
-                  <span>{isInStock ? `Còn ${stock} sản phẩm` : 'Hết hàng'}</span>
+          {/* Tab Content */}
+          <div className="py-8">
+            {activeTab === 'description' && (
+              <div className="max-w-4xl">
+                <div className="prose prose-gray max-w-none">
+                  {product.description ? (
+                    <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                      {product.description}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <p>Chưa có mô tả cho sản phẩm này.</p>
+                    </div>
+                  )}
                 </div>
-                <div className="text-gray-500">
-                  SKU: {sku}
-                </div>
-              </div>
-            </div>
 
-            {/* Rating (Mock) */}
-            <div className="flex items-center mb-6">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, index) => (
-                  <StarSolidIcon
-                    key={index}
-                    className={`w-5 h-5 ${index < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
-                  />
-                ))}
-              </div>
-              <span className="ml-2 text-sm text-gray-500">(4.0 • 127 đánh giá)</span>
-            </div>
-
-            {/* Quantity Selector */}
-            {isInStock && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Số lượng
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-gray-300 rounded-lg">
-                    <button
-                      onClick={() => handleQuantityChange(quantity - 1)}
-                      disabled={quantity <= 1}
-                      className="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <MinusIcon className="w-4 h-4" />
-                    </button>
-                    <span className="px-4 py-2 min-w-[60px] text-center font-medium">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => handleQuantityChange(quantity + 1)}
-                      disabled={quantity >= maxQuantity}
-                      className="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <PlusIcon className="w-4 h-4" />
-                    </button>
+                {/* Product Specifications */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Thông tin sản phẩm</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Thương hiệu:</span>
+                        <span className="font-medium">{product.brand?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Danh mục:</span>
+                        <span className="font-medium">{product.category?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">SKU:</span>
+                        <span className="font-medium">{product.sku}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tình trạng:</span>
+                        <span className={`font-medium ${isOutOfStock ? 'text-red-600' : 'text-green-600'}`}>
+                          {isOutOfStock ? 'Hết hàng' : 'Còn hàng'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    (Tối đa {Math.min(stock, 10)} sản phẩm)
-                  </span>
+
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Chính sách</h3>
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Bảo hành chính hãng 12 tháng</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Miễn phí vận chuyển đơn hàng từ 500.000đ</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Đổi trả trong 7 ngày nếu có lỗi từ nhà sản xuất</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span>•</span>
+                        <span>Hỗ trợ kỹ thuật 24/7</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-4 mb-8">
-              <AddToCartButton 
-                product={product}
-                quantity={quantity}
-                size="lg"
-                variant="primary"
-                disabled={!isInStock}
-                className="flex-1"
-              />
-              
-              <button
-                onClick={handleWishlistToggle}
-                className={`p-3 rounded-lg border transition-colors ${
-                  isWishlisted 
-                    ? 'border-red-300 bg-red-50 text-red-600' 
-                    : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {isWishlisted ? (
-                  <HeartSolidIcon className="w-6 h-6" />
-                ) : (
-                  <HeartIcon className="w-6 h-6" />
-                )}
-              </button>
-              
-              <button
-                onClick={handleShare}
-                className="p-3 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                <ShareIcon className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Shipping Info */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
-              <div className="flex items-center gap-2 text-green-800">
-                <TruckIcon className="w-5 h-5" />
-                <span className="font-medium">Miễn phí vận chuyển</span>
+            {activeTab === 'reviews' && (
+              <div className="max-w-6xl">
+                <ReviewList 
+                  productId={product._id} 
+                  productReviewStats={product.reviewStats}
+                  isAdmin={false}
+                />
               </div>
-              <p className="text-sm text-green-600 mt-1">
-                Đơn hàng từ 500.000₫ được miễn phí ship toàn quốc
-              </p>
-            </div>
+            )}
 
-            {/* Description */}
-            {description && (
-              <div className="mb-8">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Mô tả sản phẩm</h3>
-                <div className="prose prose-sm text-gray-600">
-                  <p>{description}</p>
-                </div>
+            {activeTab === 'write-review' && (
+              <div className="max-w-4xl">
+                <CreateReviewForm
+                  productId={product._id}
+                  product={product}
+                  onReviewCreated={() => {
+                    setActiveTab('reviews');
+                    // Optionally refetch product data to update review stats
+                  }}
+                  onCancel={() => setActiveTab('reviews')}
+                />
               </div>
             )}
           </div>
         </div>
 
-        {/* Image Modal */}
-        {showImageModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="relative max-w-4xl max-h-full">
-              <button
-                onClick={() => setShowImageModal(false)}
-                className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
-              >
-                <XMarkIcon className="w-8 h-8" />
-              </button>
-              {/* ✅ UPDATED: Sử dụng SmartImage */}
-              <SmartImage
-                src={images[selectedImageIndex] || images[0]}
-                alt={name}
-                className="max-w-full max-h-full object-contain"
-                fallback="/placeholder-product.jpg"
-              />
-            </div>
+        {/* Related Products Section (Optional) */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Sản phẩm liên quan</h2>
+          <div className="text-center py-12 text-gray-500">
+            <p>Chức năng sản phẩm liên quan sẽ được cập nhật sau.</p>
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   );
 };
-
-// Loading Skeleton Component
-const ProductDetailSkeleton = () => (
-  <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start animate-pulse">
-    <div className="flex flex-col-reverse">
-      <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-        <div className="grid grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 rounded" />
-          ))}
-        </div>
-      </div>
-      <div className="aspect-w-1 aspect-h-1 w-full">
-        <div className="w-full h-96 bg-gray-200 rounded-lg" />
-      </div>
-    </div>
-    <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
-      <div className="h-8 bg-gray-200 rounded w-3/4" />
-      <div className="h-4 bg-gray-200 rounded w-1/2 mt-4" />
-      <div className="h-10 bg-gray-200 rounded w-1/3 mt-6" />
-      <div className="h-6 bg-gray-200 rounded w-1/4 mt-4" />
-      <div className="h-4 bg-gray-200 rounded w-1/3 mt-4" />
-      <div className="flex gap-4 mt-8">
-        <div className="h-10 bg-gray-200 rounded w-20" />
-      </div>
-      <div className="flex gap-4 mt-6">
-        <div className="h-12 bg-gray-200 rounded flex-1" />
-        <div className="h-12 bg-gray-200 rounded flex-1" />
-        <div className="h-12 w-12 bg-gray-200 rounded" />
-        <div className="h-12 w-12 bg-gray-200 rounded" />
-      </div>
-      <div className="h-40 bg-gray-200 rounded mt-8" />
-    </div>
-  </div>
-);
 
 export default ProductDetailPage;
 ====================================================================================================
@@ -15785,6 +17164,11 @@ const CartPage = () => {
     subtotal = items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.unitPrice || 0)), 0);
   }
 
+  // Recalculate with only valid items
+  const validItems = items.filter(item => item.product && item.product.isActive);
+  const validSubtotal = validItems.reduce((sum, item) => sum + ((item.quantity || 0) * (item.unitPrice || 0)), 0);
+  const validTotalItems = validItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
   // Fallback: use direct query if context has no data
   const { data: directCartData } = useQuery(GET_CART, {
     skip: !authData.isAuthenticated,
@@ -15838,7 +17222,7 @@ const CartPage = () => {
   };
 
   const handleClearCart = async () => {
-    if (window.confirm(`Bạn có chắc muốn xóa toàn bộ ${totalItems} sản phẩm khỏi giỏ hàng?`)) {
+    if (window.confirm(`Bạn có chắc muốn xóa toàn bộ ${validTotalItems} sản phẩm khỏi giỏ hàng?`)) {
       if (cartData?.clearCart) {
         await cartData.clearCart();
       }
@@ -15846,10 +17230,13 @@ const CartPage = () => {
   };
 
   // Calculate shipping and total
-  const shippingFee = subtotal >= 500000 ? 0 : 30000;
+  const shippingFee = validSubtotal >= 500000 ? 0 : 30000;
   const taxRate = 0.1;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shippingFee + tax;
+  const tax = validSubtotal * taxRate;
+  const total = validSubtotal + shippingFee + tax;
+
+  // Check for invalid products
+  const invalidItems = items.filter(item => !item.product || !item.product.isActive);
 
   return (
     <ProtectedRoute>
@@ -15870,9 +17257,9 @@ const CartPage = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
                   <ShoppingCartIcon className="w-7 h-7 sm:w-8 sm:h-8" />
                   Giỏ hàng
-                  {!isEmpty && totalItems > 0 && (
+                  {!isEmpty && validTotalItems > 0 && (
                     <span className="bg-blue-100 text-blue-800 text-sm sm:text-lg font-semibold px-2 sm:px-3 py-1 rounded-full">
-                      {totalItems}
+                      {validTotalItems}
                     </span>
                   )}
                 </h1>
@@ -15898,6 +17285,40 @@ const CartPage = () => {
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-6"></div>
                   <p className="text-gray-600 text-lg">Đang tải giỏ hàng...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Invalid Items Warning */}
+            {!isLoading && invalidItems.length > 0 && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                      <span className="text-red-600 text-sm font-bold">!</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-red-800 font-semibold mb-2">
+                      Có {invalidItems.length} sản phẩm không khả dụng
+                    </h3>
+                    <p className="text-red-700 text-sm mb-3">
+                      Một số sản phẩm trong giỏ hàng đã bị xóa hoặc không còn khả dụng. 
+                      Chúng sẽ được tự động loại bỏ khi bạn thanh toán.
+                    </p>
+                    <div className="space-y-2">
+                      {invalidItems.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm">
+                          <span className="text-red-700">
+                            {item.productName || 'Sản phẩm không xác định'}
+                          </span>
+                          <span className="text-red-600 font-medium">
+                            {item.quantity} x {formatPrice(item.unitPrice)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -15953,7 +17374,7 @@ const CartPage = () => {
             )}
 
             {/* Cart Content */}
-            {!isEmpty && items.length > 0 && (
+            {!isEmpty && validItems.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Cart Items */}
                 <div className="lg:col-span-8 space-y-6">
@@ -15962,11 +17383,11 @@ const CartPage = () => {
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 p-6">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-xl font-bold text-gray-900">
-                          Sản phẩm trong giỏ ({items.length} sản phẩm)
+                          Sản phẩm trong giỏ ({validItems.length} sản phẩm)
                         </h2>
                         <div className="text-sm text-gray-600">
                           Tạm tính: <span className="font-bold text-gray-900 text-base">
-                            {formatPrice(subtotal)}
+                            {formatPrice(validSubtotal)}
                           </span>
                         </div>
                       </div>
@@ -15974,7 +17395,7 @@ const CartPage = () => {
 
                     {/* Cart Items List */}
                     <div className="divide-y divide-gray-100">
-                      {items.map((item, index) => {
+                      {validItems.map((item, index) => {
                         const product = item.product || {};
                         const productImage = getProductImage(product);
                         const originalPrice = product.originalPrice;
@@ -16963,10 +18384,10 @@ END OF FILE: webfrontend/src/pages/CheckoutPage.jsx
 FILE: webfrontend/src/pages/OrdersPage.jsx
 ====================================================================================================
 
-// webfrontend/src/pages/OrdersPage.jsx - ENHANCED WITH CANCEL & PROPER IMAGES
+// webfrontend/src/pages/OrdersPage.jsx - UPDATED with Review Integration
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { 
   ShoppingBagIcon, 
@@ -16986,11 +18407,13 @@ import {
   ChatBubbleLeftIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
+import { CheckCircleIcon as CheckCircleSolid, StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 import Layout from '../components/common/Layout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import { useAuth } from '../contexts/AuthContext';
+import { SmartImage } from '../utils/imageHelper';
 import { 
   GET_MY_ORDERS, 
   CANCEL_ORDER,
@@ -17000,6 +18423,7 @@ import {
 } from '../graphql/orders';
 
 const OrdersPage = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [orderBy, setOrderBy] = useState('DATE_DESC');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -17023,7 +18447,7 @@ const OrdersPage = () => {
     onCompleted: (data) => {
       if (data.cancelOrder) {
         toast.success('Đã hủy đơn hàng thành công!');
-        refetch(); // Refresh orders list
+        refetch();
       }
     },
     onError: (error) => {
@@ -17036,38 +18460,8 @@ const OrdersPage = () => {
 
   const orders = data?.getMyOrders?.nodes || [];
   const totalCount = data?.getMyOrders?.totalCount || 0;
-  const hasNextPage = data?.getMyOrders?.hasNextPage || false;
-  const hasPreviousPage = data?.getMyOrders?.hasPreviousPage || false;
 
-  // Filter orders
-  const filteredOrders = orders.filter(order => {
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    const matchesSearch = searchTerm === '' || 
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerInfo.fullName.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesStatus && matchesSearch;
-  });
-
-  // Handle cancel order
-  const handleCancelOrder = async (orderNumber) => {
-    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
-      return;
-    }
-
-    setCancellingOrder(orderNumber);
-    try {
-      await cancelOrderMutation({
-        variables: {
-          orderNumber,
-          reason: 'Khách hàng yêu cầu hủy đơn'
-        }
-      });
-    } catch (error) {
-      console.error('Cancel order error:', error);
-    }
-  };
-
-  // Format price
+  // Helper functions
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -17075,245 +18469,180 @@ const OrdersPage = () => {
     }).format(price);
   };
 
-  // Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
       year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
     });
   };
 
-  // Status Timeline Component
-  const StatusTimeline = ({ status, orderDate, confirmedAt, shippedAt, deliveredAt }) => {
-    const steps = [
-      { key: 'pending', label: 'Đặt hàng', icon: ShoppingBagIcon, date: orderDate },
-      { key: 'confirmed', label: 'Xác nhận', icon: CheckCircleIcon, date: confirmedAt },
-      { key: 'shipping', label: 'Vận chuyển', icon: TruckIcon, date: shippedAt },
-      { key: 'delivered', label: 'Hoàn thành', icon: CheckCircleSolid, date: deliveredAt }
-    ];
-
-    const currentStepIndex = steps.findIndex(step => step.key === status);
+  const handleCancelOrder = async (orderNumber) => {
+    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
     
-    return (
-      <div className="flex items-center space-x-2 text-xs">
-        {steps.map((step, index) => {
-          const StepIcon = step.icon;
-          const isCompleted = index <= currentStepIndex;
-          const isCurrent = index === currentStepIndex;
-          
-          return (
-            <React.Fragment key={step.key}>
-              <div className={`flex items-center space-x-1 ${
-                isCompleted ? 'text-green-600' : 'text-gray-400'
-              }`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                  isCompleted ? 'bg-green-100' : 'bg-gray-100'
-                }`}>
-                  <StepIcon className="w-3 h-3" />
-                </div>
-                <span className={`font-medium ${isCurrent ? 'text-blue-600' : ''}`}>
-                  {step.label}
-                </span>
-              </div>
-              {index < steps.length - 1 && (
-                <div className={`flex-1 h-0.5 ${
-                  isCompleted ? 'bg-green-200' : 'bg-gray-200'
-                }`} />
-              )}
-            </React.Fragment>
-          );
-        })}
-      </div>
-    );
+    setCancellingOrder(orderNumber);
+    try {
+      await cancelOrderMutation({
+        variables: { orderNumber, reason: 'Khách hàng yêu cầu hủy' }
+      });
+    } catch (error) {
+      console.error('Cancel order error:', error);
+    }
   };
 
-  // Product Item Component with proper image handling
-  const ProductItem = ({ item }) => {
-    const product = item.product || {};
-    const snapshot = item.productSnapshot || {};
+  // NEW: Navigate to review page for specific product
+  const handleReviewProduct = (productId, productName) => {
+    navigate(`/products/${productId}`, { 
+      state: { 
+        openReviewForm: true, 
+        productName: productName 
+      } 
+    });
+  };
+
+  // Component for individual order item with review option
+  const OrderItem = ({ item, order }) => {
+    const canReview = order.status === 'delivered' && order.paymentStatus === 'paid';
     
-    // ✅ FIX: Get product image with proper priority and fallback
-    const getProductImage = () => {
-      // Priority 1: Product images (current/live product)
-      if (product.images && product.images.length > 0) {
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/img/${product.images[0]}`;
-      }
-      
-      // Priority 2: Snapshot images (from order time)
-      if (snapshot.images && snapshot.images.length > 0) {
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/img/${snapshot.images[0]}`;
-      }
-      
-      return null;
-    };
-
-    const productImage = getProductImage();
-
     return (
-      <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
-        {/* ✅ ENHANCED: Product Image with better styling */}
-        <div className="w-20 h-20 bg-white rounded-lg overflow-hidden border-2 border-gray-200 flex-shrink-0 shadow-sm">
-          {productImage ? (
-            <img
-              src={productImage}
+      <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
+        {/* Product Image */}
+        <div className="flex-shrink-0 w-16 h-16">
+          {item.productSnapshot?.images?.[0] ? (
+            <SmartImage
+              src={item.productSnapshot.images[0]}
               alt={item.productName}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
+              className="w-full h-full object-cover rounded-lg"
+              fallback="/placeholder-product.jpg"
             />
-          ) : null}
-          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 text-lg">
-            📦
-          </div>
+          ) : (
+            <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+              <ShoppingBagIcon className="h-8 w-8 text-gray-400" />
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 text-lg truncate mb-1">
+          <h4 className="text-sm font-medium text-gray-900 truncate">
             {item.productName}
           </h4>
-          
-          {/* Product details */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600 space-x-3">
-              <span className="bg-gray-200 px-2 py-1 rounded text-xs font-mono">
-                {item.productSku}
-              </span>
-              <span className="font-medium">
-                Số lượng: {item.quantity}
-              </span>
-            </div>
+          <p className="text-sm text-gray-500">SKU: {item.productSku}</p>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm text-gray-600">
+              Số lượng: {item.quantity}
+            </span>
             <div className="text-right">
-              <div className="font-bold text-lg text-gray-900">
+              <span className="text-sm text-gray-500">
+                {formatPrice(item.unitPrice)} x {item.quantity}
+              </span>
+              <div className="font-medium text-gray-900">
                 {formatPrice(item.totalPrice)}
               </div>
-              {item.quantity > 1 && (
-                <div className="text-sm text-gray-500">
-                  {formatPrice(item.unitPrice)} × {item.quantity}
-                </div>
-              )}
             </div>
           </div>
-          
-          {/* Brand & Category from snapshot or product */}
-          <div className="flex items-center space-x-3 text-sm text-gray-500">
-            {(snapshot.brand || product.brand?.name) && (
-              <span className="inline-flex items-center">
-                🏷️ {snapshot.brand || product.brand?.name}
-              </span>
-            )}
-            {(snapshot.category || product.category?.name) && (
-              <span className="inline-flex items-center">
-                📂 {snapshot.category || product.category?.name}
-              </span>
-            )}
-          </div>
         </div>
+
+        {/* NEW: Review Button */}
+        {canReview && (
+          <div className="flex flex-col space-y-2">
+            <button
+              onClick={() => handleReviewProduct(item.productId, item.productName)}
+              className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors"
+            >
+              <StarIcon className="h-4 w-4" />
+              <span>Đánh giá</span>
+            </button>
+            <Link
+              to={`/products/${item.productId}`}
+              className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-center"
+            >
+              <ShoppingBagIcon className="h-4 w-4" />
+              <span>Mua lại</span>
+            </Link>
+          </div>
+        )}
       </div>
     );
   };
 
-  // Main Order Card Component
+  // Main order card component
   const OrderCard = ({ order }) => {
+    const [showItems, setShowItems] = useState(false);
     const statusInfo = getOrderStatusInfo(order.status);
     const paymentInfo = getPaymentStatusInfo(order.paymentStatus);
-    const [showItems, setShowItems] = useState(false);
     const canCancel = ['pending', 'confirmed'].includes(order.status);
     const isCancelling = cancellingOrder === order.orderNumber;
-    
+
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
-        {/* Header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+        {/* Order Header */}
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-start justify-between">
-            {/* Left side - Order info */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <ShoppingBagIcon className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">
-                    #{order.orderNumber}
-                  </h3>
-                  <div className="flex items-center space-x-4 mt-1">
-                    <span className="flex items-center text-sm text-gray-500">
-                      <CalendarIcon className="h-4 w-4 mr-1" />
-                      {formatDate(order.orderDate)}
-                    </span>
-                    <span className="flex items-center text-sm text-gray-500">
-                      <CreditCardIcon className="h-4 w-4 mr-1" />
-                      {order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản'}
-                    </span>
-                  </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <ShoppingBagIcon className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
-
-              {/* Status Timeline - Hide for cancelled orders */}
-              {order.status !== 'cancelled' && (
-                <div className="mb-4">
-                  <StatusTimeline 
-                    status={order.status}
-                    orderDate={order.orderDate}
-                    confirmedAt={order.confirmedAt}
-                    shippedAt={order.shippedAt}
-                    deliveredAt={order.deliveredAt}
-                  />
-                </div>
-              )}
-
-              {/* Status Badges */}
-              <div className="flex items-center space-x-3">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  statusInfo.color === 'green' ? 'bg-green-100 text-green-800' :
-                  statusInfo.color === 'blue' ? 'bg-blue-100 text-blue-800' :
-                  statusInfo.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                  statusInfo.color === 'red' ? 'bg-red-100 text-red-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {statusInfo.label}
-                </span>
-                
-                <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
-                  paymentInfo.color === 'green' ? 'bg-green-50 text-green-700 border border-green-200' :
-                  paymentInfo.color === 'yellow' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' :
-                  'bg-gray-50 text-gray-700 border border-gray-200'
-                }`}>
-                  {paymentInfo.label}
-                </span>
+              
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  #{order.orderNumber}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {formatDate(order.orderDate)}
+                </p>
               </div>
             </div>
-
-            {/* Right side - Price */}
-            <div className="text-right ml-6">
-              <div className="text-3xl font-bold text-gray-900 mb-1">
+            
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-900">
                 {formatPrice(order.totalAmount)}
               </div>
-              <div className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500">
                 {order.items?.length || 0} sản phẩm
-              </div>
+              </p>
             </div>
+          </div>
+
+          {/* Status badges */}
+          <div className="flex items-center space-x-3">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              statusInfo.color === 'green' ? 'bg-green-100 text-green-800' :
+              statusInfo.color === 'blue' ? 'bg-blue-100 text-blue-800' :
+              statusInfo.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+              statusInfo.color === 'red' ? 'bg-red-100 text-red-800' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              <CheckCircleIcon className="w-4 h-4 mr-1" />
+              {statusInfo.label}
+            </span>
+            
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              paymentInfo.color === 'green' ? 'bg-green-100 text-green-800' :
+              paymentInfo.color === 'red' ? 'bg-red-100 text-red-800' :
+              'bg-yellow-100 text-yellow-800'
+            }`}>
+              <CreditCardIcon className="w-4 h-4 mr-1" />
+              {paymentInfo.label}
+            </span>
           </div>
         </div>
 
-
-
-        {/* Product Items */}
+        {/* Order Items */}
         {order.items && order.items.length > 0 && (
-          <div className="px-6 py-4">
+          <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-900 text-lg">
-                Sản phẩm đã đặt ({order.items.length})
+              <h4 className="font-medium text-gray-900">
+                Sản phẩm đã đặt
               </h4>
               {order.items.length > 1 && (
                 <button
                   onClick={() => setShowItems(!showItems)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   {showItems ? '↑ Ẩn bớt' : '↓ Xem tất cả'}
                 </button>
@@ -17323,7 +18652,7 @@ const OrdersPage = () => {
             {/* Show first item or all if expanded */}
             <div className="space-y-3">
               {(showItems ? order.items : order.items.slice(0, 1)).map((item, index) => (
-                <ProductItem key={item._id || index} item={item} />
+                <OrderItem key={item._id || index} item={item} order={order} />
               ))}
               
               {!showItems && order.items.length > 1 && (
@@ -17340,25 +18669,17 @@ const OrdersPage = () => {
           </div>
         )}
 
-        {/* Actions */}
-        <div className="px-6 py-4 bg-white border-t border-gray-100">
+        {/* Order Actions */}
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {/* Quick actions based on status */}
-              {order.status === 'delivered' && (
-                <>
-                  <button className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
-                    <StarIcon className="h-4 w-4" />
-                    <span>Đánh giá</span>
-                  </button>
-                  <button className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                    <ShoppingBagIcon className="h-4 w-4" />
-                    <span>Mua lại</span>
-                  </button>
-                </>
-              )}
+              {/* Contact Support */}
+              <button className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
+                <ChatBubbleLeftIcon className="h-4 w-4" />
+                <span>Liên hệ</span>
+              </button>
               
-              {/* ✅ ENHANCED: Cancel button with loading state */}
+              {/* Cancel button */}
               {canCancel && (
                 <button
                   onClick={() => handleCancelOrder(order.orderNumber)}
@@ -17371,7 +18692,7 @@ const OrdersPage = () => {
                 >
                   {isCancelling ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
                       <span>Đang hủy...</span>
                     </>
                   ) : (
@@ -17383,92 +18704,54 @@ const OrdersPage = () => {
                 </button>
               )}
             </div>
-            
-            {/* View Details */}
-            <Link
-              to={`/orders/${order.orderNumber}`}
-              className="inline-flex items-center space-x-2 px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-            >
-              <EyeIcon className="h-4 w-4" />
-              <span>Chi tiết đơn hàng</span>
-              <ChevronRightIcon className="h-4 w-4" />
-            </Link>
+
+            <div className="flex items-center space-x-3">
+              <Link
+                to={`/orders/${order.orderNumber}`}
+                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              >
+                <EyeIcon className="h-4 w-4" />
+                <span>Chi tiết</span>
+                <ChevronRightIcon className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  // Filters Component
-  const FiltersSection = () => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-        {/* Search */}
-        <div className="relative flex-1 max-w-md">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Tìm kiếm theo mã đơn hàng..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        {/* Filters */}
-        <div className="flex items-center space-x-4">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="pending">Chờ xác nhận</option>
-            <option value="confirmed">Đã xác nhận</option>
-            <option value="processing">Đang xử lý</option>
-            <option value="shipping">Đang giao hàng</option>
-            <option value="delivered">Đã giao hàng</option>
-            <option value="cancelled">Đã hủy</option>
-          </select>
-
-          <select
-            value={orderBy}
-            onChange={(e) => setOrderBy(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="DATE_DESC">Mới nhất</option>
-            <option value="DATE_ASC">Cũ nhất</option>
-            <option value="TOTAL_DESC">Giá trị cao nhất</option>
-            <option value="TOTAL_ASC">Giá trị thấp nhất</option>
-          </select>
-
-          <button
-            onClick={() => refetch()}
-            className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            🔄 Làm mới
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   if (loading) {
     return (
       <ProtectedRoute>
         <Layout>
-          <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="mb-8">
-                <LoadingSkeleton className="h-10 w-64 mb-2" />
-                <LoadingSkeleton className="h-6 w-96" />
-              </div>
-              <FiltersSection />
-              <div className="space-y-6">
-                {[...Array(3)].map((_, i) => (
-                  <LoadingSkeleton key={i} className="h-80 rounded-xl" />
-                ))}
-              </div>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <LoadingSkeleton type="order-card" count={3} />
+          </div>
+        </Layout>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <Layout>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="text-center py-12">
+              <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Có lỗi xảy ra
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {error.message || 'Không thể tải danh sách đơn hàng'}
+              </p>
+              <button
+                onClick={() => refetch()}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Thử lại
+              </button>
             </div>
           </div>
         </Layout>
@@ -17479,137 +18762,88 @@ const OrdersPage = () => {
   return (
     <ProtectedRoute>
       <Layout>
-        <div className="min-h-screen bg-gray-50 py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <ShoppingBagIcon className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold text-gray-900">
-                    Đơn hàng của tôi
-                  </h1>
-                  <p className="text-lg text-gray-600 mt-1">
-                    Theo dõi và quản lý tất cả đơn hàng của bạn
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-100">Tổng đơn hàng</p>
-                      <p className="text-3xl font-bold">{totalCount}</p>
-                    </div>
-                    <ShoppingBagIcon className="h-8 w-8 text-blue-200" />
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-100">Đã giao hàng</p>
-                      <p className="text-3xl font-bold">
-                        {orders.filter(o => o.status === 'delivered').length}
-                      </p>
-                    </div>
-                    <CheckCircleIcon className="h-8 w-8 text-green-200" />
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-yellow-100">Đang xử lý</p>
-                      <p className="text-3xl font-bold">
-                        {orders.filter(o => ['confirmed', 'processing', 'shipping'].includes(o.status)).length}
-                      </p>
-                    </div>
-                    <TruckIcon className="h-8 w-8 text-yellow-200" />
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-100">Tổng chi tiêu</p>
-                      <p className="text-2xl font-bold">
-                        {formatPrice(orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0))}
-                      </p>
-                    </div>
-                    <CurrencyDollarIcon className="h-8 w-8 text-purple-200" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Filters */}
-            <FiltersSection />
-
-            {/* Orders List */}
-            {filteredOrders.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
-                  <ShoppingBagIcon className="h-16 w-16 text-gray-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {searchTerm || statusFilter !== 'all' ? 'Không tìm thấy đơn hàng' : 'Chưa có đơn hàng nào'}
-                </h3>
-                <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  {searchTerm || statusFilter !== 'all' 
-                    ? 'Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm để tìm thấy đơn hàng bạn cần.'
-                    : 'Khám phá các sản phẩm tuyệt vời tại SmartShop và tạo đơn hàng đầu tiên của bạn!'
-                  }
-                </p>
-                {!searchTerm && statusFilter === 'all' && (
-                  <Link
-                    to="/products"
-                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg"
-                  >
-                    <ShoppingBagIcon className="h-5 w-5 mr-2" />
-                    Khám phá sản phẩm
-                  </Link>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-8">
-                {filteredOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} />
-                ))}
-              </div>
-            )}
-
-            {/* Pagination */}
-            {totalCount > itemsPerPage && (
-              <div className="mt-12 flex items-center justify-center">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={!hasPreviousPage}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    ← Trước
-                  </button>
-                  
-                  <span className="px-4 py-2 text-sm text-gray-700">
-                    Trang {currentPage} / {Math.ceil(totalCount / itemsPerPage)}
-                  </span>
-                  
-                  <button
-                    onClick={() => setCurrentPage(prev => prev + 1)}
-                    disabled={!hasNextPage}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Tiếp →
-                  </button>
-                </div>
-              </div>
-            )}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Page Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Đơn hàng của tôi
+            </h1>
+            <p className="text-gray-600">
+              Quản lý và theo dõi tình trạng đơn hàng của bạn
+            </p>
           </div>
+
+          {/* Filters */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo mã đơn hàng..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="all">Tất cả trạng thái</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="processing">Đang xử lý</option>
+                <option value="shipping">Đang giao hàng</option>
+                <option value="delivered">Đã giao hàng</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+
+              {/* Sort */}
+              <select
+                value={orderBy}
+                onChange={(e) => setOrderBy(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="DATE_DESC">Mới nhất</option>
+                <option value="DATE_ASC">Cũ nhất</option>
+                <option value="TOTAL_DESC">Giá trị cao</option>
+                <option value="TOTAL_ASC">Giá trị thấp</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Orders List */}
+          {orders.length === 0 ? (
+            <div className="text-center py-12">
+              <ShoppingBagIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Chưa có đơn hàng nào
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Bạn chưa đặt đơn hàng nào. Hãy bắt đầu mua sắm ngay!
+              </p>
+              <Link
+                to="/products"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <ShoppingBagIcon className="h-5 w-5 mr-2" />
+                Mua sắm ngay
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {orders.map((order) => (
+                <OrderCard key={order._id} order={order} />
+              ))}
+            </div>
+          )}
+
+          {/* Load More / Pagination can be added here */}
         </div>
       </Layout>
     </ProtectedRoute>
@@ -19649,7 +20883,7 @@ import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import { SmartImage } from '../../utils/imageHelper';
 import { 
-  GET_ORDER,
+  GET_ORDER_ADMIN as GET_ORDER,
   UPDATE_ORDER_STATUS,
   UPDATE_PAYMENT_STATUS,
   CANCEL_ORDER,
@@ -20420,7 +21654,7 @@ import {
 
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import { SmartImage } from '../../utils/imageHelper';
-import { GET_PRODUCTS_WITH_FILTERS } from '../../graphql/products';
+import { GET_PRODUCTS } from '../../graphql/products';
 import { CREATE_ORDER, PAYMENT_METHOD_OPTIONS } from '../../graphql/orders';
 
 const AdminCreateOrderPage = () => {
@@ -20448,7 +21682,7 @@ const AdminCreateOrderPage = () => {
   const [errors, setErrors] = useState({});
   
   // GraphQL queries and mutations
-  const { data: productsData, loading: productsLoading } = useQuery(GET_PRODUCTS_WITH_FILTERS, {
+  const { data: productsData, loading: productsLoading } = useQuery(GET_PRODUCTS, {
     variables: {
       first: 50,
       condition: {
@@ -21216,6 +22450,8 @@ import {
   GET_ORDER_STATS,
   UPDATE_ORDER_STATUS,
   UPDATE_PAYMENT_STATUS,
+  CLEAR_ALL_ORDERS,
+  FIX_INVALID_ORDERS,
   getOrderStatusInfo,
   getPaymentStatusInfo,
   getPaymentMethodLabel,
@@ -21291,6 +22527,26 @@ const AdminOrdersPage = () => {
     }
   });
 
+  const [clearAllOrders] = useMutation(CLEAR_ALL_ORDERS, {
+    onCompleted: () => {
+      toast.success('Đã xóa tất cả đơn hàng thành công!');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi xóa đơn hàng');
+    }
+  });
+
+  const [fixInvalidOrders] = useMutation(FIX_INVALID_ORDERS, {
+    onCompleted: () => {
+      toast.success('Đã sửa các đơn hàng không hợp lệ thành công!');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi sửa đơn hàng');
+    }
+  });
+
   const orders = ordersData?.getAllOrders?.nodes || [];
   const totalCount = ordersData?.getAllOrders?.totalCount || 0;
   const hasNextPage = ordersData?.getAllOrders?.hasNextPage || false;
@@ -21357,6 +22613,34 @@ const AdminOrdersPage = () => {
     setPaymentMethodFilter('');
     setDateRange({ from: '', to: '' });
     setCurrentPage(1);
+  };
+
+  // Handle clear all orders
+  const handleClearAllOrders = () => {
+    if (!window.confirm('⚠️ CẢNH BÁO: Bạn có chắc muốn xóa TẤT CẢ đơn hàng?\n\nHành động này sẽ:\n- Xóa tất cả orders\n- Xóa tất cả order items\n- KHÔNG THỂ HOÀN TÁC\n\nNhập "DELETE" để xác nhận:')) {
+      return;
+    }
+    
+    const confirmation = prompt('Nhập "DELETE" để xác nhận xóa tất cả đơn hàng:');
+    if (confirmation !== 'DELETE') {
+      toast.error('Hủy bỏ xóa đơn hàng');
+      return;
+    }
+    
+    clearAllOrders();
+  };
+
+  // Handle fix invalid orders
+  const handleFixInvalidOrders = () => {
+    if (!window.confirm('🔧 Bạn có muốn sửa các đơn hàng không hợp lệ?\n\nHành động này sẽ:\n- Sửa paymentMethod thành "cod"\n- Sửa paymentStatus thành "pending"\n- Sửa status thành "pending"\n- Thêm customerInfo nếu thiếu')) {
+      return;
+    }
+    
+    console.log('🔧 Attempting to fix invalid orders...');
+    fixInvalidOrders().catch(error => {
+      console.error('❌ Error fixing invalid orders:', error);
+      toast.error('Có lỗi xảy ra khi sửa đơn hàng');
+    });
   };
 
   // Status Badge Component
@@ -21706,6 +22990,38 @@ const AdminOrdersPage = () => {
 
       {/* Orders Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        {/* Table Header with Actions */}
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">Danh sách đơn hàng</h3>
+              <p className="text-sm text-gray-500">
+                Tổng cộng {totalCount} đơn hàng
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleFixInvalidOrders}
+                className="flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                title="Sửa đơn hàng không hợp lệ"
+              >
+                <ArrowPathIcon className="w-4 h-4 mr-2" />
+                Sửa đơn hàng lỗi
+              </button>
+              {orders.length > 0 && (
+                <button
+                  onClick={handleClearAllOrders}
+                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  title="Xóa tất cả đơn hàng"
+                >
+                  <TrashIcon className="w-4 h-4 mr-2" />
+                  Xóa tất cả đơn hàng
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+        
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -24839,15 +26155,16 @@ END OF FILE: README.md
 ====================================================================================================
 EXTRACTION SUMMARY - COMPLETE VERSION
 ====================================================================================================
-Total core files: 113
-Successfully processed: 113
-Missing files: 0
+Total core files: 119
+Successfully processed: 117
+Missing files: 2
 Output file: /home/takiya/SmartShop/smartshop_core_code_complete.txt
 
 ====================================================================================================
 MISSING FILES
 ====================================================================================================
-None - All files processed successfully!
+- server/graphql/reviews.js
+- server/data/models/review.js
 
 ====================================================================================================
 SMARTSHOP PROJECT STRUCTURE - COMPLETE
@@ -24870,6 +26187,7 @@ SmartShop/
 │   │   ├── brands.js
 │   │   ├── carts.js
 │   │   ├── orders.js
+│   │   ├── reviews.js
 │   │   └── upload.js
 │   ├── data/              # Data layer
 │   │   ├── models/        # Mongoose models
@@ -24880,7 +26198,8 @@ SmartShop/
 │   │   │   ├── brand.js
 │   │   │   ├── cart.js
 │   │   │   ├── order.js
-│   │   │   └── orderItem.js
+│   │   │   ├── orderItem.js
+│   │   │   └── review.js
 │   │   ├── mongoRepo.js   # Repository pattern
 │   │   ├── mockRepo.js    # Mock repository for tests
 │   │   ├── init.js        # Database initialization
@@ -24942,6 +26261,10 @@ SmartShop/
 │       │   │   ├── CartItem.jsx
 │       │   │   ├── CartSummary.jsx
 │       │   │   └── AddToCartButton.jsx
+│       │   ├── reviews/   # Review components
+│       │   │   ├── ReviewCard.jsx
+│       │   │   ├── ReviewList.jsx
+│       │   │   └── CreateReviewForm.jsx
 │       │   └── admin/     # Admin components
 │       │       └── AdminLayout.jsx
 │       ├── pages/         # Page components
@@ -24967,6 +26290,7 @@ SmartShop/
 │       │       ├── AdminOrderDetailPage.jsx
 │       │       ├── CreateOrderPage.jsx
 │       │       └── AdminOrdersPage.jsx
+│       │       └── products/     # Admin product components
 │       │           ├── ProductTable.jsx
 │       │           ├── ProductForm.jsx
 │       │           ├── ProductFilter.jsx
@@ -24979,6 +26303,7 @@ SmartShop/
 │       │   ├── brands.js
 │       │   ├── cart.js
 │       │   ├── orders.js
+│       │   ├── reviews.js
 │       │   ├── upload.js
 │       │   └── admin.js
 │       └── lib/           # Utilities

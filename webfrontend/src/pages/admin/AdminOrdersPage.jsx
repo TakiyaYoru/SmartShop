@@ -34,6 +34,8 @@ import {
   GET_ORDER_STATS,
   UPDATE_ORDER_STATUS,
   UPDATE_PAYMENT_STATUS,
+  CLEAR_ALL_ORDERS,
+  FIX_INVALID_ORDERS,
   getOrderStatusInfo,
   getPaymentStatusInfo,
   getPaymentMethodLabel,
@@ -109,6 +111,26 @@ const AdminOrdersPage = () => {
     }
   });
 
+  const [clearAllOrders] = useMutation(CLEAR_ALL_ORDERS, {
+    onCompleted: () => {
+      toast.success('Đã xóa tất cả đơn hàng thành công!');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi xóa đơn hàng');
+    }
+  });
+
+  const [fixInvalidOrders] = useMutation(FIX_INVALID_ORDERS, {
+    onCompleted: () => {
+      toast.success('Đã sửa các đơn hàng không hợp lệ thành công!');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi sửa đơn hàng');
+    }
+  });
+
   const orders = ordersData?.getAllOrders?.nodes || [];
   const totalCount = ordersData?.getAllOrders?.totalCount || 0;
   const hasNextPage = ordersData?.getAllOrders?.hasNextPage || false;
@@ -175,6 +197,34 @@ const AdminOrdersPage = () => {
     setPaymentMethodFilter('');
     setDateRange({ from: '', to: '' });
     setCurrentPage(1);
+  };
+
+  // Handle clear all orders
+  const handleClearAllOrders = () => {
+    if (!window.confirm('⚠️ CẢNH BÁO: Bạn có chắc muốn xóa TẤT CẢ đơn hàng?\n\nHành động này sẽ:\n- Xóa tất cả orders\n- Xóa tất cả order items\n- KHÔNG THỂ HOÀN TÁC\n\nNhập "DELETE" để xác nhận:')) {
+      return;
+    }
+    
+    const confirmation = prompt('Nhập "DELETE" để xác nhận xóa tất cả đơn hàng:');
+    if (confirmation !== 'DELETE') {
+      toast.error('Hủy bỏ xóa đơn hàng');
+      return;
+    }
+    
+    clearAllOrders();
+  };
+
+  // Handle fix invalid orders
+  const handleFixInvalidOrders = () => {
+    if (!window.confirm('🔧 Bạn có muốn sửa các đơn hàng không hợp lệ?\n\nHành động này sẽ:\n- Sửa paymentMethod thành "cod"\n- Sửa paymentStatus thành "pending"\n- Sửa status thành "pending"\n- Thêm customerInfo nếu thiếu')) {
+      return;
+    }
+    
+    console.log('🔧 Attempting to fix invalid orders...');
+    fixInvalidOrders().catch(error => {
+      console.error('❌ Error fixing invalid orders:', error);
+      toast.error('Có lỗi xảy ra khi sửa đơn hàng');
+    });
   };
 
   // Status Badge Component
@@ -524,6 +574,38 @@ const AdminOrdersPage = () => {
 
       {/* Orders Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        {/* Table Header with Actions */}
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">Danh sách đơn hàng</h3>
+              <p className="text-sm text-gray-500">
+                Tổng cộng {totalCount} đơn hàng
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleFixInvalidOrders}
+                className="flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                title="Sửa đơn hàng không hợp lệ"
+              >
+                <ArrowPathIcon className="w-4 h-4 mr-2" />
+                Sửa đơn hàng lỗi
+              </button>
+              {orders.length > 0 && (
+                <button
+                  onClick={handleClearAllOrders}
+                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  title="Xóa tất cả đơn hàng"
+                >
+                  <TrashIcon className="w-4 h-4 mr-2" />
+                  Xóa tất cả đơn hàng
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+        
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

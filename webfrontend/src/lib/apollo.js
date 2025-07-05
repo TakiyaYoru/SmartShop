@@ -13,6 +13,10 @@ const uploadLink = createUploadLink({
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('smartshop_token');
   
+  console.log('🔐 Apollo - Adding auth header');
+  console.log('🔐 Apollo - Token present:', !!token);
+  console.log('🔐 Apollo - Operation:', _.operationName);
+  
   return {
     headers: {
       ...headers,
